@@ -1,0 +1,79 @@
+import React, { useState } from 'react'
+import { useWorkoutLogs, useTimeTrials } from './hooks/useStore'
+import Today from './views/Today'
+import Log from './views/Log'
+import Progress from './views/Progress'
+import Plan from './views/Plan'
+import type { ViewName } from './types'
+
+function IconToday() {
+  return (
+    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  )
+}
+function IconLog() {
+  return (
+    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+  )
+}
+function IconProgress() {
+  return (
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+  )
+}
+function IconPlan() {
+  return (
+    <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+  )
+}
+
+const NAV: { id: ViewName; label: string; icon: () => React.ReactElement }[] = [
+  { id: 'today',    label: 'Today',    icon: IconToday },
+  { id: 'log',      label: 'Log',      icon: IconLog },
+  { id: 'progress', label: 'Progress', icon: IconProgress },
+  { id: 'plan',     label: 'Plan',     icon: IconPlan },
+]
+
+const TITLES: Record<ViewName, string> = {
+  today:    '10K Sub-50 Tracker',
+  log:      'Log Session',
+  progress: 'Progress',
+  plan:     'Training Plan',
+}
+
+export default function App() {
+  const [view, setView] = useState<ViewName>('today')
+  const { logs, addLog, deleteLog } = useWorkoutLogs()
+  const { trials, addTrial, deleteTrial } = useTimeTrials()
+
+  function goToLog() {
+    setView('log')
+  }
+
+  return (
+    <>
+      <header className="header">
+        <h1>{TITLES[view]}</h1>
+        {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
+      </header>
+
+      {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
+      {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
+      {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
+      {view === 'plan' && <Plan />}
+
+      <nav className="bottom-nav">
+        {NAV.map(({ id, label, icon: Icon }) => (
+          <button
+            key={id}
+            className={`nav-btn ${view === id ? 'active' : ''}`}
+            onClick={() => setView(id)}
+          >
+            <Icon />
+            {label}
+          </button>
+        ))}
+      </nav>
+    </>
+  )
+}
