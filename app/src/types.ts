@@ -48,4 +48,38 @@ export interface Phase {
   notes?: string[]
 }
 
-export type ViewName = 'today' | 'log' | 'progress' | 'plan'
+export type ViewName = 'today' | 'log' | 'progress' | 'plan' | 'strava'
+
+export interface StravaAthlete {
+  id: number
+  firstname: string
+  lastname: string
+  profile_medium: string
+}
+
+export interface StravaTokens {
+  access_token: string
+  refresh_token: string
+  expires_at: number
+  athlete: StravaAthlete
+}
+
+export interface StravaSplit {
+  split: number
+  distance: number
+  elapsed_time: number
+  moving_time: number
+  average_speed: number
+}
+
+export interface StravaActivity {
+  id: number
+  name: string
+  type: string
+  start_date_local: string
+  distance: number
+  moving_time: number
+  total_elevation_gain: number
+  average_speed: number
+  splits_metric?: StravaSplit[]
+}

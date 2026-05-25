@@ -1,10 +1,52 @@
 import { useState } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE } from '../data/plan'
-import type { WorkoutLog } from '../types'
+import type { WorkoutLog, Phase } from '../types'
 
 interface Props {
   logs: WorkoutLog[]
   onGoLog: () => void
+}
+
+function isStrengthItem(item: string) {
+  return /strength/i.test(item)
+}
+
+function StrengthCircuitInline({ circuit }: { circuit: string[] }) {
+  return (
+    <div style={{ marginTop: 8, paddingLeft: 12, borderLeft: '2px solid var(--accent-2)' }}>
+      {circuit.map((line, i) => (
+        <div key={i} style={{
+          fontSize: 13,
+          color: line.startsWith('A.') || line.startsWith('B.') ? 'var(--text)' : line === '' ? 'transparent' : 'var(--text-muted)',
+          fontWeight: line.startsWith('A.') || line.startsWith('B.') ? 700 : 400,
+          padding: line === '' ? '3px 0' : '2px 0',
+        }}>
+          {line || ' '}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
+  const [open, setOpen] = useState(false)
+  const hasCircuit = isStrengthItem(item) && phase?.strengthCircuit && phase.strengthCircuit.length > 0
+
+  if (!hasCircuit) {
+    return <li>{item}</li>
+  }
+
+  return (
+    <li style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
+        <span style={{ flex: 1 }}>{item}</span>
+        <span style={{ fontSize: 11, color: 'var(--accent-2)', fontWeight: 700, flexShrink: 0 }}>
+          {open ? '▲ hide' : '▼ show exercises'}
+        </span>
+      </div>
+      {open && <StrengthCircuitInline circuit={phase!.strengthCircuit!} />}
+    </li>
+  )
 }
 
 export default function Today({ logs, onGoLog }: Props) {
@@ -45,7 +87,7 @@ export default function Today({ logs, onGoLog }: Props) {
           <div className="card-title">Plan Status</div>
           <div style={{ textAlign: 'center', padding: '8px 0' }}>
             <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--warn)' }}>{daysUntilStart}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>days until plan starts (26 May 2026)</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>days until plan starts (25 May 2026)</div>
           </div>
         </div>
       ) : (
@@ -101,7 +143,7 @@ export default function Today({ logs, onGoLog }: Props) {
                 {expandedSession && (
                   <ul className="session-items">
                     {daySession.session.items.map((item, i) => (
-                      <li key={i}>{item}</li>
+                      <SessionItem key={i} item={item} phase={phase} />
                     ))}
                   </ul>
                 )}
@@ -182,7 +224,7 @@ export default function Today({ logs, onGoLog }: Props) {
         <div className="sw-title">Shin Splint Protocol</div>
         <ul>
           <li>Never increase weekly distance by more than 10%</li>
-          <li>Calf raises every Wed &amp; Thu — non-negotiable</li>
+          <li>Calf raises every Wed & Thu — non-negotiable</li>
           <li>Shin pain? Drop volume 50%, substitute skip/bike</li>
         </ul>
       </div>

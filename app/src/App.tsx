@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useWorkoutLogs, useTimeTrials } from './hooks/useStore'
 import Today from './views/Today'
 import Log from './views/Log'
 import Progress from './views/Progress'
 import Plan from './views/Plan'
+import StravaView from './views/StravaView'
 import type { ViewName } from './types'
 
 function IconToday() {
@@ -21,6 +22,11 @@ function IconProgress() {
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
   )
 }
+function IconStrava() {
+  return (
+    <svg viewBox="0 0 24 24"><path d="M10.5 3L6 13.5h3.75L10.5 3zm3 10.5L12 17.25 10.5 13.5H6.75L12 24l5.25-10.5H13.5z"/></svg>
+  )
+}
 function IconPlan() {
   return (
     <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -31,6 +37,7 @@ const NAV: { id: ViewName; label: string; icon: () => React.ReactElement }[] = [
   { id: 'today',    label: 'Today',    icon: IconToday },
   { id: 'log',      label: 'Log',      icon: IconLog },
   { id: 'progress', label: 'Progress', icon: IconProgress },
+  { id: 'strava',   label: 'Strava',   icon: IconStrava },
   { id: 'plan',     label: 'Plan',     icon: IconPlan },
 ]
 
@@ -38,6 +45,7 @@ const TITLES: Record<ViewName, string> = {
   today:    '10K Sub-50 Tracker',
   log:      'Log Session',
   progress: 'Progress',
+  strava:   'Strava',
   plan:     'Training Plan',
 }
 
@@ -45,6 +53,11 @@ export default function App() {
   const [view, setView] = useState<ViewName>('today')
   const { logs, addLog, deleteLog } = useWorkoutLogs()
   const { trials, addTrial, deleteTrial } = useTimeTrials()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('code')) setView('strava')
+  }, [])
 
   function goToLog() {
     setView('log')
@@ -55,11 +68,13 @@ export default function App() {
       <header className="header">
         <h1>{TITLES[view]}</h1>
         {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
+        {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
       </header>
 
       {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
       {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
       {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
+      {view === 'strava' && <StravaView />}
       {view === 'plan' && <Plan />}
 
       <nav className="bottom-nav">
