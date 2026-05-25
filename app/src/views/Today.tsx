@@ -159,6 +159,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
   const heatAdj = weather ? calcHeatAdj(weather.feelsLikeC, weather.humidity) : null
   const heatAdjSecs = heatAdj?.adjSecs ?? 0
   const cityInputRef = useRef<HTMLInputElement>(null)
+  const [editingCity, setEditingCity] = useState(false)
 
   // RPE-based time trial prompt
   const last3EasyRuns = logs
@@ -312,7 +313,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
           {/* Weather card */}
           {weather ? (
             <div className="card" style={heatAdj && heatAdj.level !== 'none' ? { borderColor: heatAdj.color } : undefined}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: heatAdj && heatAdj.level !== 'none' ? 10 : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: (heatAdj && heatAdj.level !== 'none') || editingCity ? 10 : 0 }}>
                 <span style={{ fontSize: 28 }}>{weather.icon}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 700, fontSize: 15 }}>
@@ -323,36 +324,64 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     {weather.description}
-                    {savedCity && <span style={{ marginLeft: 6 }}>· {savedCity}</span>}
+                    {weather.locationName && <span style={{ marginLeft: 6, fontWeight: 600 }}>· {weather.locationName}</span>}
                   </div>
                 </div>
                 <button
-                  onClick={() => { localStorage.removeItem('weatherCache'); localStorage.removeItem('weatherCity'); window.location.reload() }}
-                  style={{ background: 'none', border: 'none', fontSize: 11, color: 'var(--text-dim)', cursor: 'pointer', padding: 0 }}
-                  title="Change city"
+                  onClick={() => setEditingCity(e => !e)}
+                  style={{ background: 'none', border: 'none', fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer', padding: '2px 6px', borderRadius: 6, flexShrink: 0 }}
+                  title="Change location"
                 >
-                  ✎
+                  change
                 </button>
               </div>
               {heatAdj && heatAdj.level !== 'none' && (
-                <div style={{ background: 'rgba(239,68,68,0.06)', border: `1px solid ${heatAdj.color}50`, borderRadius: 8, padding: '8px 12px', fontSize: 13 }}>
-                  <div style={{ fontWeight: 700, color: heatAdj.color }}>🌡 +{heatAdj.adjSecs}s/km added to pace targets</div>
+                <div style={{ background: 'rgba(239,68,68,0.06)', border: `1px solid ${heatAdj.color}50`, borderRadius: 8, padding: '8px 12px', fontSize: 13, marginBottom: editingCity ? 10 : 0 }}>
+                  <div style={{ fontWeight: 700, color: heatAdj.color }}>+{heatAdj.adjSecs}s/km added to pace targets</div>
                   <div style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 12 }}>{heatAdj.label}</div>
+                </div>
+              )}
+              {editingCity && (
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Enter a town, village or city:</div>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      ref={cityInputRef}
+                      type="text"
+                      defaultValue={savedCity}
+                      placeholder="e.g. Kesgrave, Shefford, London"
+                      style={{
+                        flex: 1, padding: '8px 10px', borderRadius: 'var(--radius-sm)',
+                        border: `1.5px solid ${cityError ? 'var(--danger)' : 'var(--border)'}`,
+                        background: 'var(--input-bg)', color: 'var(--text)', fontSize: 13,
+                      }}
+                      onKeyDown={async e => { if (e.key === 'Enter') { const ok = await fetchByCity(cityInputRef.current?.value ?? ''); if (ok) setEditingCity(false) } }}
+                    />
+                    <button
+                      className="btn btn-primary"
+                      onClick={async () => { const ok = await fetchByCity(cityInputRef.current?.value ?? ''); if (ok) setEditingCity(false) }}
+                      disabled={weatherLoading}
+                      style={{ flexShrink: 0, fontSize: 13 }}
+                    >
+                      {weatherLoading ? '...' : 'Go'}
+                    </button>
+                  </div>
+                  {cityError && <div style={{ fontSize: 12, color: 'var(--danger)', marginTop: 6 }}>Location not found — try a different name or check spelling</div>}
                 </div>
               )}
             </div>
           ) : permissionDenied ? (
             <div className="card">
-              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>📍 Enter your city for weather</div>
+              <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 8 }}>Enter your location for weather</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>
-                Location access was blocked. Type your city to get heat-adjusted pace targets.
+                Location access was blocked. Type your town or city to get heat-adjusted pace targets.
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input
                   ref={cityInputRef}
                   type="text"
                   defaultValue={savedCity}
-                  placeholder="e.g. London, Dubai, Sydney"
+                  placeholder="e.g. Kesgrave, Shefford, London"
                   style={{
                     flex: 1, padding: '8px 10px', borderRadius: 'var(--radius-sm)',
                     border: `1.5px solid ${cityError ? 'var(--danger)' : 'var(--border)'}`,
@@ -366,10 +395,10 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                   disabled={weatherLoading}
                   style={{ flexShrink: 0, fontSize: 13 }}
                 >
-                  {weatherLoading ? '…' : 'Go'}
+                  {weatherLoading ? '...' : 'Go'}
                 </button>
               </div>
-              {cityError && <div style={{ fontSize: 12, color: 'var(--danger)', marginTop: 6 }}>City not found — try a different name</div>}
+              {cityError && <div style={{ fontSize: 12, color: 'var(--danger)', marginTop: 6 }}>Location not found — try a different name or check spelling</div>}
             </div>
           ) : null}
 

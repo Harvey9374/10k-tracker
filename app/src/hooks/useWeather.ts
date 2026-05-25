@@ -6,6 +6,7 @@ export interface WeatherData {
   humidity: number
   description: string
   icon: string
+  locationName: string
 }
 
 export interface HeatAdjustment {
@@ -30,7 +31,7 @@ export function calcHeatAdj(feelsLikeC: number, humidity: number): HeatAdjustmen
 
 const CACHE_KEY = 'weatherCache'
 const CITY_KEY = 'weatherCity'
-const CACHE_TTL = 30 * 60 * 1000 // 30 min
+const CACHE_TTL = 30 * 60 * 1000
 
 function loadCached(): WeatherData | null {
   try {
@@ -72,7 +73,34 @@ function weatherDesc(code: number): string {
   return 'Thunderstorm'
 }
 
-async function fetchWeatherByCoords(lat: number, lon: number): Promise<WeatherData> {
+const NOM_HEADERS = { 'Accept-Language': 'en', 'User-Agent': '10k-tracker-app' }
+
+async function reverseGeocode(lat: number, lon: number): Promise<string> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat.toFixed(4)}&lon=${lon.toFixed(4)}&format=json&zoom=10`,
+      { headers: NOM_HEADERS }
+    )
+    const json = await res.json()
+    const a = json.address ?? {}
+    return a.town || a.city || a.village || a.hamlet || a.suburb || json.display_name?.split(',')[0] || ''
+  } catch { return '' }
+}
+
+async function geocodeCity(name: string): Promise<{ lat: number; lon: number; displayName: string } | null> {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(name)}&format=json&limit=1&addressdetails=1`,
+    { headers: NOM_HEADERS }
+  )
+  const json = await res.json()
+  const loc = json[0]
+  if (!loc) return null
+  const a = loc.address ?? {}
+  const displayName = a.town || a.city || a.village || a.hamlet || a.suburb || loc.display_name?.split(',')[0] || name
+  return { lat: parseFloat(loc.lat), lon: parseFloat(loc.lon), displayName }
+}
+
+async function fetchWeatherByCoords(lat: number, lon: number, locationName: string): Promise<WeatherData> {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code&timezone=auto`
   const res = await fetch(url)
   const json = await res.json()
@@ -83,6 +111,7 @@ async function fetchWeatherByCoords(lat: number, lon: number): Promise<WeatherDa
     humidity: Math.round(c.relative_humidity_2m),
     description: weatherDesc(c.weather_code),
     icon: weatherIcon(c.weather_code),
+    locationName,
   }
 }
 
@@ -100,9 +129,13 @@ export function useWeather() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         try {
-          const data = await fetchWeatherByCoords(coords.latitude, coords.longitude)
-          saveCache(data)
-          setWeather(data)
+          const [locationName, data] = await Promise.all([
+            reverseGeocode(coords.latitude, coords.longitude),
+            fetchWeatherByCoords(coords.latitude, coords.longitude, ''),
+          ])
+          const full = { ...data, locationName }
+          saveCache(full)
+          setWeather(full)
         } catch { /* silent */ }
         finally { setLoading(false) }
       },
@@ -111,23 +144,23 @@ export function useWeather() {
     )
   }, [])
 
-  const fetchByCity = useCallback(async (city: string) => {
+  const fetchByCity = useCallback(async (city: string): Promise<boolean> => {
     const name = city.trim()
-    if (!name) return
+    if (!name) return false
     setLoading(true)
     setCityError(false)
     try {
-      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`)
-      const geoJson = await geoRes.json()
-      const loc = geoJson.results?.[0]
-      if (!loc) { setCityError(true); return }
-      const data = await fetchWeatherByCoords(loc.latitude, loc.longitude)
+      const loc = await geocodeCity(name)
+      if (!loc) { setCityError(true); return false }
+      const data = await fetchWeatherByCoords(loc.lat, loc.lon, loc.displayName)
       saveCache(data)
       setWeather(data)
       try { localStorage.setItem(CITY_KEY, name) } catch { /* */ }
       setSavedCity(name)
+      return true
     } catch {
       setCityError(true)
+      return false
     } finally {
       setLoading(false)
     }
