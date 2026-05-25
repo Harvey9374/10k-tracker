@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 export interface WeatherData {
   tempC: number
@@ -29,6 +29,7 @@ export function calcHeatAdj(feelsLikeC: number, humidity: number): HeatAdjustmen
 }
 
 const CACHE_KEY = 'weatherCache'
+const CITY_KEY = 'weatherCity'
 const CACHE_TTL = 30 * 60 * 1000 // 30 min
 
 function loadCached(): WeatherData | null {
@@ -43,6 +44,10 @@ function loadCached(): WeatherData | null {
 
 function saveCache(data: WeatherData) {
   try { localStorage.setItem(CACHE_KEY, JSON.stringify({ data, ts: Date.now() })) } catch { /* */ }
+}
+
+function loadSavedCity(): string {
+  try { return localStorage.getItem(CITY_KEY) ?? '' } catch { return '' }
 }
 
 function weatherIcon(code: number): string {
@@ -67,29 +72,35 @@ function weatherDesc(code: number): string {
   return 'Thunderstorm'
 }
 
+async function fetchWeatherByCoords(lat: number, lon: number): Promise<WeatherData> {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code&timezone=auto`
+  const res = await fetch(url)
+  const json = await res.json()
+  const c = json.current
+  return {
+    tempC: Math.round(c.temperature_2m),
+    feelsLikeC: Math.round(c.apparent_temperature),
+    humidity: Math.round(c.relative_humidity_2m),
+    description: weatherDesc(c.weather_code),
+    icon: weatherIcon(c.weather_code),
+  }
+}
+
 export function useWeather() {
   const [weather, setWeather] = useState<WeatherData | null>(loadCached)
   const [loading, setLoading] = useState(false)
   const [permissionDenied, setPermissionDenied] = useState(false)
+  const [cityError, setCityError] = useState(false)
+  const [savedCity, setSavedCity] = useState(loadSavedCity)
 
   useEffect(() => {
     if (loadCached()) return
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation) { setPermissionDenied(true); return }
     setLoading(true)
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         try {
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude.toFixed(4)}&longitude=${coords.longitude.toFixed(4)}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code&timezone=auto`
-          const res = await fetch(url)
-          const json = await res.json()
-          const c = json.current
-          const data: WeatherData = {
-            tempC: Math.round(c.temperature_2m),
-            feelsLikeC: Math.round(c.apparent_temperature),
-            humidity: Math.round(c.relative_humidity_2m),
-            description: weatherDesc(c.weather_code),
-            icon: weatherIcon(c.weather_code),
-          }
+          const data = await fetchWeatherByCoords(coords.latitude, coords.longitude)
           saveCache(data)
           setWeather(data)
         } catch { /* silent */ }
@@ -100,5 +111,27 @@ export function useWeather() {
     )
   }, [])
 
-  return { weather, loading, permissionDenied }
+  const fetchByCity = useCallback(async (city: string) => {
+    const name = city.trim()
+    if (!name) return
+    setLoading(true)
+    setCityError(false)
+    try {
+      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=en&format=json`)
+      const geoJson = await geoRes.json()
+      const loc = geoJson.results?.[0]
+      if (!loc) { setCityError(true); return }
+      const data = await fetchWeatherByCoords(loc.latitude, loc.longitude)
+      saveCache(data)
+      setWeather(data)
+      try { localStorage.setItem(CITY_KEY, name) } catch { /* */ }
+      setSavedCity(name)
+    } catch {
+      setCityError(true)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  return { weather, loading, permissionDenied, cityError, savedCity, fetchByCity }
 }
