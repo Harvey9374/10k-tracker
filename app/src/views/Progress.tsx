@@ -23,6 +23,68 @@ function parseTimeInput(mm: string, ss: string): number | null {
   return m * 60 + s
 }
 
+function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
+  const runLogs = logs
+    .filter(l => l.distanceKm && l.durationMins && l.distanceKm > 0 && l.durationMins > 0)
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-20)
+
+  if (runLogs.length < 3) return (
+    <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '12px 0', textAlign: 'center' }}>
+      Log 3+ sessions with distance & duration to see your pace trend.
+    </div>
+  )
+
+  const paces = runLogs.map(l => calcPaceSeconds(l.distanceKm!, l.durationMins!))
+  const minPace = Math.min(...paces)
+  const maxPace = Math.max(...paces)
+  const range = maxPace - minPace || 30
+
+  const W = 300, H = 80, padX = 10, padY = 10
+
+  const pts = runLogs.map((l, i) => {
+    const pace = calcPaceSeconds(l.distanceKm!, l.durationMins!)
+    const x = padX + (i / (runLogs.length - 1)) * (W - padX * 2)
+    const y = padY + (pace - minPace) / range * (H - padY * 2)
+    return { x, y, pace, date: l.date }
+  })
+
+  const pathD = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
+  const improving = paces[paces.length - 1] < paces[0] - 5
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
+          Run Pace Trend
+        </span>
+        <span style={{ fontSize: 12, fontWeight: 700, color: improving ? 'var(--accent)' : 'var(--text-muted)' }}>
+          {improving ? '↑ Getting faster' : '→ Consistent'}
+        </span>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 70, overflow: 'visible' }}>
+        <defs>
+          <linearGradient id="paceGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="var(--accent-2)" stopOpacity="0.7" />
+            <stop offset="100%" stopColor="var(--accent)" />
+          </linearGradient>
+        </defs>
+        <path d={pathD} fill="none" stroke="url(#paceGrad)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+        {pts.map((p, i) => (
+          <circle key={i} cx={p.x} cy={p.y} r={i === pts.length - 1 ? 4 : 2.5}
+            fill={i === pts.length - 1 ? 'var(--accent)' : 'var(--accent-2)'} />
+        ))}
+      </svg>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+        <span>{fmtDate(pts[0].date)} · {formatPace(paces[0])}</span>
+        <span style={{ color: improving ? 'var(--accent)' : 'var(--text-muted)', fontWeight: improving ? 700 : 400 }}>
+          {fmtDate(pts[pts.length - 1].date)} · {formatPace(paces[paces.length - 1])}
+        </span>
+      </div>
+    </div>
+  )
+}
+
 function TrialForm({ onAdd }: { onAdd: (t: Omit<TimeTrial, 'id'>) => void }) {
   const today = new Date().toISOString().slice(0, 10)
   const [date, setDate] = useState(today)
@@ -106,7 +168,7 @@ function MiniChart({ trials, distanceKm }: { trials: TimeTrial[], distanceKm: nu
 
   return (
     <div style={{ marginTop: 10 }}>
-      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Pace Trend ({distanceKm}km)</div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Trend ({distanceKm}km)</div>
       <svg viewBox={`0 0 ${w} ${h}`} style={{ width: '100%', height: 56, overflow: 'visible' }}>
         <polyline points={pts} fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
         {filtered.map((t, i) => {
@@ -133,8 +195,9 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
 
   const latestTrial10k = trials.filter(t => t.distanceKm === 10).sort((a, b) => b.date.localeCompare(a.date))[0]
   const pb10k = trials.filter(t => t.distanceKm === 10).sort((a, b) => a.timeSeconds - b.timeSeconds)[0]
-
   const gapToGoal = pb10k ? pb10k.timeSeconds - GOAL_SECONDS : null
+  const flaggedLogs = logs.filter(l => l.injuryFlag)
+
   return (
     <div className="view">
       <div className="seg-control">
@@ -157,6 +220,10 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
               <div className="stat-value warn">{Math.round(totalMins / 60)}</div>
               <div className="stat-label">Hours</div>
             </div>
+          </div>
+
+          <div className="card">
+            <PaceTrendChart logs={logs} />
           </div>
 
           {pb10k ? (
@@ -204,8 +271,25 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
           {latestTrial10k && latestTrial10k !== pb10k && (
             <div className="card">
               <div className="card-title">Last 10km Time Trial</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--text)' }}>{formatTime(latestTrial10k.timeSeconds)}</div>
+              <div style={{ fontSize: 24, fontWeight: 800 }}>{formatTime(latestTrial10k.timeSeconds)}</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>{fmtDate(latestTrial10k.date)}</div>
+            </div>
+          )}
+
+          {flaggedLogs.length > 0 && (
+            <div className="card" style={{ borderColor: 'rgba(239,68,68,0.35)' }}>
+              <div className="card-title" style={{ color: 'var(--danger)' }}>⚠️ Injury Flags ({flaggedLogs.length})</div>
+              {flaggedLogs.slice(0, 6).map(log => (
+                <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--border)', fontSize: 13 }}>
+                  <span>{log.sessionType}</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>{fmtDate(log.date)}</span>
+                </div>
+              ))}
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+                {flaggedLogs.length > 1
+                  ? 'Multiple flags — consider reducing load or seeing a physio.'
+                  : 'Monitor closely. Rest if pain persists beyond 24 hours.'}
+              </div>
             </div>
           )}
 
@@ -217,7 +301,6 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
               const achieved = best && best.timeSeconds <= bm.targetSeconds
               const isCurrent = bm.week === Math.max(...BENCHMARKS.filter(b => b.week <= (week || 1)).map(b => b.week))
               const isPast = week > bm.week
-
               return (
                 <div key={bm.week} className="benchmark-item">
                   <div className={`bm-check ${achieved ? 'done' : isCurrent ? 'current' : ''}`}>
@@ -225,10 +308,7 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
                   </div>
                   <div className="bm-info">
                     <div className="bm-label">{bm.label}</div>
-                    <div className="bm-week">
-                      Week {bm.week}
-                      {best ? ` · PB: ${formatTime(best.timeSeconds)}` : ''}
-                    </div>
+                    <div className="bm-week">Week {bm.week}{best ? ` · PB: ${formatTime(best.timeSeconds)}` : ''}</div>
                   </div>
                   <div className="bm-target">{bm.target}</div>
                 </div>
@@ -246,7 +326,10 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
                 return (
                   <div key={log.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border)', alignItems: 'center' }}>
                     <div>
-                      <div style={{ fontSize: 13, fontWeight: 600 }}>{log.sessionType}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>
+                        {log.injuryFlag && <span style={{ marginRight: 4 }}>⚠️</span>}
+                        {log.sessionType}
+                      </div>
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmtDate(log.date)}{log.distanceKm ? ` · ${log.distanceKm}km` : ''}</div>
                     </div>
                     {pace && <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>{pace}</div>}
@@ -261,7 +344,6 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
       {tab === 'timetrials' && (
         <>
           <TrialForm onAdd={onAddTrial} />
-
           {[10, 5, 3].map(d => {
             const dTrials = trials.filter(t => t.distanceKm === d)
             return dTrials.length > 0 ? (
@@ -287,14 +369,12 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
               </div>
             ) : null
           })}
-
           {trials.length === 0 && (
             <div className="empty-state">
               <div className="empty-icon">⏱️</div>
               <p>No time trials yet. Log one above to start tracking your race progress.</p>
             </div>
           )}
-
           <div className="card blue-border">
             <div className="card-title">Target Pace</div>
             <div style={{ display: 'flex', gap: 16 }}>

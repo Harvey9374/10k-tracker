@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE } from '../data/plan'
+import { useSessionCompletions } from '../hooks/useStore'
 import type { WorkoutLog, Phase } from '../types'
 
 interface Props {
@@ -32,9 +33,7 @@ function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
   const [open, setOpen] = useState(false)
   const hasCircuit = isStrengthItem(item) && phase?.strengthCircuit && phase.strengthCircuit.length > 0
 
-  if (!hasCircuit) {
-    return <li>{item}</li>
-  }
+  if (!hasCircuit) return <li>{item}</li>
 
   return (
     <li style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
@@ -49,11 +48,26 @@ function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
   )
 }
 
+function getWeekStart(date: Date): Date {
+  const d = new Date(date)
+  const day = d.getDay()
+  d.setDate(d.getDate() - (day === 0 ? 6 : day - 1))
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+function parseWeeklyKmTarget(target: string): { min: number; max: number } | null {
+  const m = target.match(/(\d+)[–\-](\d+)/)
+  if (m) return { min: parseInt(m[1]), max: parseInt(m[2]) }
+  return null
+}
+
 export default function Today({ logs, onGoLog }: Props) {
   const today = new Date()
   const week = getWeekNumber(today)
   const phase = getPhase(week)
   const [expandedSession, setExpandedSession] = useState(true)
+  const { completions, toggleCompletion } = useSessionCompletions()
 
   const daysToRace = Math.ceil((RACE_DATE.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
   const planStarted = today >= PLAN_START
@@ -61,17 +75,37 @@ export default function Today({ logs, onGoLog }: Props) {
 
   const todayStr = today.toISOString().slice(0, 10)
   const loggedToday = logs.filter(l => l.date === todayStr)
+  const todayMarkedComplete = completions.includes(todayStr)
 
   const daySession = phase ? getDaySession(phase, week, today) : null
-
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const todayName = dayNames[today.getDay()]
 
   const totalWeeksElapsed = week > 0 ? week - 1 : 0
   const planProgress = Math.min(Math.round((totalWeeksElapsed / 52) * 100), 100)
-
   const nextBenchmark = BENCHMARKS.find(b => b.week >= week)
   const paceInfo = phase ? PACE_GUIDE.find(p => p.phase === phase.number) : null
+
+  const weekStart = getWeekStart(today)
+  const weekStartStr = weekStart.toISOString().slice(0, 10)
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
+  const weekEndStr = weekEnd.toISOString().slice(0, 10)
+  const weekLogs = logs.filter(l => l.date >= weekStartStr && l.date <= weekEndStr)
+  const weekKm = weekLogs.reduce((acc, l) => acc + (l.distanceKm ?? 0), 0)
+  const weekTarget = phase ? parseWeeklyKmTarget(phase.weeklyTarget) : null
+
+  const weekDots = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart)
+    d.setDate(weekStart.getDate() + i)
+    const dateStr = d.toISOString().slice(0, 10)
+    return {
+      dateStr,
+      label: ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i],
+      isToday: dateStr === todayStr,
+      isFuture: dateStr > todayStr,
+      isDone: completions.includes(dateStr),
+    }
+  })
 
   return (
     <div className="view">
@@ -123,6 +157,72 @@ export default function Today({ logs, onGoLog }: Props) {
             )}
           </div>
 
+          <div className="card">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <div className="card-title" style={{ marginBottom: 0 }}>This Week</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                {weekDots.filter(d => d.isDone).length}/{weekDots.filter(d => !d.isFuture).length} sessions
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: 6, justifyContent: 'space-between', marginBottom: 14 }}>
+              {weekDots.map((dot, i) => (
+                <button
+                  key={i}
+                  onClick={() => !dot.isFuture && toggleCompletion(dot.dateStr)}
+                  style={{
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: 4,
+                    background: 'none',
+                    border: 'none',
+                    cursor: dot.isFuture ? 'default' : 'pointer',
+                    padding: 0,
+                  }}
+                >
+                  <div style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: dot.isDone ? 'var(--accent)' : dot.isToday ? 'var(--accent-dim)' : 'transparent',
+                    border: `2px solid ${dot.isDone ? 'var(--accent)' : dot.isToday ? 'var(--accent)' : 'var(--border)'}`,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: dot.isDone ? '#fff' : dot.isFuture ? 'var(--text-dim)' : 'var(--text)',
+                    transition: 'all 0.15s',
+                  }}>
+                    {dot.isDone ? '✓' : dot.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {weekTarget && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>
+                  <span style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-0.5px' }}>
+                    {weekKm.toFixed(1)} <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>km</span>
+                  </span>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>target {weekTarget.min}–{weekTarget.max} km</span>
+                </div>
+                <div className="progress-bar-track">
+                  <div className="progress-bar-fill" style={{ width: `${Math.min(100, (weekKm / weekTarget.max) * 100)}%` }} />
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6 }}>
+                  {weekKm === 0 ? 'No km logged yet this week'
+                    : weekKm < weekTarget.min ? `${(weekTarget.min - weekKm).toFixed(1)} km to minimum target`
+                    : weekKm <= weekTarget.max ? '✓ On target this week'
+                    : `${(weekKm - weekTarget.max).toFixed(1)} km over weekly ceiling`}
+                </div>
+              </>
+            )}
+          </div>
+
           {daySession ? (
             <div className="today-session-card">
               <div className="tsc-header">
@@ -147,9 +247,29 @@ export default function Today({ logs, onGoLog }: Props) {
                     ))}
                   </ul>
                 )}
-                <div style={{ marginTop: 14 }}>
-                  <button className="btn btn-primary" onClick={onGoLog}>
-                    + Log This Session
+                <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+                  <button className="btn btn-primary" onClick={onGoLog} style={{ flex: 1 }}>
+                    + Log Session
+                  </button>
+                  <button
+                    onClick={() => toggleCompletion(todayStr)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: 50,
+                      border: `2px solid ${todayMarkedComplete ? 'var(--accent)' : 'var(--border)'}`,
+                      borderRadius: 'var(--radius-sm)',
+                      background: todayMarkedComplete ? 'var(--accent-dim)' : 'var(--card)',
+                      color: todayMarkedComplete ? 'var(--accent)' : 'var(--text-muted)',
+                      fontSize: 20,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                      flexShrink: 0,
+                    }}
+                    title={todayMarkedComplete ? 'Mark incomplete' : 'Mark complete'}
+                  >
+                    {todayMarkedComplete ? '✓' : '○'}
                   </button>
                 </div>
               </div>
@@ -213,6 +333,9 @@ export default function Today({ logs, onGoLog }: Props) {
                       {log.durationMins ? `${log.durationMins} min` : ''}
                     </div>
                   </div>
+                  {log.injuryFlag && (
+                    <span style={{ fontSize: 18 }} title="Injury flag">⚠️</span>
+                  )}
                 </div>
               ))}
             </div>

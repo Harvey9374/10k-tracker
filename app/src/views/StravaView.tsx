@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useStrava } from '../hooks/useStrava'
 import { getWeekNumber, getPhase } from '../data/plan'
 import type { StravaActivity, StravaSplit } from '../types'
@@ -150,6 +150,24 @@ export default function StravaView() {
 
   const { isConnected, athlete, activities, syncing, error, exchangeCode, syncActivities, fetchDetail, disconnect } = useStrava()
 
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const touchStartY = useRef(0)
+  const [pullProgress, setPullProgress] = useState(0)
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartY.current = e.touches[0].clientY
+  }
+  function handleTouchMove(e: React.TouchEvent) {
+    const scrollTop = scrollRef.current?.scrollTop ?? 0
+    if (scrollTop > 0) return
+    const diff = e.touches[0].clientY - touchStartY.current
+    if (diff > 0) setPullProgress(Math.min(diff / 72, 1))
+  }
+  function handleTouchEnd() {
+    if (pullProgress >= 1 && !syncing) syncActivities()
+    setPullProgress(0)
+  }
+
   const redirectUri = window.location.origin + '/'
   const connectUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&approval_prompt=auto&scope=activity:read_all`
 
@@ -209,8 +227,25 @@ export default function StravaView() {
   }
 
   return (
-    <div className="view">
-      {/* Header */}
+    <div
+      className="view"
+      ref={scrollRef}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      {(pullProgress > 0 || syncing) && (
+        <div style={{
+          textAlign: 'center',
+          padding: '6px 0 10px',
+          fontSize: 12,
+          color: 'var(--text-muted)',
+          transition: 'opacity 0.2s',
+          opacity: syncing ? 1 : pullProgress,
+        }}>
+          {syncing ? '↻ Refreshing…' : pullProgress >= 1 ? '↑ Release to refresh' : '↓ Pull to refresh'}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>
@@ -234,7 +269,6 @@ export default function StravaView() {
         </div>
       )}
 
-      {/* Pace legend */}
       <div className="card">
         <div className="card-title">Pace Zones — Phase {phaseNum}</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -253,7 +287,6 @@ export default function StravaView() {
         </div>
       </div>
 
-      {/* Activity list */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <div className="card-title" style={{ marginBottom: 0 }}>Recent Runs</div>
