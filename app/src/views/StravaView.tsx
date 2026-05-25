@@ -69,6 +69,88 @@ function getZone(paceSecPerKm: number, phaseNum: number, calibrated?: Calibrated
   return { label: 'Recovery', color: 'var(--text-muted)', bg: 'rgba(107,125,160,0.12)' }
 }
 
+type RunInsight = { icon: string; text: string; positive: boolean }
+type RunAssessment = { verdict: string; verdictColor: string; insights: RunInsight[]; tip: string }
+
+function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: CalibratedZones | null): RunAssessment {
+  const paces = splits.map(s => speedToPace(s.average_speed))
+  const avgPace = paces.reduce((a, b) => a + b, 0) / paces.length
+  const firstPace = paces[0]
+  const lastPace = paces[paces.length - 1]
+  const insights: RunInsight[] = []
+
+  // 1. Pacing strategy
+  const splitDiffPct = ((lastPace - firstPace) / firstPace) * 100
+  if (splitDiffPct > 10) {
+    let fadeKm = -1
+    for (let i = 1; i < paces.length; i++) {
+      if ((paces[i] - paces[i - 1]) / paces[i - 1] > 0.07) { fadeKm = i + 1; break }
+    }
+    if (fadeKm > 0) {
+      insights.push({ icon: '⚠', text: `Pace dropped sharply at km ${fadeKm} — you went out ${Math.round((paces[0] - avgPace) / avgPace * 100)}% faster than your average. Start slower next time.`, positive: false })
+    } else {
+      insights.push({ icon: '⚠', text: `Positive split: finished ${Math.round(splitDiffPct)}% slower than you started — energy ran out before the end.`, positive: false })
+    }
+  } else if (splitDiffPct < -8) {
+    insights.push({ icon: '✓', text: `Negative split — finished ${Math.round(-splitDiffPct)}% faster than you started. Excellent pacing discipline.`, positive: true })
+  } else {
+    insights.push({ icon: '✓', text: `Even pacing throughout — consistent effort, good control.`, positive: true })
+  }
+
+  // 2. First km relative to average
+  if (firstPace < avgPace * 0.93) {
+    insights.push({ icon: '⚡', text: `Km 1 (${fmtPace(firstPace)}) was ${Math.round((avgPace - firstPace) / avgPace * 100)}% faster than your run average — classic fast start, dial it back.`, positive: false })
+  }
+
+  // 3. Consistency
+  const variance = paces.reduce((sum, p) => sum + Math.pow(p - avgPace, 2), 0) / paces.length
+  const cv = Math.sqrt(variance) / avgPace * 100
+  if (cv < 3) {
+    insights.push({ icon: '✓', text: `Excellent consistency — splits varied by only ±${cv.toFixed(1)}%.`, positive: true })
+  } else if (cv > 9) {
+    insights.push({ icon: '⚠', text: `Erratic pacing — splits varied by ±${Math.round(cv)}%. Aim for a steadier effort.`, positive: false })
+  }
+
+  // 4. Strong finish
+  if (paces.length >= 3) {
+    const last3 = paces.slice(-Math.min(3, paces.length))
+    const last3Avg = last3.reduce((a, b) => a + b, 0) / last3.length
+    if (last3Avg < avgPace * 0.95 && splitDiffPct >= -4) {
+      insights.push({ icon: '✓', text: `Finished strong — last ${Math.min(3, paces.length)} km averaged ${fmtPace(last3Avg)}, ${Math.round((avgPace - last3Avg) / avgPace * 100)}% faster than your overall pace.`, positive: true })
+    }
+  }
+
+  // 5. Zone compliance
+  const zones = PHASE_ZONES[phaseNum] ?? PHASE_ZONES[1]
+  const easyRange = calibrated
+    ? { min: calibrated.easy.min - 20, max: calibrated.easy.max + 30 }
+    : (() => { const r = parsePaceRange(zones.easy); return r ? { min: r.min - 20, max: r.max + 30 } : null })()
+  if (easyRange) {
+    const tooFast = paces.filter(p => p < easyRange!.min).length
+    if (tooFast > paces.length * 0.4) {
+      insights.push({ icon: '⚠', text: `${tooFast}/${paces.length} km splits above easy zone — accumulating unnecessary fatigue. Slow down on easy days.`, positive: false })
+    }
+  }
+
+  const pos = insights.filter(i => i.positive).length
+  const neg = insights.filter(i => !i.positive).length
+  let verdict: string, verdictColor: string, tip: string
+  if (neg === 0) {
+    verdict = 'Excellent run'; verdictColor = 'var(--accent)'
+    tip = 'Well-paced and consistent — exactly the kind of run that builds fitness.'
+  } else if (splitDiffPct > 10 && neg > pos) {
+    verdict = 'Started too fast'; verdictColor = 'var(--warn)'
+    tip = `Next run: start ${Math.round(splitDiffPct / 2)}% slower in km 1. Your fade suggests you had more in the tank — save it for a negative split.`
+  } else if (pos >= neg) {
+    verdict = 'Solid effort'; verdictColor = 'var(--accent)'
+    tip = 'Good run overall. Small pacing tweaks will unlock consistent improvement.'
+  } else {
+    verdict = 'Room to improve'; verdictColor = 'var(--warn)'
+    tip = 'Focus on km 1 discipline — start conversationally easy. The first km sets the tone for everything after.'
+  }
+  return { verdict, verdictColor, insights, tip }
+}
+
 function fmtDist(m: number) { return (m / 1000).toFixed(2) + ' km' }
 
 function fmtTime(secs: number) {
@@ -151,6 +233,26 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
           ) : (
             <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>No split data available for this activity.</div>
           )}
+          {detail?.splits_metric && detail.splits_metric.length >= 2 && (() => {
+            const a = assessRun(detail.splits_metric, phaseNum, calibrated)
+            return (
+              <div style={{ marginTop: 12, background: 'var(--surface)', borderRadius: 8, padding: '10px 12px', border: '1px solid var(--border)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <div style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Run Assessment</div>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: a.verdictColor, marginLeft: 'auto' }}>{a.verdict}</span>
+                </div>
+                {a.insights.map((ins, i) => (
+                  <div key={i} style={{ fontSize: 12, color: ins.positive ? 'var(--text-muted)' : '#fca5a5', padding: '4px 0', borderBottom: '1px solid var(--border)', display: 'flex', gap: 6 }}>
+                    <span style={{ color: ins.positive ? 'var(--accent)' : 'var(--warn)', flexShrink: 0 }}>{ins.icon}</span>
+                    <span>{ins.text}</span>
+                  </div>
+                ))}
+                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', marginTop: 8, paddingTop: 4 }}>
+                  💡 {a.tip}
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
     </div>

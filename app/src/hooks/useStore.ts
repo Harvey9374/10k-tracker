@@ -71,6 +71,20 @@ export function useCalibratedZones() {
   return { zones, saveZones, clearZones }
 }
 
+export function useInjuryMode() {
+  const [active, setActive] = useState<boolean>(() => {
+    try { return localStorage.getItem('injuryMode') === 'true' } catch { return false }
+  })
+  const toggle = useCallback(() => {
+    setActive(prev => {
+      const next = !prev
+      try { localStorage.setItem('injuryMode', next ? 'true' : 'false') } catch { /* */ }
+      return next
+    })
+  }, [])
+  return { injuryMode: active, toggleInjuryMode: toggle }
+}
+
 export function useSessionCompletions() {
   const [completions, setCompletions] = useState<string[]>(() => load('sessionCompletions', []))
 

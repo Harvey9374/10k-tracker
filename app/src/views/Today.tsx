@@ -7,6 +7,8 @@ interface Props {
   logs: WorkoutLog[]
   onGoLog: () => void
   calibratedZones?: CalibratedZones | null
+  injuryMode: boolean
+  onToggleInjuryMode: () => void
 }
 
 function fmtPaceRange(min: number, max: number): string {
@@ -54,6 +56,31 @@ function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
   )
 }
 
+const INJURY_SESSIONS: Record<string, { title: string; items: string[] }> = {
+  monday:    { title: 'Gentle Recovery — Injury Mode', items: ['Easy walk or stationary bike: 20–30 mins (no impact)', 'Seated calf raises: 3 × 20 each leg', 'Hip flexor & hamstring stretches: 10 mins', 'Ice any sore area: 10–15 mins', 'No running or high-impact activity'] },
+  tuesday:   { title: 'Upper Body Only — Injury Mode', items: ['Upper body strength session: 40 mins', 'No lower-body loading exercises', 'Gentle core work (dead bug, plank): 10 mins', 'Foam roll calves and shins: 10 mins'] },
+  wednesday: { title: 'Light Conditioning — Injury Mode', items: ['Gentle flat walk: 20–30 mins', 'Resistance band glute work: 15 mins', 'Seated calf raises: 3 × 20 each leg', 'Hip mobility circuit: 10 mins'] },
+  thursday:  { title: 'Rest & Assess — Injury Mode', items: ['Full rest or gentle yoga/stretching: 20 mins', 'Foam roll full lower body: 10 mins', 'Rate pain level 1–10. Improving? Plan gradual return.', 'If pain above 3/10 consult a physio'] },
+  friday:    { title: 'Test Run — Injury Mode', items: ['5-min walk warm-up', 'Attempt 5-min easy jog — stop immediately at any pain', 'If pain-free: continue 10–15 mins at very easy pace', 'If any pain: rest and book physio'] },
+  weekend:   { title: 'Active Recovery — Injury Mode', items: ['Swimming or cycling (low impact): 30–40 mins if available', 'No running until pain-free for 48 hrs', 'Gentle walk alternative: 30 mins flat', 'Reassess Monday — plan return-to-run if improving'] },
+}
+
+const DAY_TO_SESSION_KEY = ['weekend', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'weekend']
+
+function loadStravaWeekKm(weekStartStr: string, weekEndStr: string): number {
+  try {
+    const raw = localStorage.getItem('stravaActivities')
+    if (!raw) return 0
+    const acts: Array<{ start_date_local: string; distance: number }> = JSON.parse(raw)
+    return acts
+      .filter(a => {
+        const d = a.start_date_local.slice(0, 10)
+        return d >= weekStartStr && d <= weekEndStr
+      })
+      .reduce((sum, a) => sum + a.distance / 1000, 0)
+  } catch { return 0 }
+}
+
 function toLocalDateStr(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
@@ -72,7 +99,7 @@ function parseWeeklyKmTarget(target: string): { min: number; max: number } | nul
   return null
 }
 
-export default function Today({ logs, onGoLog, calibratedZones }: Props) {
+export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onToggleInjuryMode }: Props) {
   const today = new Date()
   const week = getWeekNumber(today)
   const phase = getPhase(week)
@@ -102,8 +129,13 @@ export default function Today({ logs, onGoLog, calibratedZones }: Props) {
   const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
   const weekEndStr = toLocalDateStr(weekEnd)
   const weekLogs = logs.filter(l => l.date >= weekStartStr && l.date <= weekEndStr)
-  const weekKm = weekLogs.reduce((acc, l) => acc + (l.distanceKm ?? 0), 0)
+  const weekManualKm = weekLogs.reduce((acc, l) => acc + (l.distanceKm ?? 0), 0)
+  const weekStravaKm = loadStravaWeekKm(weekStartStr, weekEndStr)
+  const weekKm = weekManualKm + weekStravaKm
   const weekTarget = phase ? parseWeeklyKmTarget(phase.weeklyTarget) : null
+
+  const injurySessionKey = DAY_TO_SESSION_KEY[today.getDay()]
+  const injuryDaySession = INJURY_SESSIONS[injurySessionKey]
 
   // RPE-based time trial prompt
   const last3EasyRuns = logs
@@ -248,10 +280,37 @@ export default function Today({ logs, onGoLog, calibratedZones }: Props) {
                     : weekKm < weekTarget.min ? `${(weekTarget.min - weekKm).toFixed(1)} km to minimum target`
                     : weekKm <= weekTarget.max ? '✓ On target this week'
                     : `${(weekKm - weekTarget.max).toFixed(1)} km over weekly ceiling`}
+                  {weekStravaKm > 0 && <span style={{ marginLeft: 6, color: '#fc4c02', fontWeight: 600 }}>· {weekStravaKm.toFixed(1)} km via Strava</span>}
                 </div>
               </>
             )}
           </div>
+
+          {/* Injury mode toggle */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
+            <button
+              onClick={onToggleInjuryMode}
+              style={{
+                background: injuryMode ? 'rgba(239,68,68,0.1)' : 'var(--card)',
+                border: `1.5px solid ${injuryMode ? 'var(--danger)' : 'var(--border)'}`,
+                borderRadius: 20,
+                color: injuryMode ? 'var(--danger)' : 'var(--text-muted)',
+                fontSize: 12,
+                fontWeight: 700,
+                padding: '6px 14px',
+                cursor: 'pointer',
+              }}
+            >
+              {injuryMode ? '🩹 Injury Mode ON — tap to resume' : '🩹 Pause for Injury'}
+            </button>
+          </div>
+
+          {injuryMode && (
+            <div style={{ background: 'rgba(239,68,68,0.07)', border: '1.5px solid rgba(239,68,68,0.3)', borderRadius: 'var(--radius-sm)', padding: '10px 14px', marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--danger)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>⚠ Training Paused — Injury Mode</div>
+              <div style={{ fontSize: 13, color: '#f87171' }}>Normal sessions replaced with recovery work. Tap the button above when ready to resume training.</div>
+            </div>
+          )}
 
           {showTimeTrialPrompt && (
             <div className="card" style={{ borderColor: 'var(--accent-2)', borderWidth: 2 }}>
@@ -279,7 +338,43 @@ export default function Today({ logs, onGoLog, calibratedZones }: Props) {
             </div>
           )}
 
-          {daySession ? (
+          {injuryMode && injuryDaySession ? (
+            <div className="today-session-card" style={{ borderColor: 'var(--danger)' }}>
+              <div className="tsc-header" style={{ background: 'rgba(239,68,68,0.08)', borderBottom: '1px solid rgba(239,68,68,0.15)' }}>
+                <span style={{ fontSize: 16 }}>🩹</span>
+                <span className="tsc-day" style={{ color: 'var(--danger)' }}>{todayName}'s Recovery</span>
+                {loggedToday.length > 0 && (
+                  <span className="badge badge-green" style={{ marginLeft: 'auto' }}>✓ Logged</span>
+                )}
+              </div>
+              <div className="tsc-title">{injuryDaySession.title}</div>
+              <div className="tsc-body">
+                <ul className="session-items">
+                  {injuryDaySession.items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+                <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
+                  <button className="btn btn-primary" onClick={onGoLog} style={{ flex: 1 }}>
+                    + Log Session
+                  </button>
+                  <button
+                    onClick={() => toggleCompletion(todayStr)}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: 50, border: `2px solid ${todayMarkedComplete ? 'var(--accent)' : 'var(--border)'}`,
+                      borderRadius: 'var(--radius-sm)', background: todayMarkedComplete ? 'var(--accent-dim)' : 'var(--card)',
+                      color: todayMarkedComplete ? 'var(--accent)' : 'var(--text-muted)',
+                      fontSize: 20, cursor: 'pointer', transition: 'all 0.15s', flexShrink: 0,
+                    }}
+                    title={todayMarkedComplete ? 'Mark incomplete' : 'Mark complete'}
+                  >
+                    {todayMarkedComplete ? '✓' : '○'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : daySession ? (
             <div className="today-session-card">
               <div className="tsc-header">
                 <span style={{ fontSize: 16 }}>{['🏃', '💪', '⚡', '🧘', '🏃', '🏃', '🏃'][today.getDay()]}</span>
@@ -338,6 +433,7 @@ export default function Today({ logs, onGoLog, calibratedZones }: Props) {
               </div>
             </div>
           )}
+
 
           {calibratedZones ? (
             <div className="card" style={{ borderColor: 'var(--accent-2)' }}>

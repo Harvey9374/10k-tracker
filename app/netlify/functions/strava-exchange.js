@@ -8,7 +8,7 @@ exports.handler = async (event) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        client_id: process.env.STRAVA_CLIENT_ID,
+        client_id: process.env.STRAVA_CLIENT_ID || '250705',
         client_secret: process.env.STRAVA_CLIENT_SECRET,
         code,
         grant_type: 'authorization_code',

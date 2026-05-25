@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import type { StravaTokens, StravaActivity } from '../types'
 
 const STORAGE_KEY = 'stravaTokens'
+const ACTIVITIES_KEY = 'stravaActivities'
 
 function loadTokens(): StravaTokens | null {
   try {
@@ -12,6 +13,13 @@ function loadTokens(): StravaTokens | null {
 
 function saveTokens(t: StravaTokens) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(t))
+}
+
+function loadActivities(): StravaActivity[] {
+  try {
+    const raw = localStorage.getItem(ACTIVITIES_KEY)
+    return raw ? (JSON.parse(raw) as StravaActivity[]) : []
+  } catch { return [] }
 }
 
 async function getValidToken(): Promise<string | null> {
@@ -34,7 +42,7 @@ async function getValidToken(): Promise<string | null> {
 
 export function useStrava() {
   const [tokens, setTokens] = useState<StravaTokens | null>(loadTokens)
-  const [activities, setActivities] = useState<StravaActivity[]>([])
+  const [activities, setActivities] = useState<StravaActivity[]>(loadActivities)
   const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -64,7 +72,9 @@ export function useStrava() {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
-      setActivities(Array.isArray(data) ? (data as StravaActivity[]).filter(a => a.type === 'Run') : [])
+      const runs = Array.isArray(data) ? (data as StravaActivity[]).filter(a => a.type === 'Run') : []
+      setActivities(runs)
+      localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(runs))
     } catch {
       setError('Could not fetch activities from Strava')
     } finally {
@@ -85,6 +95,7 @@ export function useStrava() {
 
   const disconnect = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY)
+    localStorage.removeItem(ACTIVITIES_KEY)
     setTokens(null)
     setActivities([])
   }, [])
