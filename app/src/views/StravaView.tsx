@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useStrava } from '../hooks/useStrava'
-import { getWeekNumber, getPhase } from '../data/plan'
-import type { StravaActivity, StravaSplit } from '../types'
+import { getWeekNumber, getPhase, formatPace, formatTime } from '../data/plan'
+import type { StravaActivity, StravaSplit, CalibratedZones } from '../types'
 
 const CLIENT_ID = '250705'
 
@@ -36,7 +36,20 @@ const PHASE_ZONES: Record<number, { easy: string; tempo?: string; interval?: str
   4: { easy: '6:00–6:30/km', tempo: '5:10–5:20/km', interval: '4:45–5:00/km', race: '5:00/km' },
 }
 
-function getZone(paceSecPerKm: number, phaseNum: number): Zone {
+function getZone(paceSecPerKm: number, phaseNum: number, calibrated?: CalibratedZones | null): Zone {
+  if (calibrated) {
+    if (paceSecPerKm <= calibrated.racePace + 10)
+      return { label: 'Race pace', color: '#f472b6', bg: 'rgba(244,114,182,0.15)' }
+    if (paceSecPerKm <= calibrated.interval.max + 10)
+      return { label: 'Interval', color: 'var(--accent-2)', bg: 'var(--accent-2-dim)' }
+    if (paceSecPerKm <= calibrated.tempo.max + 10)
+      return { label: 'Tempo', color: 'var(--warn)', bg: 'var(--warn-dim)' }
+    if (paceSecPerKm >= calibrated.easy.min - 20 && paceSecPerKm <= calibrated.easy.max + 30)
+      return { label: 'Easy ✓', color: 'var(--accent)', bg: 'var(--accent-dim)' }
+    if (paceSecPerKm < calibrated.easy.min - 20)
+      return { label: 'Too fast', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' }
+    return { label: 'Recovery', color: 'var(--text-muted)', bg: 'rgba(107,125,160,0.12)' }
+  }
   const z = PHASE_ZONES[phaseNum] ?? PHASE_ZONES[1]
   const easy = parsePaceRange(z.easy)
   const tempo = z.tempo ? parsePaceRange(z.tempo) : null
@@ -70,9 +83,9 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
-function SplitRow({ split, phaseNum }: { split: StravaSplit; phaseNum: number }) {
+function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNum: number; calibrated?: CalibratedZones | null }) {
   const pace = speedToPace(split.average_speed)
-  const zone = getZone(pace, phaseNum)
+  const zone = getZone(pace, phaseNum, calibrated)
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--border)' }}>
       <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 36 }}>km {split.split}</span>
@@ -82,17 +95,18 @@ function SplitRow({ split, phaseNum }: { split: StravaSplit; phaseNum: number })
   )
 }
 
-function ActivityCard({ activity, phaseNum, onExpand }: {
+function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
   activity: StravaActivity
   phaseNum: number
   onExpand: () => Promise<StravaActivity | null>
+  calibrated?: CalibratedZones | null
 }) {
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState<StravaActivity | null>(null)
   const [loading, setLoading] = useState(false)
 
   const pace = speedToPace(activity.average_speed)
-  const zone = getZone(pace, phaseNum)
+  const zone = getZone(pace, phaseNum, calibrated)
 
   async function toggle() {
     if (!open && !detail) {
@@ -132,7 +146,7 @@ function ActivityCard({ activity, phaseNum, onExpand }: {
           ) : detail?.splits_metric && detail.splits_metric.length > 0 ? (
             <>
               <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 4 }}>Km Splits</div>
-              {detail.splits_metric.map(s => <SplitRow key={s.split} split={s} phaseNum={phaseNum} />)}
+              {detail.splits_metric.map(s => <SplitRow key={s.split} split={s} phaseNum={phaseNum} calibrated={calibrated} />)}
             </>
           ) : (
             <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>No split data available for this activity.</div>
@@ -143,7 +157,7 @@ function ActivityCard({ activity, phaseNum, onExpand }: {
   )
 }
 
-export default function StravaView() {
+export default function StravaView({ calibratedZones }: { calibratedZones?: CalibratedZones | null }) {
   const week = getWeekNumber()
   const phase = getPhase(week)
   const phaseNum = phase?.number ?? 1
@@ -152,7 +166,7 @@ export default function StravaView() {
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef(0)
-  const [pullProgress, setPullProgress] = useState(0)
+  const [pullProgress, setPullProgress] = useState(0) // 0–1
 
   function handleTouchStart(e: React.TouchEvent) {
     touchStartY.current = e.touches[0].clientY
@@ -246,6 +260,7 @@ export default function StravaView() {
           {syncing ? '↻ Refreshing…' : pullProgress >= 1 ? '↑ Release to refresh' : '↓ Pull to refresh'}
         </div>
       )}
+      {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>
@@ -269,8 +284,18 @@ export default function StravaView() {
         </div>
       )}
 
+      {/* Pace legend */}
       <div className="card">
-        <div className="card-title">Pace Zones — Phase {phaseNum}</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <div className="card-title" style={{ marginBottom: 0 }}>
+            {calibratedZones ? 'Your Calibrated Zones' : `Pace Zones — Phase ${phaseNum}`}
+          </div>
+          {calibratedZones && (
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-2)' }}>
+              ↑ {calibratedZones.basedOnDistanceKm}km trial · {formatTime(calibratedZones.predicted10KMins * 60)} 10K
+            </span>
+          )}
+        </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
           {[
             { label: 'Easy ✓', color: 'var(--accent)', bg: 'var(--accent-dim)' },
@@ -287,6 +312,7 @@ export default function StravaView() {
         </div>
       </div>
 
+      {/* Activity list */}
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <div className="card-title" style={{ marginBottom: 0 }}>Recent Runs</div>
@@ -313,6 +339,7 @@ export default function StravaView() {
               activity={a}
               phaseNum={phaseNum}
               onExpand={() => fetchDetail(a.id)}
+              calibrated={calibratedZones}
             />
           ))
         )}

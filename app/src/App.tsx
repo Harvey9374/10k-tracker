@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useWorkoutLogs, useTimeTrials } from './hooks/useStore'
+import { useWorkoutLogs, useTimeTrials, useCalibratedZones } from './hooks/useStore'
+import { calcCalibratedZones } from './data/plan'
 import Today from './views/Today'
 import Log from './views/Log'
 import Progress from './views/Progress'
@@ -61,7 +62,13 @@ export default function App() {
   const [slideDir, setSlideDir] = useState<'left' | 'right'>('right')
   const [theme, setTheme] = useState<'dark' | 'light'>(getInitialTheme)
   const { logs, addLog, deleteLog } = useWorkoutLogs()
-  const { trials, addTrial, deleteTrial } = useTimeTrials()
+  const { trials, addTrial: addTrialBase, deleteTrial } = useTimeTrials()
+  const { zones: calibratedZones, saveZones, clearZones } = useCalibratedZones()
+
+  function addTrial(trial: Parameters<typeof addTrialBase>[0]) {
+    addTrialBase(trial)
+    saveZones(calcCalibratedZones(trial.distanceKm, trial.timeSeconds / 60))
+  }
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -94,10 +101,10 @@ export default function App() {
       </header>
 
       <div key={view} className={`view-anim slide-${slideDir}`}>
-        {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
+        {view === 'today' && <Today logs={logs} onGoLog={goToLog} calibratedZones={calibratedZones} />}
         {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
-        {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
-        {view === 'strava' && <StravaView />}
+        {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} calibratedZones={calibratedZones} onClearZones={clearZones} />}
+        {view === 'strava' && <StravaView calibratedZones={calibratedZones} />}
         {view === 'plan' && <Plan />}
       </div>
 

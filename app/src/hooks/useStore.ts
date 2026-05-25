@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import type { WorkoutLog, TimeTrial } from '../types'
+import type { WorkoutLog, TimeTrial, CalibratedZones } from '../types'
 
 function load<T>(key: string, fallback: T): T {
   try {
@@ -56,6 +56,19 @@ export function useTimeTrials() {
   }, [])
 
   return { trials, addTrial, deleteTrial }
+}
+
+export function useCalibratedZones() {
+  const [zones, setZones] = useState<CalibratedZones | null>(() => load('calibratedZones', null))
+  const saveZones = useCallback((z: CalibratedZones) => {
+    setZones(z)
+    save('calibratedZones', z)
+  }, [])
+  const clearZones = useCallback(() => {
+    setZones(null)
+    localStorage.removeItem('calibratedZones')
+  }, [])
+  return { zones, saveZones, clearZones }
 }
 
 export function useSessionCompletions() {

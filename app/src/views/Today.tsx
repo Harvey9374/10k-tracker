@@ -1,11 +1,17 @@
 import { useState } from 'react'
-import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE } from '../data/plan'
+import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
 import { useSessionCompletions } from '../hooks/useStore'
-import type { WorkoutLog, Phase } from '../types'
+import type { WorkoutLog, Phase, CalibratedZones } from '../types'
 
 interface Props {
   logs: WorkoutLog[]
   onGoLog: () => void
+  calibratedZones?: CalibratedZones | null
+}
+
+function fmtPaceRange(min: number, max: number): string {
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+  return `${fmt(min)}–${fmt(max)}/km`
 }
 
 function isStrengthItem(item: string) {
@@ -66,7 +72,7 @@ function parseWeeklyKmTarget(target: string): { min: number; max: number } | nul
   return null
 }
 
-export default function Today({ logs, onGoLog }: Props) {
+export default function Today({ logs, onGoLog, calibratedZones }: Props) {
   const today = new Date()
   const week = getWeekNumber(today)
   const phase = getPhase(week)
@@ -98,6 +104,21 @@ export default function Today({ logs, onGoLog }: Props) {
   const weekLogs = logs.filter(l => l.date >= weekStartStr && l.date <= weekEndStr)
   const weekKm = weekLogs.reduce((acc, l) => acc + (l.distanceKm ?? 0), 0)
   const weekTarget = phase ? parseWeeklyKmTarget(phase.weeklyTarget) : null
+
+  // RPE-based time trial prompt
+  const last3EasyRuns = logs
+    .filter(l => l.sessionType === 'Easy Run' && typeof l.perceivedEffort === 'number')
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, 3)
+  const recentlyCalibrated = calibratedZones &&
+    (Date.now() - new Date(calibratedZones.calibratedAt).getTime()) < 28 * 24 * 60 * 60 * 1000
+  const showTimeTrialPrompt =
+    !recentlyCalibrated &&
+    last3EasyRuns.length >= 3 &&
+    last3EasyRuns.every(l => (l.perceivedEffort ?? 10) <= 3)
+  const avgEasyRPE = last3EasyRuns.length === 3
+    ? Math.round(last3EasyRuns.reduce((s, l) => s + (l.perceivedEffort ?? 0), 0) / 3 * 10) / 10
+    : null
 
   // Day dots for the week (Mon–Sun)
   const weekDots = Array.from({ length: 7 }, (_, i) => {
@@ -232,6 +253,32 @@ export default function Today({ logs, onGoLog }: Props) {
             )}
           </div>
 
+          {showTimeTrialPrompt && (
+            <div className="card" style={{ borderColor: 'var(--accent-2)', borderWidth: 2 }}>
+              <div className="card-title" style={{ color: 'var(--accent-2)', marginBottom: 4 }}>⏱ Time Trial Recommended</div>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 14, lineHeight: 1.6 }}>
+                Your last 3 easy runs averaged RPE {avgEasyRPE}/10. Your aerobic fitness has improved — a time trial will recalibrate all your pace zones.
+              </div>
+              <div style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 8 }}>How to run it</div>
+              {[
+                { icon: '📏', label: 'Distance', value: `5km or 10km${week < 20 ? ' (5km recommended before Week 20)' : ' (10km gives the most accurate result)'}` },
+                { icon: '💥', label: 'Effort', value: '100% — treat it as a race from the gun, not a time trial jog' },
+                { icon: '🗺️', label: 'Route', value: 'Flat, measured route — no traffic stops, no hills' },
+                { icon: '🔥', label: 'Warm-up first', value: '10 min easy jog, then 4 × 100m strides with full recovery, rest 5 min' },
+                { icon: '⚡', label: 'Pacing', value: 'Start controlled — aim for even or slightly negative splits, not a fast first km' },
+                { icon: '📊', label: 'Afterwards', value: 'Log it in Progress → Time Trials — your pace zones will update automatically' },
+              ].map(({ icon, label, value }) => (
+                <div key={label} style={{ display: 'flex', gap: 10, padding: '7px 0', borderBottom: '1px solid var(--border)', fontSize: 13 }}>
+                  <span style={{ flexShrink: 0 }}>{icon}</span>
+                  <div>
+                    <span style={{ fontWeight: 700 }}>{label}:</span>
+                    <span style={{ color: 'var(--text-muted)', marginLeft: 4 }}>{value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {daySession ? (
             <div className="today-session-card">
               <div className="tsc-header">
@@ -292,7 +339,30 @@ export default function Today({ logs, onGoLog }: Props) {
             </div>
           )}
 
-          {paceInfo && (
+          {calibratedZones ? (
+            <div className="card" style={{ borderColor: 'var(--accent-2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                <div className="card-title" style={{ marginBottom: 0 }}>Your Pace Zones</div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-2)' }}>↑ Recalibrated</span>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
+                From your {calibratedZones.basedOnDistanceKm}km trial · Predicted 10K: {formatTime(calibratedZones.predicted10KMins * 60)}
+              </div>
+              <div style={{ display: 'grid', gap: 8 }}>
+                {[
+                  { label: 'Easy Run',  value: fmtPaceRange(calibratedZones.easy.min, calibratedZones.easy.max),         color: 'var(--accent)' },
+                  { label: 'Tempo',     value: fmtPaceRange(calibratedZones.tempo.min, calibratedZones.tempo.max),       color: 'var(--warn)' },
+                  { label: 'Intervals', value: fmtPaceRange(calibratedZones.interval.min, calibratedZones.interval.max), color: 'var(--accent-2)' },
+                  { label: 'Race Pace', value: formatPace(calibratedZones.racePace),                                     color: '#f472b6' },
+                ].map(p => (
+                  <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+                    <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.label}</span>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: p.color }}>{p.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : paceInfo ? (
             <div className="card">
               <div className="card-title">Phase {phase?.number} Pace Guide</div>
               <div style={{ display: 'grid', gap: 8 }}>
@@ -309,7 +379,7 @@ export default function Today({ logs, onGoLog }: Props) {
                 ))}
               </div>
             </div>
-          )}
+          ) : null}
 
           {nextBenchmark && (
             <div className="card blue-border">
@@ -356,7 +426,7 @@ export default function Today({ logs, onGoLog }: Props) {
         <div className="sw-title">Shin Splint Protocol</div>
         <ul>
           <li>Never increase weekly distance by more than 10%</li>
-          <li>Calf raises every Wed &amp; Thu — non-negotiable</li>
+          <li>Calf raises every Wed & Thu — non-negotiable</li>
           <li>Shin pain? Drop volume 50%, substitute skip/bike</li>
         </ul>
       </div>

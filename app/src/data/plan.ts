@@ -1,4 +1,4 @@
-import type { Phase } from '../types'
+import type { Phase, CalibratedZones } from '../types'
 
 export const PLAN_START = new Date('2026-05-25')
 export const RACE_DATE = new Date('2027-05-15')
@@ -360,7 +360,7 @@ export function getPhase(week: number): Phase | null {
 }
 
 export function getDaySession(phase: Phase, weekNumber: number, date = new Date()) {
-  const day = date.getDay()
+  const day = date.getDay() // 0=Sun, 1=Mon...6=Sat
   const dayMap: Record<number, { key: keyof Phase; label: string; type: string }> = {
     1: { key: 'monday',    label: 'Monday',    type: 'run' },
     2: { key: 'tuesday',   label: 'Tuesday',   type: 'strength' },
@@ -392,4 +392,23 @@ export function formatTime(totalSeconds: number): string {
 
 export function calcPaceSeconds(distanceKm: number, durationMins: number): number {
   return (durationMins * 60) / distanceKm
+}
+
+export function riegelPredict10K(distanceKm: number, timeMins: number): number {
+  return timeMins * Math.pow(10 / distanceKm, 1.06)
+}
+
+export function calcCalibratedZones(distanceKm: number, timeMins: number): CalibratedZones {
+  const predicted10KMins = riegelPredict10K(distanceKm, timeMins)
+  const rp = (predicted10KMins * 60) / 10
+  return {
+    easy:     { min: Math.round(rp + 70), max: Math.round(rp + 90) },
+    tempo:    { min: Math.round(rp + 15), max: Math.round(rp + 25) },
+    interval: { min: Math.round(rp - 10), max: Math.round(rp - 5) },
+    racePace: Math.round(rp),
+    predicted10KMins,
+    calibratedAt: new Date().toISOString(),
+    basedOnDistanceKm: distanceKm,
+    basedOnTimeMins: timeMins,
+  }
 }

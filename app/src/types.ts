@@ -18,6 +18,17 @@ export interface TimeTrial {
   notes?: string
 }
 
+export interface CalibratedZones {
+  easy: { min: number; max: number }
+  tempo: { min: number; max: number }
+  interval: { min: number; max: number }
+  racePace: number
+  predicted10KMins: number
+  calibratedAt: string
+  basedOnDistanceKm: number
+  basedOnTimeMins: number
+}
+
 export interface PhaseSession {
   title: string
   items: string[]

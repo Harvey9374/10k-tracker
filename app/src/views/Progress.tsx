@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { WorkoutLog, TimeTrial } from '../types'
+import type { WorkoutLog, TimeTrial, CalibratedZones } from '../types'
 import { BENCHMARKS, getWeekNumber, formatTime, calcPaceSeconds, formatPace } from '../data/plan'
 
 interface Props {
@@ -7,6 +7,13 @@ interface Props {
   trials: TimeTrial[]
   onAddTrial: (t: Omit<TimeTrial, 'id'>) => void
   onDeleteTrial: (id: string) => void
+  calibratedZones?: CalibratedZones | null
+  onClearZones?: () => void
+}
+
+function fmtPaceRange(min: number, max: number): string {
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+  return `${fmt(min)}–${fmt(max)}/km`
 }
 
 const GOAL_SECONDS = 50 * 60
@@ -86,7 +93,8 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
 }
 
 function TrialForm({ onAdd }: { onAdd: (t: Omit<TimeTrial, 'id'>) => void }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const _d = new Date()
+  const today = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, '0')}-${String(_d.getDate()).padStart(2, '0')}`
   const [date, setDate] = useState(today)
   const [distance, setDistance] = useState('10')
   const [mm, setMm] = useState('')
@@ -185,7 +193,7 @@ function MiniChart({ trials, distanceKm }: { trials: TimeTrial[], distanceKm: nu
   )
 }
 
-export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Props) {
+export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, calibratedZones, onClearZones }: Props) {
   const week = getWeekNumber()
   const [tab, setTab] = useState<'overview' | 'timetrials'>('overview')
 
@@ -225,6 +233,36 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial }: Pr
           <div className="card">
             <PaceTrendChart logs={logs} />
           </div>
+
+          {calibratedZones && (
+            <div className="card" style={{ borderColor: 'var(--accent-2)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                <div className="card-title" style={{ color: 'var(--accent-2)', marginBottom: 0 }}>↑ Pace Zones Recalibrated</div>
+                <button
+                  onClick={onClearZones}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-dim)', fontSize: 12, cursor: 'pointer', padding: 0 }}
+                >
+                  Reset to phase defaults
+                </button>
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
+                Based on your {calibratedZones.basedOnDistanceKm}km trial ({formatTime(calibratedZones.basedOnTimeMins * 60)}) · Predicted 10K: {formatTime(calibratedZones.predicted10KMins * 60)}
+              </div>
+              <div style={{ display: 'grid', gap: 6 }}>
+                {[
+                  { label: 'Easy',      value: fmtPaceRange(calibratedZones.easy.min, calibratedZones.easy.max),         color: 'var(--accent)' },
+                  { label: 'Tempo',     value: fmtPaceRange(calibratedZones.tempo.min, calibratedZones.tempo.max),       color: 'var(--warn)' },
+                  { label: 'Interval',  value: fmtPaceRange(calibratedZones.interval.min, calibratedZones.interval.max), color: 'var(--accent-2)' },
+                  { label: 'Race Pace', value: formatPace(calibratedZones.racePace),                                     color: '#f472b6' },
+                ].map(p => (
+                  <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', padding: '5px 0', borderBottom: '1px solid var(--border)', fontSize: 13 }}>
+                    <span style={{ color: 'var(--text-muted)' }}>{p.label}</span>
+                    <span style={{ fontWeight: 700, color: p.color }}>{p.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {pb10k ? (
             <div className="card accent-border">
