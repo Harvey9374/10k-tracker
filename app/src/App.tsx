@@ -49,19 +49,29 @@ const TITLES: Record<ViewName, string> = {
   plan:     'Training Plan',
 }
 
+function getInitialTheme(): 'dark' | 'light' {
+  try { return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark' }
+  catch { return 'dark' }
+}
+
 export default function App() {
   const [view, setView] = useState<ViewName>('today')
+  const [theme, setTheme] = useState<'dark' | 'light'>(getInitialTheme)
   const { logs, addLog, deleteLog } = useWorkoutLogs()
   const { trials, addTrial, deleteTrial } = useTimeTrials()
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('code')) setView('strava')
   }, [])
 
-  function goToLog() {
-    setView('log')
-  }
+  function goToLog() { setView('log') }
+  function toggleTheme() { setTheme(t => t === 'dark' ? 'light' : 'dark') }
 
   return (
     <>
@@ -69,6 +79,9 @@ export default function App() {
         <h1>{TITLES[view]}</h1>
         {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
         {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </header>
 
       {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
