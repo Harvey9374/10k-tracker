@@ -1,6 +1,6 @@
 import type { Phase } from '../types'
 
-export const PLAN_START = new Date('2026-05-26')
+export const PLAN_START = new Date('2026-05-25')
 export const RACE_DATE = new Date('2027-05-15')
 export const TOTAL_WEEKS = 52
 
@@ -360,7 +360,7 @@ export function getPhase(week: number): Phase | null {
 }
 
 export function getDaySession(phase: Phase, weekNumber: number, date = new Date()) {
-  const day = date.getDay() // 0=Sun, 1=Mon...6=Sat
+  const day = date.getDay()
   const dayMap: Record<number, { key: keyof Phase; label: string; type: string }> = {
     1: { key: 'monday',    label: 'Monday',    type: 'run' },
     2: { key: 'tuesday',   label: 'Tuesday',   type: 'strength' },
