@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
 import { useSessionCompletions } from '../hooks/useStore'
+import { useWeather, calcHeatAdj } from '../hooks/useWeather'
 import type { WorkoutLog, Phase, CalibratedZones } from '../types'
 
 interface Props {
@@ -14,6 +15,23 @@ interface Props {
 function fmtPaceRange(min: number, max: number): string {
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
   return `${fmt(min)}–${fmt(max)}/km`
+}
+
+function applyHeatToStr(paceStr: string, adjSecs: number): string {
+  if (adjSecs <= 0 || paceStr === '—') return paceStr
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+  const rangeMatch = paceStr.match(/^(\d+):(\d{2})–(\d+):(\d{2})\/km$/)
+  if (rangeMatch) {
+    const min = parseInt(rangeMatch[1]) * 60 + parseInt(rangeMatch[2])
+    const max = parseInt(rangeMatch[3]) * 60 + parseInt(rangeMatch[4])
+    return `${fmt(min + adjSecs)}–${fmt(max + adjSecs)}/km`
+  }
+  const singleMatch = paceStr.match(/^(\d+):(\d{2})\/km$/)
+  if (singleMatch) {
+    const secs = parseInt(singleMatch[1]) * 60 + parseInt(singleMatch[2])
+    return `${fmt(secs + adjSecs)}/km`
+  }
+  return paceStr
 }
 
 function isStrengthItem(item: string) {
@@ -136,6 +154,10 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
 
   const injurySessionKey = DAY_TO_SESSION_KEY[today.getDay()]
   const injuryDaySession = INJURY_SESSIONS[injurySessionKey]
+
+  const { weather } = useWeather()
+  const heatAdj = weather ? calcHeatAdj(weather.feelsLikeC, weather.humidity) : null
+  const heatAdjSecs = heatAdj?.adjSecs ?? 0
 
   // RPE-based time trial prompt
   const last3EasyRuns = logs
@@ -285,6 +307,30 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
               </>
             )}
           </div>
+
+          {/* Weather card */}
+          {weather && (
+            <div className="card" style={heatAdj && heatAdj.level !== 'none' ? { borderColor: heatAdj.color } : undefined}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: heatAdj && heatAdj.level !== 'none' ? 10 : 0 }}>
+                <span style={{ fontSize: 28 }}>{weather.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15 }}>
+                    {weather.tempC}°C
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 6 }}>
+                      feels {weather.feelsLikeC}°C · {weather.humidity}% humidity
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{weather.description}</div>
+                </div>
+              </div>
+              {heatAdj && heatAdj.level !== 'none' && (
+                <div style={{ background: 'rgba(239,68,68,0.06)', border: `1px solid ${heatAdj.color}50`, borderRadius: 8, padding: '8px 12px', fontSize: 13 }}>
+                  <div style={{ fontWeight: 700, color: heatAdj.color }}>🌡 +{heatAdj.adjSecs}s/km added to pace targets</div>
+                  <div style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: 12 }}>{heatAdj.label}</div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Injury mode toggle */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 4 }}>
@@ -439,17 +485,20 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
             <div className="card" style={{ borderColor: 'var(--accent-2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                 <div className="card-title" style={{ marginBottom: 0 }}>Your Pace Zones</div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-2)' }}>↑ Recalibrated</span>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  {heatAdjSecs > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: heatAdj!.color }}>🌡 Heat adj.</span>}
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent-2)' }}>↑ Recalibrated</span>
+                </div>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
                 From your {calibratedZones.basedOnDistanceKm}km trial · Predicted 10K: {formatTime(calibratedZones.predicted10KMins * 60)}
               </div>
               <div style={{ display: 'grid', gap: 8 }}>
                 {[
-                  { label: 'Easy Run',  value: fmtPaceRange(calibratedZones.easy.min, calibratedZones.easy.max),         color: 'var(--accent)' },
-                  { label: 'Tempo',     value: fmtPaceRange(calibratedZones.tempo.min, calibratedZones.tempo.max),       color: 'var(--warn)' },
-                  { label: 'Intervals', value: fmtPaceRange(calibratedZones.interval.min, calibratedZones.interval.max), color: 'var(--accent-2)' },
-                  { label: 'Race Pace', value: formatPace(calibratedZones.racePace),                                     color: '#f472b6' },
+                  { label: 'Easy Run',  value: fmtPaceRange(calibratedZones.easy.min + heatAdjSecs, calibratedZones.easy.max + heatAdjSecs),         color: 'var(--accent)' },
+                  { label: 'Tempo',     value: fmtPaceRange(calibratedZones.tempo.min + heatAdjSecs, calibratedZones.tempo.max + heatAdjSecs),       color: 'var(--warn)' },
+                  { label: 'Intervals', value: fmtPaceRange(calibratedZones.interval.min + heatAdjSecs, calibratedZones.interval.max + heatAdjSecs), color: 'var(--accent-2)' },
+                  { label: 'Race Pace', value: formatPace(calibratedZones.racePace + heatAdjSecs),                                                    color: '#f472b6' },
                 ].map(p => (
                   <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
                     <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.label}</span>
@@ -460,13 +509,16 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
             </div>
           ) : paceInfo ? (
             <div className="card">
-              <div className="card-title">Phase {phase?.number} Pace Guide</div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <div className="card-title" style={{ marginBottom: 0 }}>Phase {phase?.number} Pace Guide</div>
+                {heatAdjSecs > 0 && <span style={{ fontSize: 11, fontWeight: 700, color: heatAdj!.color }}>🌡 Heat adj.</span>}
+              </div>
               <div style={{ display: 'grid', gap: 8 }}>
                 {[
-                  { label: 'Easy Run', value: paceInfo.easy, color: 'var(--accent)' },
-                  ...(paceInfo.tempo !== '—' ? [{ label: 'Tempo', value: paceInfo.tempo, color: 'var(--warn)' }] : []),
-                  ...(paceInfo.interval !== '—' ? [{ label: 'Intervals', value: paceInfo.interval, color: 'var(--accent-2)' }] : []),
-                  ...(paceInfo.racePace !== '—' ? [{ label: 'Race Pace', value: paceInfo.racePace, color: '#f472b6' }] : []),
+                  { label: 'Easy Run', value: applyHeatToStr(paceInfo.easy, heatAdjSecs), color: 'var(--accent)' },
+                  ...(paceInfo.tempo !== '—' ? [{ label: 'Tempo', value: applyHeatToStr(paceInfo.tempo, heatAdjSecs), color: 'var(--warn)' }] : []),
+                  ...(paceInfo.interval !== '—' ? [{ label: 'Intervals', value: applyHeatToStr(paceInfo.interval, heatAdjSecs), color: 'var(--accent-2)' }] : []),
+                  ...(paceInfo.racePace !== '—' ? [{ label: 'Race Pace', value: applyHeatToStr(paceInfo.racePace, heatAdjSecs), color: '#f472b6' }] : []),
                 ].map(p => (
                   <div key={p.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
                     <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{p.label}</span>
