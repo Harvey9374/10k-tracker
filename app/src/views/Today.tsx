@@ -45,7 +45,7 @@ export default function Today({ logs, onGoLog }: Props) {
           <div className="card-title">Plan Status</div>
           <div style={{ textAlign: 'center', padding: '8px 0' }}>
             <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--warn)' }}>{daysUntilStart}</div>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>days until plan starts (26 May 2026)</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>days until plan starts (25 May 2026)</div>
           </div>
         </div>
       ) : (
