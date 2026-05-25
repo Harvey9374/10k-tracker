@@ -61,7 +61,7 @@ export const PHASES: Phase[] = [
       items: [
         'Warm-up: 5 min walk + 5 min dynamic movement',
         'Easy run: 40–50 mins (Weeks 1–6) / 50–60 mins (Weeks 7–12)',
-        'Strength circuit: 15–20 mins',
+        'Strength circuit — 1–2 rounds post-run: 15–20 mins',
         'Cool-down: 5 min walk + calf stretch',
       ],
     },
@@ -69,7 +69,7 @@ export const PHASES: Phase[] = [
       title: 'Strength + Conditioning (90 mins)',
       items: [
         'Warm-up: 5 min ropeless skip at easy pace',
-        'Strength session: 50–60 mins',
+        'Strength session — 3 rounds full circuit: 50–60 mins',
         'Skip finisher: 10 mins varied pace',
         'Cool-down and stretch: 10 mins',
       ],
@@ -119,7 +119,7 @@ export const PHASES: Phase[] = [
       '  Plank: 45–60 second hold',
       '  Dead bug: 10 reps each side',
       '',
-      '3 rounds total. Rest 60–90 sec between rounds.',
+      'Tuesday (full session): 3 rounds. Monday (post-run finisher): 1–2 rounds. Rest 60–90 sec between rounds.',
     ],
     notes: [
       'Weeks 1–4 skip: 15 mins steady',
@@ -146,7 +146,7 @@ export const PHASES: Phase[] = [
         'Warm-up: 10 mins easy jog',
         'Tempo run: 20–30 mins at 5:40–5:55/km',
         'Cool-down jog: 10 mins easy',
-        'Optional: 15 mins strength accessory work',
+        'Optional: strength accessory work 1–2 rounds post-run (15 mins)',
         '⚡ From Week 18: replace with intervals twice/month',
         '   6 × 800m at 5:10–5:25/km, 90-sec easy jog recovery',
         '   Progress to 8 × 800m by end of Phase 2',
@@ -155,7 +155,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Strength + Skip (90 mins)',
       items: [
-        'Full strength session: 60 mins',
+        'Full strength session — 3–4 rounds: 60 mins',
         'Skip finisher: 15 mins including 5 × 1-min hard efforts',
       ],
     },
@@ -196,7 +196,7 @@ export const PHASES: Phase[] = [
       'Press-ups: max controlled reps',
       'Plank variations: 3 × 45–60 sec',
       '',
-      '3–4 rounds. Rest 60–90 sec between rounds.',
+      'Tuesday (full session): 3–4 rounds. Monday (optional, post-run): 1–2 rounds. Rest 60–90 sec between rounds.',
     ],
   },
   {
@@ -227,7 +227,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Strength + Easy Run (90 mins)',
       items: [
-        'Strength: 45 mins (maintain, do not increase load)',
+        'Strength — 3 rounds (maintain, do not increase load): 45 mins',
         'Easy run: 20–25 mins after strength',
       ],
     },
@@ -306,7 +306,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Reduced Strength + Easy Run (90 mins)',
       items: [
-        'Strength: 35 mins, reduced load',
+        'Strength — 2 rounds, reduced load: 35 mins',
         'Easy run: 30 mins',
       ],
     },
