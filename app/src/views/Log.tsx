@@ -28,7 +28,7 @@ const SESSION_ICONS: Record<string, string> = {
   'Race Pace Session': '🎯',
   'Strength + Conditioning': '💪',
   'Long Run': '🛣️',
-  'Skip + Mobility': '🦮',
+  'Skip + Mobility': '🦘',
   'Recovery / Mobility': '🧘',
   'Time Trial': '⏱️',
   'Other': '📝',
@@ -59,6 +59,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const [durationMins, setDurationMins] = useState('')
   const [effort, setEffort] = useState(5)
   const [notes, setNotes] = useState('')
+  const [injuryFlag, setInjuryFlag] = useState(false)
   const [saved, setSaved] = useState(false)
 
   const dist = parseFloat(distanceKm)
@@ -75,12 +76,14 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       durationMins: dur || undefined,
       perceivedEffort: effort,
       notes: notes.trim() || undefined,
+      injuryFlag: injuryFlag || undefined,
       completed: true,
     })
     setDistanceKm('')
     setDurationMins('')
     setNotes('')
     setEffort(5)
+    setInjuryFlag(false)
     setDate(today)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
@@ -155,6 +158,32 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
               <textarea className="form-textarea" placeholder="How did it feel? Any shin discomfort? Weather?" value={notes} onChange={e => setNotes(e.target.value)} />
             </div>
 
+            <div className="form-group">
+              <label className="form-label">Injury / Niggle</label>
+              <button
+                type="button"
+                onClick={() => setInjuryFlag(f => !f)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  border: `1.5px solid ${injuryFlag ? 'var(--danger)' : 'var(--border)'}`,
+                  borderRadius: 'var(--radius-sm)',
+                  background: injuryFlag ? 'rgba(239,68,68,0.08)' : 'var(--surface)',
+                  color: injuryFlag ? 'var(--danger)' : 'var(--text-muted)',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {injuryFlag ? '⚠️ Niggle flagged — tap to clear' : '⚑ Flag injury / niggle'}
+              </button>
+              {injuryFlag && (
+                <div className="form-hint" style={{ color: '#f87171', marginTop: 6 }}>Session will appear in your injury log on the Progress tab.</div>
+              )}
+            </div>
+
             <button className="btn btn-primary" onClick={handleSave}>
               Save Session
             </button>
@@ -175,9 +204,9 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                 ? formatPace(calcPaceSeconds(log.distanceKm, log.durationMins))
                 : null
               return (
-                <div key={log.id} className="log-item">
-                  <div className={`log-icon ${sessionClass(log.sessionType)}`}>
-                    {sessionIcon(log.sessionType)}
+                <div key={log.id} className="log-item" style={log.injuryFlag ? { borderColor: 'rgba(239,68,68,0.4)' } : undefined}>
+                  <div className={`log-icon ${sessionClass(log.sessionType)}`} style={log.injuryFlag ? { background: 'rgba(239,68,68,0.12)' } : undefined}>
+                    {log.injuryFlag ? '⚠️' : sessionIcon(log.sessionType)}
                   </div>
                   <div className="log-meta">
                     <div className="log-title">{log.sessionType}</div>

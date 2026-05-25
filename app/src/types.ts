@@ -7,6 +7,7 @@ export interface WorkoutLog {
   perceivedEffort?: number
   notes?: string
   completed: boolean
+  injuryFlag?: boolean
 }
 
 export interface TimeTrial {

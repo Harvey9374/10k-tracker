@@ -1,9 +1,9 @@
 [build]
-  command = "cd app && npm run build"
-  publish = "app/dist"
+  command = "npm run build"
+  publish = "dist"
 
 [functions]
-  directory = "app/netlify/functions"
+  directory = "netlify/functions"
 
 [[redirects]]
   from = "/*"

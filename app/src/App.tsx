@@ -49,19 +49,38 @@ const TITLES: Record<ViewName, string> = {
   plan:     'Training Plan',
 }
 
+function getInitialTheme(): 'dark' | 'light' {
+  try { return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark' }
+  catch { return 'dark' }
+}
+
+const NAV_ORDER = NAV.map(n => n.id)
+
 export default function App() {
   const [view, setView] = useState<ViewName>('today')
+  const [slideDir, setSlideDir] = useState<'left' | 'right'>('right')
+  const [theme, setTheme] = useState<'dark' | 'light'>(getInitialTheme)
   const { logs, addLog, deleteLog } = useWorkoutLogs()
   const { trials, addTrial, deleteTrial } = useTimeTrials()
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('code')) setView('strava')
   }, [])
 
-  function goToLog() {
-    setView('log')
+  function navigate(next: ViewName) {
+    const from = NAV_ORDER.indexOf(view)
+    const to = NAV_ORDER.indexOf(next)
+    setSlideDir(to >= from ? 'right' : 'left')
+    setView(next)
   }
+  function goToLog() { navigate('log') }
+  function toggleTheme() { setTheme(t => t === 'dark' ? 'light' : 'dark') }
 
   return (
     <>
@@ -69,20 +88,25 @@ export default function App() {
         <h1>{TITLES[view]}</h1>
         {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
         {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </header>
 
-      {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
-      {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
-      {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
-      {view === 'strava' && <StravaView />}
-      {view === 'plan' && <Plan />}
+      <div key={view} className={`view-anim slide-${slideDir}`}>
+        {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
+        {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
+        {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
+        {view === 'strava' && <StravaView />}
+        {view === 'plan' && <Plan />}
+      </div>
 
       <nav className="bottom-nav">
         {NAV.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             className={`nav-btn ${view === id ? 'active' : ''}`}
-            onClick={() => setView(id)}
+            onClick={() => navigate(id)}
           >
             <Icon />
             {label}

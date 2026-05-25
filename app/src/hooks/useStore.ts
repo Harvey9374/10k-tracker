@@ -57,3 +57,19 @@ export function useTimeTrials() {
 
   return { trials, addTrial, deleteTrial }
 }
+
+export function useSessionCompletions() {
+  const [completions, setCompletions] = useState<string[]>(() => load('sessionCompletions', []))
+
+  const toggleCompletion = useCallback((date: string) => {
+    setCompletions(prev => {
+      const next = prev.includes(date)
+        ? prev.filter(d => d !== date)
+        : [...prev, date]
+      save('sessionCompletions', next)
+      return next
+    })
+  }, [])
+
+  return { completions, toggleCompletion }
+}
