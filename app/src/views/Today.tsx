@@ -48,6 +48,10 @@ function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
   )
 }
 
+function toLocalDateStr(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function getWeekStart(date: Date): Date {
   const d = new Date(date)
   const day = d.getDay()
@@ -73,7 +77,7 @@ export default function Today({ logs, onGoLog }: Props) {
   const planStarted = today >= PLAN_START
   const daysUntilStart = Math.ceil((PLAN_START.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
 
-  const todayStr = today.toISOString().slice(0, 10)
+  const todayStr = toLocalDateStr(today)
   const loggedToday = logs.filter(l => l.date === todayStr)
   const todayMarkedComplete = completions.includes(todayStr)
 
@@ -86,18 +90,20 @@ export default function Today({ logs, onGoLog }: Props) {
   const nextBenchmark = BENCHMARKS.find(b => b.week >= week)
   const paceInfo = phase ? PACE_GUIDE.find(p => p.phase === phase.number) : null
 
+  // Weekly km + adherence
   const weekStart = getWeekStart(today)
-  const weekStartStr = weekStart.toISOString().slice(0, 10)
+  const weekStartStr = toLocalDateStr(weekStart)
   const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6)
-  const weekEndStr = weekEnd.toISOString().slice(0, 10)
+  const weekEndStr = toLocalDateStr(weekEnd)
   const weekLogs = logs.filter(l => l.date >= weekStartStr && l.date <= weekEndStr)
   const weekKm = weekLogs.reduce((acc, l) => acc + (l.distanceKm ?? 0), 0)
   const weekTarget = phase ? parseWeeklyKmTarget(phase.weeklyTarget) : null
 
+  // Day dots for the week (Mon–Sun)
   const weekDots = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart)
     d.setDate(weekStart.getDate() + i)
-    const dateStr = d.toISOString().slice(0, 10)
+    const dateStr = toLocalDateStr(d)
     return {
       dateStr,
       label: ['M', 'T', 'W', 'T', 'F', 'S', 'S'][i],
@@ -157,6 +163,7 @@ export default function Today({ logs, onGoLog }: Props) {
             )}
           </div>
 
+          {/* Weekly summary card */}
           <div className="card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
               <div className="card-title" style={{ marginBottom: 0 }}>This Week</div>
@@ -165,6 +172,7 @@ export default function Today({ logs, onGoLog }: Props) {
               </div>
             </div>
 
+            {/* Day dots */}
             <div style={{ display: 'flex', gap: 6, justifyContent: 'space-between', marginBottom: 14 }}>
               {weekDots.map((dot, i) => (
                 <button
@@ -202,6 +210,7 @@ export default function Today({ logs, onGoLog }: Props) {
               ))}
             </div>
 
+            {/* Weekly km bar */}
             {weekTarget && (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 6 }}>

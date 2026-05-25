@@ -50,7 +50,8 @@ function fmtDate(iso: string) {
 }
 
 export default function Log({ logs, onAdd, onDelete }: Props) {
-  const today = new Date().toISOString().slice(0, 10)
+  const _d = new Date()
+  const today = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, '0')}-${String(_d.getDate()).padStart(2, '0')}`
   const [tab, setTab] = useState<'add' | 'history'>('add')
 
   const [date, setDate] = useState(today)
