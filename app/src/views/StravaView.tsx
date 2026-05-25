@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useStrava } from '../hooks/useStrava'
-import { getWeekNumber, getPhase, formatPace, formatTime } from '../data/plan'
+import { getWeekNumber, getPhase, formatTime } from '../data/plan'
 import type { StravaActivity, StravaSplit, CalibratedZones } from '../types'
 
 const CLIENT_ID = '250705'
