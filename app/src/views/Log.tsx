@@ -8,6 +8,24 @@ interface Props {
   onDelete: (id: string) => void
 }
 
+const STRENGTH_SESSION_TYPES = new Set(['Strength + Conditioning'])
+
+function getStrengthSuggestion(rounds: number, rpe: number): { text: string; color: string } {
+  if (rpe <= 4) {
+    if (rounds >= 3) return { text: 'Very manageable — add 1–2 reps per exercise next session', color: 'var(--accent)' }
+    return { text: 'Light effort — try adding an extra round or 1–2 reps next session', color: 'var(--accent)' }
+  }
+  if (rpe <= 6) {
+    if (rounds >= 3) return { text: 'Spot on — maintain current reps and load', color: 'var(--accent)' }
+    return { text: 'Good effort — work towards completing full rounds before adding reps', color: 'var(--warn)' }
+  }
+  if (rpe <= 8) {
+    if (rounds >= 3) return { text: 'Strong effort — hold reps for 1–2 more sessions before increasing', color: 'var(--warn)' }
+    return { text: 'Solid work — aim to complete target rounds at current reps next session', color: 'var(--warn)' }
+  }
+  return { text: 'Very hard — reduce reps by ~10% to maintain form and aid recovery', color: '#ef4444' }
+}
+
 const SESSION_TYPES = [
   'Easy Run',
   'Tempo Run',
@@ -28,7 +46,7 @@ const SESSION_ICONS: Record<string, string> = {
   'Race Pace Session': '🎯',
   'Strength + Conditioning': '💪',
   'Long Run': '🛣️',
-  'Skip + Mobility': '🦘',
+  'Skip + Mobility': '🦨',
   'Recovery / Mobility': '🧘',
   'Time Trial': '⏱️',
   'Other': '📝',
@@ -50,8 +68,8 @@ function fmtDate(iso: string) {
 }
 
 export default function Log({ logs, onAdd, onDelete }: Props) {
-  const _d = new Date()
-  const today = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, '0')}-${String(_d.getDate()).padStart(2, '0')}`
+  const d = new Date()
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   const [tab, setTab] = useState<'add' | 'history'>('add')
 
   const [date, setDate] = useState(today)
@@ -61,7 +79,10 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const [effort, setEffort] = useState(5)
   const [notes, setNotes] = useState('')
   const [injuryFlag, setInjuryFlag] = useState(false)
+  const [roundsCompleted, setRoundsCompleted] = useState<number | ''>('')
   const [saved, setSaved] = useState(false)
+
+  const isStrengthSession = STRENGTH_SESSION_TYPES.has(sessionType)
 
   const dist = parseFloat(distanceKm)
   const dur = parseFloat(durationMins)
@@ -76,6 +97,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       distanceKm: dist || undefined,
       durationMins: dur || undefined,
       perceivedEffort: effort,
+      roundsCompleted: isStrengthSession && roundsCompleted !== '' ? roundsCompleted : undefined,
       notes: notes.trim() || undefined,
       injuryFlag: injuryFlag || undefined,
       completed: true,
@@ -84,6 +106,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
     setDurationMins('')
     setNotes('')
     setEffort(5)
+    setRoundsCompleted('')
     setInjuryFlag(false)
     setDate(today)
     setSaved(true)
@@ -154,6 +177,45 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
               </div>
             </div>
 
+            {isStrengthSession && (
+              <div className="form-group">
+                <label className="form-label">Rounds completed</label>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {[1, 2, 3, 4].map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRoundsCompleted(roundsCompleted === r ? '' : r)}
+                      style={{
+                        width: 52, height: 52, borderRadius: 'var(--radius-sm)',
+                        border: `2px solid ${roundsCompleted === r ? 'var(--accent-2)' : 'var(--border)'}`,
+                        background: roundsCompleted === r ? 'rgba(139,92,246,0.12)' : 'var(--surface)',
+                        color: roundsCompleted === r ? 'var(--accent-2)' : 'var(--text)',
+                        fontSize: 18, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
+                      }}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                {roundsCompleted !== '' && (
+                  <div style={{
+                    marginTop: 10, padding: '10px 14px', borderRadius: 'var(--radius-sm)',
+                    border: `1px solid ${getStrengthSuggestion(roundsCompleted, effort).color}40`,
+                    background: `${getStrengthSuggestion(roundsCompleted, effort).color}0d`,
+                    fontSize: 13,
+                  }}>
+                    <div style={{ fontWeight: 700, color: getStrengthSuggestion(roundsCompleted, effort).color, marginBottom: 2 }}>
+                      Recommendation
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>
+                      {getStrengthSuggestion(roundsCompleted, effort).text}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="form-group">
               <label className="form-label">Notes (optional)</label>
               <textarea className="form-textarea" placeholder="How did it feel? Any shin discomfort? Weather?" value={notes} onChange={e => setNotes(e.target.value)} />
@@ -220,6 +282,9 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                   </div>
                   <div className="log-right">
                     {pace && <div className="log-pace">{pace}</div>}
+                    {log.roundsCompleted && (
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{log.roundsCompleted} round{log.roundsCompleted !== 1 ? 's' : ''}</div>
+                    )}
                     {log.perceivedEffort && (
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>RPE {log.perceivedEffort}/10</div>
                     )}

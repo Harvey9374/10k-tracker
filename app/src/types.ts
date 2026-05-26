@@ -5,6 +5,7 @@ export interface WorkoutLog {
   distanceKm?: number
   durationMins?: number
   perceivedEffort?: number
+  roundsCompleted?: number
   notes?: string
   completed: boolean
   injuryFlag?: boolean
@@ -57,6 +58,8 @@ export interface Phase {
   friday: PhaseSession
   weekend: PhaseSession
   strengthCircuit?: string[]
+  mobilityCircuit?: string[]
+  recoveryCircuit?: string[]
   notes?: string[]
 }
 

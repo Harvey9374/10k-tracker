@@ -34,18 +34,24 @@ function applyHeatToStr(paceStr: string, adjSecs: number): string {
   return paceStr
 }
 
-function isStrengthItem(item: string) {
-  return /strength/i.test(item)
+function isStrengthItem(item: string) { return /strength/i.test(item) }
+function isMobilityItem(item: string) { return /^mobility/i.test(item.trim()) }
+function isRecoveryItem(item: string) { return /^foam roll/i.test(item.trim()) }
+
+function isSectionHeader(line: string) {
+  if (line.startsWith('A.') || line.startsWith('B.') || line.startsWith('C.')) return true
+  const part = line.split('(')[0].trim()
+  return part.length >= 3 && part === part.toUpperCase() && /[A-Z]/.test(part)
 }
 
-function StrengthCircuitInline({ circuit }: { circuit: string[] }) {
+function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColor: string }) {
   return (
-    <div style={{ marginTop: 8, paddingLeft: 12, borderLeft: '2px solid var(--accent-2)' }}>
+    <div style={{ marginTop: 8, paddingLeft: 12, borderLeft: `2px solid ${accentColor}` }}>
       {circuit.map((line, i) => (
         <div key={i} style={{
           fontSize: 13,
-          color: line.startsWith('A.') || line.startsWith('B.') ? 'var(--text)' : line === '' ? 'transparent' : 'var(--text-muted)',
-          fontWeight: line.startsWith('A.') || line.startsWith('B.') ? 700 : 400,
+          color: isSectionHeader(line) ? 'var(--text)' : line === '' ? 'transparent' : 'var(--text-muted)',
+          fontWeight: isSectionHeader(line) ? 700 : 400,
           padding: line === '' ? '3px 0' : '2px 0',
         }}>
           {line || ' '}
@@ -57,19 +63,26 @@ function StrengthCircuitInline({ circuit }: { circuit: string[] }) {
 
 function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
   const [open, setOpen] = useState(false)
-  const hasCircuit = isStrengthItem(item) && phase?.strengthCircuit && phase.strengthCircuit.length > 0
+  const hasStrength = isStrengthItem(item) && !!phase?.strengthCircuit?.length
+  const hasMobility = isMobilityItem(item) && !!phase?.mobilityCircuit?.length
+  const hasRecovery = isRecoveryItem(item) && !!phase?.recoveryCircuit?.length
+  const isExpandable = hasStrength || hasMobility || hasRecovery
 
-  if (!hasCircuit) return <li>{item}</li>
+  if (!isExpandable) return <li>{item}</li>
+
+  const circuit = hasStrength ? phase!.strengthCircuit! : hasMobility ? phase!.mobilityCircuit! : phase!.recoveryCircuit!
+  const accentColor = hasStrength ? 'var(--accent-2)' : 'var(--accent)'
+  const expandLabel = hasStrength ? 'show exercises' : 'show routine'
 
   return (
     <li style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
         <span style={{ flex: 1 }}>{item}</span>
-        <span style={{ fontSize: 11, color: 'var(--accent-2)', fontWeight: 700, flexShrink: 0 }}>
-          {open ? '▲ hide' : '▼ show exercises'}
+        <span style={{ fontSize: 11, color: accentColor, fontWeight: 700, flexShrink: 0 }}>
+          {open ? '▲ hide' : `▼ ${expandLabel}`}
         </span>
       </div>
-      {open && <StrengthCircuitInline circuit={phase!.strengthCircuit!} />}
+      {open && <CircuitDetail circuit={circuit} accentColor={accentColor} />}
     </li>
   )
 }
