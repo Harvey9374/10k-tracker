@@ -149,8 +149,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const todayName = dayNames[today.getDay()]
 
-  const totalWeeksElapsed = week > 0 ? week - 1 : 0
-  const planProgress = Math.min(Math.round((totalWeeksElapsed / 52) * 100), 100)
+  const planProgress = Math.min(Math.round((week / 52) * 100), 100)
   const nextBenchmark = BENCHMARKS.find(b => b.week >= week)
   const paceInfo = phase ? PACE_GUIDE.find(p => p.phase === phase.number) : null
 
