@@ -13,7 +13,7 @@ import fs from 'fs';
 import path from 'path';
 
 // ---------------------------------------------------------------------------
-// CLI argument parsing
+// CLI
 // ---------------------------------------------------------------------------
 
 const args = process.argv.slice(2);
@@ -27,20 +27,19 @@ if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
 }
 
 const folderPath = path.resolve(args[0]);
-let outputPath = path.join(process.cwd(), 'recipes.json');
 
-for (let i = 1; i < args.length; i++) {
-  if ((args[i] === '--output' || args[i] === '-o') && args[i + 1]) {
-    outputPath = path.resolve(args[i + 1]);
-    i++;
-  }
-}
+const outputFlagIdx = args.indexOf('--output') !== -1 ? args.indexOf('--output') : args.indexOf('-o');
+const outputPath = outputFlagIdx !== -1 && args[outputFlagIdx + 1]
+  ? path.resolve(args[outputFlagIdx + 1])
+  : path.join(process.cwd(), 'recipes.json');
 
 // ---------------------------------------------------------------------------
 // Validation
 // ---------------------------------------------------------------------------
 
-if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
+try {
+  if (!fs.statSync(folderPath).isDirectory()) throw new Error();
+} catch {
   console.error(`Error: "${folderPath}" is not a valid directory.`);
   process.exit(1);
 }
@@ -57,6 +56,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
 const client = new Anthropic();
 
 const MODEL = 'claude-sonnet-4-20250514';
+const CONCURRENCY = 5;
 
 const SYSTEM_PROMPT =
   'You are a recipe extraction assistant. When given a screenshot of a recipe, ' +
@@ -81,6 +81,10 @@ Rules:
 - ingredientTags: short lowercase keywords for the main ingredients (e.g. "chicken", "rice") — no quantities or units
 - Return ONLY the JSON object`;
 
+// Hoisted so they are compiled once across all concurrent calls
+const FENCE_OPEN = /^```(?:json)?\s*/i;
+const FENCE_CLOSE = /\s*```$/;
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -96,8 +100,7 @@ function slugify(name) {
 }
 
 function mediaTypeFor(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  return ext === '.png' ? 'image/png' : 'image/jpeg';
+  return path.extname(filePath).toLowerCase() === '.png' ? 'image/png' : 'image/jpeg';
 }
 
 // ---------------------------------------------------------------------------
@@ -105,7 +108,7 @@ function mediaTypeFor(filePath) {
 // ---------------------------------------------------------------------------
 
 async function extractRecipe(imagePath) {
-  const imageData = fs.readFileSync(imagePath).toString('base64');
+  const imageData = (await fs.promises.readFile(imagePath)).toString('base64');
   const mediaType = mediaTypeFor(imagePath);
 
   const response = await client.messages.create({
@@ -126,11 +129,8 @@ async function extractRecipe(imagePath) {
     ],
   });
 
-  const text = response.content[0].text.trim();
-
-  // Strip accidental markdown code fences if the model adds them anyway
-  const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-  return JSON.parse(cleaned);
+  const text = response.content[0].text.trim().replace(FENCE_OPEN, '').replace(FENCE_CLOSE, '');
+  return JSON.parse(text);
 }
 
 // ---------------------------------------------------------------------------
@@ -152,13 +152,11 @@ async function main() {
   console.log(`Output file: ${outputPath}\n`);
 
   // Load and index any existing recipes
-  const existingById = {};
+  let existingById = {};
   if (fs.existsSync(outputPath)) {
     try {
       const existing = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
-      for (const recipe of existing) {
-        existingById[recipe.id] = recipe;
-      }
+      existingById = Object.fromEntries(existing.map(r => [r.id, r]));
       console.log(`Loaded ${existing.length} existing recipe(s) from ${outputPath}\n`);
     } catch {
       console.warn(`Warning: Could not parse existing ${outputPath}; starting fresh.\n`);
@@ -168,37 +166,43 @@ async function main() {
   let succeeded = 0;
   let failed = 0;
 
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  async function processFile(file, i) {
     const imagePath = path.join(folderPath, file);
-    process.stdout.write(`[${i + 1}/${files.length}] ${file} … `);
+    console.log(`[${i + 1}/${files.length}] Processing: ${file}`);
 
     try {
       const extracted = await extractRecipe(imagePath);
 
-      const id = slugify(extracted.name || file);
+      const nameSlug = slugify(extracted.name ?? '');
+      const fileSlug = slugify(path.basename(file, path.extname(file)));
+      const id = nameSlug || fileSlug || `recipe-${i + 1}`;
+
       const recipe = {
-        id: id || `recipe-${i + 1}`,
+        id,
         name: extracted.name ?? '',
         ingredients: Array.isArray(extracted.ingredients) ? extracted.ingredients : [],
         method: Array.isArray(extracted.method) ? extracted.method : [],
-        macros: {
-          calories: extracted.macros?.calories ?? 0,
-          protein: extracted.macros?.protein ?? 0,
-          carbs: extracted.macros?.carbs ?? 0,
-          fat: extracted.macros?.fat ?? 0,
-        },
+        macros: { calories: 0, protein: 0, carbs: 0, fat: 0, ...extracted.macros },
         ingredientTags: Array.isArray(extracted.ingredientTags) ? extracted.ingredientTags : [],
       };
 
       existingById[recipe.id] = recipe;
-      console.log(`✓  "${recipe.name}" → id: ${recipe.id}`);
+      console.log(`  ✓  "${recipe.name}" → id: ${recipe.id}`);
       succeeded++;
     } catch (err) {
-      console.log(`✗  FAILED — ${err.message}`);
+      console.log(`  ✗  FAILED — ${err.message}`);
       failed++;
     }
   }
+
+  // Process up to CONCURRENCY images in parallel
+  const executing = new Set();
+  for (let i = 0; i < files.length; i++) {
+    const p = processFile(files[i], i).finally(() => executing.delete(p));
+    executing.add(p);
+    if (executing.size >= CONCURRENCY) await Promise.race(executing);
+  }
+  await Promise.all(executing);
 
   const merged = Object.values(existingById);
   fs.writeFileSync(outputPath, JSON.stringify(merged, null, 2));
