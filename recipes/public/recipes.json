@@ -1,0 +1,151 @@
+[
+  {
+    "id": "1",
+    "title": "Greek Yogurt Chicken Bowl",
+    "proteinG": 52,
+    "caloriesKcal": 480,
+    "prepMins": 10,
+    "cookMins": 20,
+    "servings": 1,
+    "tags": ["chicken", "meal-prep", "low-carb"],
+    "ingredients": [
+      { "qty": "200g", "item": "chicken breast" },
+      { "qty": "150g", "item": "plain Greek yogurt (0%)" },
+      { "qty": "1 cup", "item": "cucumber, diced" },
+      { "qty": "1 tbsp", "item": "olive oil" },
+      { "qty": "1 tsp", "item": "garlic powder" },
+      { "qty": "1 tsp", "item": "smoked paprika" },
+      { "qty": "to taste", "item": "salt and pepper" }
+    ],
+    "steps": [
+      "Season chicken breast with garlic powder, paprika, salt and pepper.",
+      "Heat olive oil in a pan over medium-high heat. Cook chicken 6–7 min per side until cooked through.",
+      "Rest 5 minutes, then slice.",
+      "Serve over Greek yogurt with cucumber on the side."
+    ]
+  },
+  {
+    "id": "2",
+    "title": "Salmon & Quinoa Plate",
+    "proteinG": 45,
+    "caloriesKcal": 520,
+    "prepMins": 5,
+    "cookMins": 15,
+    "servings": 1,
+    "tags": ["fish", "omega-3", "gluten-free"],
+    "ingredients": [
+      { "qty": "180g", "item": "salmon fillet" },
+      { "qty": "80g dry", "item": "quinoa" },
+      { "qty": "2 cups", "item": "baby spinach" },
+      { "qty": "1 tbsp", "item": "lemon juice" },
+      { "qty": "1 tbsp", "item": "olive oil" },
+      { "qty": "1 clove", "item": "garlic, minced" }
+    ],
+    "steps": [
+      "Cook quinoa according to package instructions.",
+      "Season salmon with salt, pepper and lemon juice.",
+      "Heat oil in a pan, cook salmon skin-side down 4 min, flip and cook 3 more minutes.",
+      "Sauté spinach with garlic for 1 min until wilted.",
+      "Plate quinoa, top with salmon and spinach."
+    ]
+  },
+  {
+    "id": "3",
+    "title": "High-Protein Tuna Salad",
+    "proteinG": 40,
+    "caloriesKcal": 320,
+    "prepMins": 10,
+    "cookMins": 0,
+    "servings": 1,
+    "tags": ["no-cook", "low-carb", "quick"],
+    "ingredients": [
+      { "qty": "2 cans (160g each)", "item": "tuna in water, drained" },
+      { "qty": "100g", "item": "cottage cheese" },
+      { "qty": "1 tbsp", "item": "Dijon mustard" },
+      { "qty": "2 stalks", "item": "celery, finely chopped" },
+      { "qty": "1 tbsp", "item": "fresh dill" },
+      { "qty": "to taste", "item": "salt and pepper" }
+    ],
+    "steps": [
+      "Drain tuna thoroughly and flake into a bowl.",
+      "Add cottage cheese and Dijon mustard; mix well.",
+      "Fold in celery and dill.",
+      "Season with salt and pepper. Serve on lettuce wraps or crackers."
+    ]
+  },
+  {
+    "id": "4",
+    "title": "Egg White Turkey Omelette",
+    "proteinG": 38,
+    "caloriesKcal": 290,
+    "prepMins": 5,
+    "cookMins": 10,
+    "servings": 1,
+    "tags": ["eggs", "breakfast", "low-fat"],
+    "ingredients": [
+      { "qty": "6", "item": "egg whites" },
+      { "qty": "80g", "item": "lean turkey breast, diced" },
+      { "qty": "30g", "item": "reduced-fat feta cheese" },
+      { "qty": "handful", "item": "baby spinach" },
+      { "qty": "1/4", "item": "red bell pepper, diced" },
+      { "qty": "spray", "item": "cooking oil" }
+    ],
+    "steps": [
+      "Whisk egg whites with a pinch of salt until frothy.",
+      "Heat a non-stick pan with cooking spray over medium heat.",
+      "Pour in egg whites; cook until edges set (about 2 min).",
+      "Scatter turkey, peppers and spinach on one half.",
+      "Fold omelette and cook 2 more minutes. Top with feta."
+    ]
+  },
+  {
+    "id": "5",
+    "title": "Cottage Cheese Protein Pancakes",
+    "proteinG": 30,
+    "caloriesKcal": 350,
+    "prepMins": 5,
+    "cookMins": 10,
+    "servings": 2,
+    "tags": ["breakfast", "vegetarian", "quick"],
+    "ingredients": [
+      { "qty": "250g", "item": "cottage cheese" },
+      { "qty": "3", "item": "large eggs" },
+      { "qty": "60g", "item": "rolled oats" },
+      { "qty": "1 tsp", "item": "vanilla extract" },
+      { "qty": "1/2 tsp", "item": "baking powder" },
+      { "qty": "spray", "item": "cooking oil" }
+    ],
+    "steps": [
+      "Blend all ingredients until smooth.",
+      "Heat a non-stick pan over medium heat with cooking spray.",
+      "Pour ~1/4 cup batter per pancake; cook 2–3 min until bubbles form.",
+      "Flip and cook 1 more minute. Serve with berries or sugar-free syrup."
+    ]
+  },
+  {
+    "id": "6",
+    "title": "Lean Beef Stir-Fry",
+    "proteinG": 48,
+    "caloriesKcal": 440,
+    "prepMins": 10,
+    "cookMins": 10,
+    "servings": 1,
+    "tags": ["beef", "low-carb", "quick"],
+    "ingredients": [
+      { "qty": "200g", "item": "lean beef sirloin, thinly sliced" },
+      { "qty": "2 cups", "item": "broccoli florets" },
+      { "qty": "1 cup", "item": "snap peas" },
+      { "qty": "2 tbsp", "item": "low-sodium soy sauce" },
+      { "qty": "1 tsp", "item": "sesame oil" },
+      { "qty": "1 clove", "item": "garlic, minced" },
+      { "qty": "1 tsp", "item": "fresh ginger, grated" }
+    ],
+    "steps": [
+      "Mix soy sauce, sesame oil, garlic and ginger in a small bowl.",
+      "Heat a wok or large pan over high heat until smoking.",
+      "Stir-fry beef in batches, 1–2 min per batch. Set aside.",
+      "Add broccoli and snap peas; stir-fry 3–4 min until tender-crisp.",
+      "Return beef, pour sauce over, toss for 1 minute."
+    ]
+  }
+]

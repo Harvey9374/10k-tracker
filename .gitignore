@@ -1,4 +1,6 @@
 app/node_modules/
 app/dist/
+recipes/node_modules/
+recipes/dist/
 existing-pwa/
 *.zip
