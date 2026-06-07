@@ -1,61 +1,67 @@
 import { useState, useMemo } from 'react';
-import type { Recipe } from '../types';
+import type { Recipe, MealType } from '../types';
 import RecipeCard from './RecipeCard';
-import TagFilter from './TagFilter';
+import ProteinFilter from './ProteinFilter';
 
 interface Props {
   recipes: Recipe[];
   onSelect: (recipe: Recipe) => void;
 }
 
+const MEAL_TYPES: Array<MealType | 'All'> = ['All', 'Breakfast', 'Snack', 'Lunch', 'Dinner', 'Pudding'];
+
 export default function RecipeList({ recipes, onSelect }: Props) {
   const [query, setQuery] = useState('');
-  const [activeTag, setActiveTag] = useState<string | null>(null);
-
-  const allTags = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const r of recipes) {
-      for (const t of r.ingredientTags) {
-        counts.set(t, (counts.get(t) ?? 0) + 1);
-      }
-    }
-    return [...counts.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .map(([t]) => t);
-  }, [recipes]);
+  const [mealType, setMealType] = useState<MealType | 'All'>('All');
+  const [proteinTag, setProteinTag] = useState<string | null>(null);
+  const [secondTag, setSecondTag] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return recipes.filter(r => {
-      if (activeTag && !r.ingredientTags.includes(activeTag)) return false;
+      if (mealType !== 'All' && r.mealType !== mealType) return false;
+      if (proteinTag && !r.ingredientTags.includes(proteinTag)) return false;
+      if (secondTag && !r.ingredientTags.includes(secondTag)) return false;
       if (!q) return true;
-      return (
-        r.name.toLowerCase().includes(q) ||
-        r.ingredientTags.some(t => t.includes(q))
-      );
+      return r.name.toLowerCase().includes(q) || r.ingredientTags.some(t => t.includes(q));
     });
-  }, [recipes, query, activeTag]);
-
-  function toggleTag(tag: string) {
-    setActiveTag(prev => (prev === tag ? null : tag));
-  }
+  }, [recipes, query, mealType, proteinTag, secondTag]);
 
   return (
     <div style={styles.page}>
       <header style={styles.header}>
         <h1 style={styles.title}>Protein Recipes</h1>
-        <div style={styles.searchWrap}>
-          <input
-            type="search"
-            placeholder="Search recipes…"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            style={styles.search}
-          />
-        </div>
+        <input
+          type="search"
+          placeholder="Search recipes…"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          style={styles.search}
+        />
       </header>
 
-      <TagFilter tags={allTags} active={activeTag} onToggle={toggleTag} />
+      <div style={styles.mealFilter}>
+        {MEAL_TYPES.map(mt => (
+          <button
+            key={mt}
+            onClick={() => setMealType(mt)}
+            style={{
+              ...styles.pill,
+              ...(mealType === mt ? styles.pillActive : {}),
+            }}
+          >
+            {mt}
+          </button>
+        ))}
+      </div>
+
+      <ProteinFilter
+        recipes={recipes}
+        proteinTag={proteinTag}
+        secondTag={secondTag}
+        onProteinChange={setProteinTag}
+        onSecondChange={setSecondTag}
+      />
 
       <div style={styles.count}>
         {filtered.length} recipe{filtered.length !== 1 ? 's' : ''}
@@ -70,7 +76,7 @@ export default function RecipeList({ recipes, onSelect }: Props) {
           />
         ))}
         {filtered.length === 0 && (
-          <p style={styles.empty}>No recipes match your search.</p>
+          <p style={styles.empty}>No recipes match your filters.</p>
         )}
       </div>
     </div>
@@ -83,9 +89,10 @@ const styles: Record<string, React.CSSProperties> = {
     flexDirection: 'column',
     height: '100%',
     overflow: 'hidden',
+    background: 'var(--bg)',
   },
   header: {
-    padding: '20px 16px 12px',
+    padding: '20px 16px 14px',
     background: 'var(--surface)',
     borderBottom: '1px solid var(--border)',
   },
@@ -94,9 +101,6 @@ const styles: Record<string, React.CSSProperties> = {
     fontWeight: 700,
     marginBottom: '12px',
     color: 'var(--text)',
-  },
-  searchWrap: {
-    position: 'relative',
   },
   search: {
     width: '100%',
@@ -108,8 +112,34 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: '0.95rem',
     outline: 'none',
   },
-  count: {
+  mealFilter: {
+    display: 'flex',
+    gap: '6px',
+    overflowX: 'auto',
     padding: '10px 16px 4px',
+    scrollbarWidth: 'none',
+    background: 'var(--surface)',
+    borderBottom: '1px solid var(--border)',
+  },
+  pill: {
+    flexShrink: 0,
+    fontSize: '0.82rem',
+    fontWeight: 500,
+    padding: '6px 14px',
+    borderRadius: '999px',
+    border: '1px solid var(--border)',
+    background: 'var(--surface2)',
+    color: 'var(--text-muted)',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+  },
+  pillActive: {
+    background: 'var(--accent)',
+    border: '1px solid var(--accent)',
+    color: '#fff',
+  },
+  count: {
+    padding: '8px 16px 2px',
     fontSize: '0.8rem',
     color: 'var(--text-muted)',
   },

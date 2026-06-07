@@ -39,7 +39,8 @@
       "blueberries",
       "whey protein",
       "flour"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "cheesy-crispy-smashed-potato-bites",
@@ -84,7 +85,8 @@
       "mozzarella",
       "parmesan",
       "greek yogurt"
-    ]
+    ],
+    "mealType": "Snack"
   },
   {
     "id": "one-tray-red-thai-chicken-rice-bake",
@@ -130,7 +132,8 @@
       "peppers",
       "coconut milk",
       "curry paste"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "slow-cooker-creamy-chicken-orzo",
@@ -170,7 +173,8 @@
       "cream cheese",
       "mozzarella",
       "mixed veg"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "garlic-parmesan-chicken-tenders",
@@ -208,7 +212,8 @@
       "butter",
       "parmesan",
       "egg"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "salmon-avocado-bowl",
@@ -242,7 +247,8 @@
       "greek yogurt",
       "cucumber",
       "lemon"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "high-protein-carrot-cake",
@@ -287,7 +293,8 @@
       "egg whites",
       "greek yogurt",
       "cream cheese"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "slow-cooker-chicken-tikka-masala",
@@ -326,7 +333,8 @@
       "double cream",
       "rice",
       "almonds"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "high-protein-cheesecake-overnight-weetabix",
@@ -363,7 +371,8 @@
       "whey protein",
       "chia seeds",
       "jam"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "creamy-garlic-chicken-wraps",
@@ -413,7 +422,8 @@
       "cream cheese",
       "spinach",
       "garlic"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "tuna-and-egg-salad",
@@ -447,7 +457,8 @@
       "cream cheese",
       "gherkins",
       "red onion"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "chicken-tacos",
@@ -492,7 +503,8 @@
       "black beans",
       "sweetcorn",
       "mozzarella"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "slow-cooker-honey-sriracha-chicken-noodles",
@@ -530,7 +542,8 @@
       "honey",
       "sriracha",
       "ginger"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "high-protein-taco-beef-pasta-bake",
@@ -568,7 +581,8 @@
       "mozzarella",
       "peppers",
       "taco seasoning"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "easy-protein-cinnamon-buns",
@@ -616,7 +630,8 @@
       "protein powder",
       "cream cheese",
       "cinnamon"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "chicken-and-rice-bake",
@@ -662,7 +677,8 @@
       "carrots",
       "greek yogurt",
       "curry paste"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "bacon-and-egg-tortilla-cups",
@@ -692,7 +708,8 @@
       "bacon",
       "tortilla",
       "cheddar"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "salmon-protein-quiche",
@@ -726,7 +743,8 @@
       "eggs",
       "wrap",
       "dill"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "lemon-and-herb-chicken-pasta-tray-bake",
@@ -762,7 +780,8 @@
       "mozzarella",
       "peppers",
       "tomatoes"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "600-calorie-big-stack-burger",
@@ -801,7 +820,8 @@
       "burger bun",
       "cheddar",
       "onion"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "beef-shawarma-wraps",
@@ -843,7 +863,8 @@
       "greek yogurt",
       "cucumber",
       "tomatoes"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "oreo-mug-cake",
@@ -875,7 +896,8 @@
       "cocoa powder",
       "flour",
       "milk"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "stuffed-crust-breakfast-pizza",
@@ -904,7 +926,8 @@
       "bacon",
       "tortilla",
       "cheese sticks"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "protein-chicken-pepperoni-pizza",
@@ -942,7 +965,8 @@
       "mozzarella",
       "pepperoni",
       "eggs"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "chicken-and-chorizo-one-pan-rice",
@@ -980,7 +1004,8 @@
       "peppers",
       "tomatoes",
       "peas"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "tortilla-pizza",
@@ -1011,7 +1036,8 @@
       "ham",
       "mozzarella",
       "pepperoni"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "high-protein-yogurt-bowl-dessert",
@@ -1042,7 +1068,8 @@
       "walnuts",
       "honey",
       "dark chocolate"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "sesame-chicken",
@@ -1085,7 +1112,8 @@
       "sesame",
       "cornflour",
       "ketchup"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "high-protein-wrap-quiche",
@@ -1123,7 +1151,8 @@
       "spinach",
       "cottage cheese",
       "wrap"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "one-tray-peri-peri-chicken-pasta",
@@ -1162,7 +1191,8 @@
       "mozzarella",
       "peppers",
       "peri peri"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "buffalo-chicken-burrito",
@@ -1204,7 +1234,8 @@
       "hot sauce",
       "coleslaw",
       "cajun"
-    ]
+    ],
+    "mealType": "Lunch"
   },
   {
     "id": "protein-blueberry-donut-holes",
@@ -1233,7 +1264,8 @@
       "greek yogurt",
       "blueberries",
       "white chocolate"
-    ]
+    ],
+    "mealType": "Snack"
   },
   {
     "id": "healthy-high-protein-breakfast-bagels",
@@ -1271,7 +1303,8 @@
       "bagel",
       "cottage cheese",
       "cheddar"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "big-mac-fakeaway",
@@ -1307,7 +1340,8 @@
       "cheese",
       "gherkins",
       "lettuce"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "ninja-creami-chocolate-protein-ice-cream",
@@ -1342,7 +1376,8 @@
       "cocoa powder",
       "marshmallows",
       "nuts"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "vanilla-biscoff-protein-ice-cream",
@@ -1372,7 +1407,8 @@
       "milk",
       "biscoff",
       "custard powder"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "protein-breakfast-boats",
@@ -1408,7 +1444,8 @@
       "cottage cheese",
       "cheddar",
       "salsa"
-    ]
+    ],
+    "mealType": "Breakfast"
   },
   {
     "id": "cheesy-chicken-fajita-pasta-bake",
@@ -1449,7 +1486,8 @@
       "cream cheese",
       "peppers",
       "fajita"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "doritos-crusted-chicken-tenders",
@@ -1488,7 +1526,8 @@
       "eggs",
       "flour",
       "cornflakes"
-    ]
+    ],
+    "mealType": "Dinner"
   },
   {
     "id": "strawberry-frozen-yoghurt-cheesecake",
@@ -1520,7 +1559,8 @@
       "milk",
       "honey",
       "digestive"
-    ]
+    ],
+    "mealType": "Pudding"
   },
   {
     "id": "bang-bang-chicken-sliders",
@@ -1560,6 +1600,7 @@
       "greek yogurt",
       "coleslaw",
       "slider buns"
-    ]
+    ],
+    "mealType": "Dinner"
   }
 ]

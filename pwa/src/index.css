@@ -1,12 +1,12 @@
 :root {
-  --bg: #0f0f1a;
-  --surface: #1a1a2e;
-  --surface2: #22223b;
+  --bg: #f5f6f7;
+  --surface: #ffffff;
+  --surface2: #f0f1f3;
   --accent: #e63946;
-  --accent2: #457b9d;
-  --text: #f1faee;
-  --text-muted: #a8b2c1;
-  --border: #2d2d44;
+  --accent2: #2563eb;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --border: #e5e7eb;
   --radius: 12px;
   --radius-sm: 8px;
 }
@@ -37,6 +37,6 @@ button {
   font: inherit;
 }
 
-input {
+input, select {
   font: inherit;
 }
