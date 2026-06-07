@@ -614,5 +614,156 @@
       "fat": 22
     },
     "ingredientTags": ["salmon", "eggs", "wrap", "dill"]
+  },
+  {
+    "id": "lemon-and-herb-chicken-pasta-tray-bake",
+    "name": "Lemon & Herb Chicken Pasta Tray Bake",
+    "ingredients": [
+      "200g pasta (dry weight)",
+      "600g diced chicken breast",
+      "80g grated mozzarella",
+      "1 onion, diced",
+      "2 peppers, diced",
+      "1 lemon & herb seasoning packet",
+      "1 tin chopped tomatoes (400g)",
+      "125g lemon & herb sauce",
+      "Salt",
+      "Black pepper"
+    ],
+    "method": [
+      "Preheat the oven to 190°C",
+      "Dice the chicken, onion and peppers",
+      "Add the pasta, chicken, onion, peppers, seasoning packet, chopped tomatoes and lemon & herb sauce into a large ovenproof dish, season with salt and pepper and mix everything together",
+      "Top with the grated mozzarella",
+      "Cover with foil and bake for 50 minutes at 190°C"
+    ],
+    "macros": {
+      "calories": 521,
+      "protein": 49,
+      "carbs": 54,
+      "fat": 10
+    },
+    "ingredientTags": ["chicken", "pasta", "mozzarella", "peppers", "tomatoes"]
+  },
+  {
+    "id": "600-calorie-big-stack-burger",
+    "name": "600 Calorie Big Stack Burger",
+    "ingredients": [
+      "160g 5% lean beef mince",
+      "1 burger bun (70g)",
+      "1 cheddar cheese slice (20g)",
+      "20g white onion, diced",
+      "5g crispy onions",
+      "10g ketchup (sauce)",
+      "10g light mayo (sauce)",
+      "5g Dijon mustard (sauce)",
+      "5ml pickle juice (sauce)",
+      "5ml white wine vinegar (sauce)",
+      "5g honey (sauce)",
+      "¼ tsp garlic granules (sauce)",
+      "¼ tsp onion powder (sauce)",
+      "¼ tsp paprika (sauce)",
+      "Pinch of salt and black pepper (sauce)"
+    ],
+    "method": [
+      "Mix all the sauce ingredients together",
+      "Split the beef into two 80g patties, season with salt and pepper, and cook in a hot pan 2 to 3 minutes per side",
+      "Add the cheese slice so it melts",
+      "Toast the bun, spread the sauce, stack the patties, diced onions and crispy onions"
+    ],
+    "macros": {
+      "calories": 600,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["beef mince", "burger bun", "cheddar", "onion"]
+  },
+  {
+    "id": "beef-shawarma-wraps",
+    "name": "Beef Shawarma Wraps",
+    "ingredients": [
+      "400g lean beef (5%)",
+      "2 flatbreads",
+      "250g tomatoes, diced",
+      "½-1 red onion, sliced",
+      "1 tsp paprika",
+      "1 tsp chilli powder",
+      "1 tsp black pepper",
+      "1 tsp dried garlic",
+      "Salt",
+      "200g Greek yogurt (tzatziki)",
+      "3 tbsp grated cucumber (tzatziki)",
+      "2 whole garlic bulbs, roasted (tzatziki)",
+      "1 tsp mint (tzatziki)",
+      "1 tbsp dill (tzatziki)",
+      "2 tbsp olive oil (tzatziki)",
+      "1 tbsp lemon juice (tzatziki)",
+      "Salt and pepper (tzatziki)"
+    ],
+    "method": [
+      "Cook the beef with all the spices along with the tomatoes and garlic cloves at 200°C for 40 minutes",
+      "Mix the tzatziki ingredients together (yogurt, grated cucumber, roasted garlic, herbs, lemon, oil)",
+      "Warm your flatbreads for a couple of minutes",
+      "Load up with tzatziki, beef and veg, wrap and serve"
+    ],
+    "macros": {
+      "calories": 650,
+      "protein": 48,
+      "carbs": 45,
+      "fat": 27
+    },
+    "ingredientTags": ["beef", "flatbread", "greek yogurt", "cucumber", "tomatoes"]
+  },
+  {
+    "id": "oreo-mug-cake",
+    "name": "Oreo Mug Cake",
+    "ingredients": [
+      "4 Oreos",
+      "60ml milk",
+      "1 tbsp plain flour",
+      "1 tbsp cocoa powder",
+      "1 tsp sweetener",
+      "½ tsp baking powder"
+    ],
+    "method": [
+      "Pop the Oreos in a mug",
+      "Add the milk and crush everything up",
+      "Add the flour, cocoa powder, sweetener and baking powder",
+      "Mix until smooth",
+      "Microwave for around 45 to 60 seconds",
+      "Let it cool slightly, then enjoy"
+    ],
+    "macros": {
+      "calories": 285,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["oreo", "cocoa powder", "flour", "milk"]
+  },
+  {
+    "id": "stuffed-crust-breakfast-pizza",
+    "name": "Stuffed Crust Breakfast Pizza",
+    "ingredients": [
+      "3 cheese sticks",
+      "1 large low carb tortilla",
+      "1 egg",
+      "60g veggies, chopped",
+      "30g bacon, chopped"
+    ],
+    "method": [
+      "Fold the tortilla into a triangle with the cheese sticks tucked into the edges and secure with toothpicks",
+      "Add your veggies, crack the egg into the middle, then sprinkle over the bacon",
+      "Air fry at 180°C for 12 to 15 minutes until crispy and the egg is cooked through",
+      "Remove toothpicks, slice it up and enjoy"
+    ],
+    "macros": {
+      "calories": 485,
+      "protein": 36,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["eggs", "bacon", "tortilla", "cheese sticks"]
   }
 ]
