@@ -765,5 +765,154 @@
       "fat": 0
     },
     "ingredientTags": ["eggs", "bacon", "tortilla", "cheese sticks"]
+  },
+  {
+    "id": "protein-chicken-pepperoni-pizza",
+    "name": "Protein Chicken Pepperoni Pizza",
+    "ingredients": [
+      "450g chicken mince (crust)",
+      "2 large eggs (crust)",
+      "50g grated parmesan (crust)",
+      "1 tsp garlic powder (crust)",
+      "1 tsp Italian seasoning (crust)",
+      "½ tsp salt (crust)",
+      "½ tsp black pepper (crust)",
+      "120g pizza sauce (topping)",
+      "100g grated mozzarella (topping)",
+      "20 turkey pepperoni slices (topping)"
+    ],
+    "method": [
+      "Preheat oven to 200°C and line a baking tray with baking paper",
+      "Mix chicken mince, eggs, parmesan, garlic powder, Italian seasoning, salt and pepper until fully combined",
+      "Press onto the tray into a thin circle or rectangle",
+      "Bake for 25 minutes until golden and firm, then let it rest for 5 minutes",
+      "Turn oven up to 230°C, add pizza sauce, mozzarella and pepperoni",
+      "Bake for another 10 minutes until melted and bubbling, then grill for 1 to 2 minutes for extra crispiness",
+      "Let cool slightly, slice into 4 and enjoy"
+    ],
+    "macros": {
+      "calories": 438,
+      "protein": 44,
+      "carbs": 9,
+      "fat": 26
+    },
+    "ingredientTags": ["chicken mince", "parmesan", "mozzarella", "pepperoni", "eggs"]
+  },
+  {
+    "id": "chicken-and-chorizo-one-pan-rice",
+    "name": "Chicken & Chorizo One Pan Rice",
+    "ingredients": [
+      "200g rice",
+      "500g chicken",
+      "100g chorizo",
+      "2 peppers",
+      "2 onions",
+      "300g plum tomatoes",
+      "100g peas",
+      "100g runner beans",
+      "Paprika, garlic, salt and pepper",
+      "500ml water",
+      "2 stock cubes",
+      "Saffron"
+    ],
+    "method": [
+      "Mix everything in a dish",
+      "Pour over the stock",
+      "Cover and bake at 200°C for 50 minutes",
+      "Uncover and bake for a further 10 minutes"
+    ],
+    "macros": {
+      "calories": 501,
+      "protein": 42,
+      "carbs": 48,
+      "fat": 15
+    },
+    "ingredientTags": ["chicken", "chorizo", "rice", "peppers", "tomatoes", "peas"]
+  },
+  {
+    "id": "tortilla-pizza",
+    "name": "Tortilla Pizza",
+    "ingredients": [
+      "2 tortilla wraps",
+      "2-3 eggs",
+      "100g ham",
+      "100g mozzarella",
+      "50g pepperoni",
+      "25-50g pizza sauce"
+    ],
+    "method": [
+      "Mix the eggs, ham, mozzarella, pepperoni and pizza sauce together",
+      "Spread over the tortillas",
+      "Bake in the oven for 20 to 25 minutes",
+      "Grill for a further 5 minutes until golden"
+    ],
+    "macros": {
+      "calories": 310,
+      "protein": 20,
+      "carbs": 18,
+      "fat": 16
+    },
+    "ingredientTags": ["tortilla", "eggs", "ham", "mozzarella", "pepperoni"]
+  },
+  {
+    "id": "high-protein-yogurt-bowl-dessert",
+    "name": "High Protein Yogurt Bowl Dessert",
+    "ingredients": [
+      "200g 0% Greek yogurt",
+      "110g banana",
+      "15g walnuts",
+      "15g honey",
+      "10g dark chocolate chips",
+      "Cinnamon to taste"
+    ],
+    "method": [
+      "Slice the banana and caramelise in a pan with honey and cinnamon for a few minutes",
+      "Add your yogurt to a bowl",
+      "Top with the caramelised banana, walnuts and chocolate chips",
+      "Eat immediately"
+    ],
+    "macros": {
+      "calories": 410,
+      "protein": 24,
+      "carbs": 47,
+      "fat": 13
+    },
+    "ingredientTags": ["greek yogurt", "banana", "walnuts", "honey", "dark chocolate"]
+  },
+  {
+    "id": "sesame-chicken",
+    "name": "Sesame Chicken",
+    "ingredients": [
+      "500g chicken thighs, chopped",
+      "2 eggs",
+      "60g cornflour",
+      "Large pinch of salt",
+      "60ml ketchup (sauce)",
+      "60ml soy sauce (sauce)",
+      "60ml honey (sauce)",
+      "12g brown sugar (sauce)",
+      "10ml rice vinegar (sauce)",
+      "3 garlic cloves, minced (sauce)",
+      "5ml sesame oil (sauce)",
+      "1 tbsp cornflour mixed with water (sauce)",
+      "Pinch of sesame seeds (sauce)"
+    ],
+    "method": [
+      "Cut the chicken thighs into bite-sized pieces",
+      "Add to a bowl with the eggs, cornflour and salt and mix until well coated",
+      "Air fry or fry the chicken pieces until crispy and golden",
+      "In another pan add the ketchup, soy sauce, honey, brown sugar, rice vinegar, garlic and sesame oil",
+      "Bring to a gentle simmer",
+      "Mix the cornflour with a splash of water and stir into the sauce to thicken",
+      "Add the crispy chicken and toss until coated in the sauce",
+      "Finish with a pinch of sesame seeds"
+    ],
+    "macros": {
+      "calories": 800,
+      "protein": 58,
+      "carbs": 83,
+      "fat": 26
+    },
+    "ingredientTags": ["chicken", "soy sauce", "honey", "sesame", "cornflour", "ketchup"]
   }
 ]
