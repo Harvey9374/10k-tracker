@@ -112,5 +112,169 @@
       "fat": 14
     },
     "ingredientTags": ["chicken", "rice", "broccoli", "peppers", "coconut milk", "curry paste"]
+  },
+  {
+    "id": "slow-cooker-creamy-chicken-orzo",
+    "name": "Slow Cooker Creamy Chicken Orzo",
+    "ingredients": [
+      "700g chicken breast",
+      "300g orzo",
+      "1 jar bolognese sauce (around 500g)",
+      "150g light cream cheese",
+      "80g mozzarella, grated",
+      "300-400g frozen mixed veg",
+      "500ml chicken stock",
+      "2 tbsp tomato purée",
+      "1 tbsp garlic purée",
+      "1 tsp mixed herbs or oregano",
+      "Salt and black pepper"
+    ],
+    "method": [
+      "Add the chicken, bolognese sauce, tomato purée, garlic purée, stock, herbs, salt and pepper to your slow cooker",
+      "Mix well",
+      "Cook on high for 3 to 4 hours, or low for 6 to 7",
+      "Shred the chicken",
+      "Add the orzo, cream cheese, mozzarella and frozen mixed veg",
+      "Mix again",
+      "Put the lid back on and cook on high for another 20 to 30 minutes, stirring once or twice, until the orzo is soft and everything is creamy",
+      "Serve"
+    ],
+    "macros": {
+      "calories": 560,
+      "protein": 53,
+      "carbs": 47,
+      "fat": 15
+    },
+    "ingredientTags": ["chicken", "orzo", "cream cheese", "mozzarella", "mixed veg"]
+  },
+  {
+    "id": "garlic-parmesan-chicken-tenders",
+    "name": "Garlic Parmesan Chicken Tenders",
+    "ingredients": [
+      "300g chicken mini fillets",
+      "1 large egg",
+      "60g cornflakes",
+      "40g salted butter, melted",
+      "1 tsp garlic purée",
+      "1 tbsp parmesan",
+      "Salt",
+      "Pepper",
+      "Paprika",
+      "Dried coriander (optional)"
+    ],
+    "method": [
+      "Crush the cornflakes into crumbs — not dust, you still want a bit of crunch",
+      "Season the chicken with salt, pepper, paprika and coriander if using",
+      "Dip the chicken into the egg, then coat in the crushed cornflakes",
+      "Air fry at 180°C for around 10 minutes until cooked through and crispy",
+      "Mix the melted butter, garlic purée and parmesan together",
+      "Toss the cooked chicken in the garlic parmesan butter",
+      "Serve"
+    ],
+    "macros": {
+      "calories": 545,
+      "protein": 50,
+      "carbs": 29,
+      "fat": 23
+    },
+    "ingredientTags": ["chicken", "cornflakes", "butter", "parmesan", "egg"]
+  },
+  {
+    "id": "salmon-avocado-bowl",
+    "name": "Salmon & Avocado Bowl",
+    "ingredients": [
+      "240g cooked salmon fillets",
+      "70g avocado",
+      "80g 0% fat Greek yoghurt",
+      "Juice of 1 lemon",
+      "100g cucumber",
+      "Salt and pepper",
+      "Hot sauce (optional)",
+      "Fresh dill (optional)"
+    ],
+    "method": [
+      "Flake the salmon into a bowl",
+      "Add the avocado, yoghurt, lemon juice and cucumber",
+      "Season with salt and pepper",
+      "Mix well",
+      "Add hot sauce or dill if you're feeling fancy"
+    ],
+    "macros": {
+      "calories": 278,
+      "protein": 29,
+      "carbs": 6,
+      "fat": 16
+    },
+    "ingredientTags": ["salmon", "avocado", "greek yogurt", "cucumber", "lemon"]
+  },
+  {
+    "id": "high-protein-carrot-cake",
+    "name": "High Protein Carrot Cake",
+    "ingredients": [
+      "170g oats",
+      "95g protein powder",
+      "120g carrots, grated",
+      "125g egg whites",
+      "Flavour drops or stevia",
+      "Almond or vanilla essence",
+      "125ml almond milk",
+      "200g 0% Greek yoghurt",
+      "2 tsp cinnamon",
+      "1 tsp nutmeg",
+      "1 tsp baking powder",
+      "Dash of bicarbonate of soda",
+      "100g 0% Greek yoghurt (frosting)",
+      "100g lighter Philadelphia cream cheese (frosting)",
+      "Vanilla essence (frosting)"
+    ],
+    "method": [
+      "Preheat oven to 180°C",
+      "Add the oats, protein powder, cinnamon, nutmeg, baking powder and bicarbonate of soda to a bowl",
+      "Mix in the grated carrots, egg whites, almond milk, Greek yoghurt and flavouring",
+      "Mix until combined",
+      "Pour into a lined baking dish or cake tin",
+      "Bake for 25 to 30 minutes until cooked through",
+      "Mix together the frosting ingredients and spread over once cooled",
+      "Optional: sprinkle a little sweetener over the top before serving"
+    ],
+    "macros": {
+      "calories": 191,
+      "protein": 19,
+      "carbs": 20,
+      "fat": 4
+    },
+    "ingredientTags": ["oats", "protein powder", "carrot", "egg whites", "greek yogurt", "cream cheese"]
+  },
+  {
+    "id": "slow-cooker-chicken-tikka-masala",
+    "name": "Slow Cooker Chicken Tikka Masala",
+    "ingredients": [
+      "600g chicken breast",
+      "1 red onion, diced",
+      "1 tbsp lazy garlic",
+      "1 tbsp lazy ginger",
+      "3 tbsp tikka masala paste",
+      "500ml tomato passata",
+      "2 tbsp tomato purée",
+      "30g ground almonds",
+      "1 tsp red food colouring",
+      "100ml double cream",
+      "2 microwave basmati rice packets",
+      "Naan bread (optional)"
+    ],
+    "method": [
+      "Throw everything into the slow cooker except the cream and rice",
+      "Mix well",
+      "Cook on low for 6 to 7 hours or high for 3 to 4 hours",
+      "Stir through the double cream just before serving",
+      "Serve with rice"
+    ],
+    "macros": {
+      "calories": 550,
+      "protein": 45,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "tikka masala", "passata", "double cream", "rice", "almonds"]
   }
 ]
