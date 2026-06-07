@@ -1,0 +1,116 @@
+[
+  {
+    "id": "cottage-cheese-protein-pancakes",
+    "name": "Cottage Cheese Protein Pancakes",
+    "ingredients": [
+      "200g cottage cheese",
+      "3 large eggs",
+      "70ml milk",
+      "1 tsp vanilla extract",
+      "1 tbsp maple syrup",
+      "1 tbsp melted butter",
+      "130g plain flour",
+      "1 tsp baking powder",
+      "¼ tsp baking soda",
+      "¼ tsp salt",
+      "Fresh blueberries",
+      "30g Vanilla Whey Protein"
+    ],
+    "method": [
+      "In a large bowl whisk together the cottage cheese, eggs, milk, vanilla extract, maple syrup and melted butter until smooth",
+      "In a separate bowl mix the flour, baking powder, baking soda, salt and the whey protein",
+      "Gently fold the dry ingredients into the wet mix. A few lumps are fine",
+      "Carefully fold in the blueberries",
+      "Let the batter rest for 5 to 10 minutes",
+      "Heat a pan over medium-low heat with a little butter",
+      "Pour roughly a quarter of the mix per pancake",
+      "Cook until bubbles form and the edges set, then flip and cook for another 1 to 2 minutes",
+      "Stack them up, add butter, drizzle maple syrup and enjoy"
+    ],
+    "macros": {
+      "calories": 462,
+      "protein": 39,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["cottage cheese", "eggs", "blueberries", "whey protein", "flour"]
+  },
+  {
+    "id": "cheesy-crispy-smashed-potato-bites",
+    "name": "Cheesy Crispy Smashed Potato Bites",
+    "ingredients": [
+      "500g baby potatoes",
+      "200g cottage cheese",
+      "80g low fat grated mozzarella",
+      "10g parmesan",
+      "Olive oil spray",
+      "1 tsp garlic powder",
+      "1 tsp oregano",
+      "Chilli flakes",
+      "Salt",
+      "Black pepper",
+      "150g 0% Greek yogurt (sauce)",
+      "100g cottage cheese (sauce)",
+      "2 tsp lazy garlic (sauce)",
+      "Juice of ½ lemon (sauce)",
+      "Salt (sauce)"
+    ],
+    "method": [
+      "Boil the potatoes for 15 to 20 minutes until soft",
+      "Line a baking tray with baking paper",
+      "Add small piles of cottage cheese, mozzarella and parmesan to the tray",
+      "Place the squashed potatoes on top, or squash them down with a glass",
+      "Spray with olive oil",
+      "Season with garlic powder, oregano, chilli flakes, salt and pepper",
+      "Bake at 200°C for 25 to 30 minutes until golden and crispy",
+      "Mix all sauce ingredients together in a bowl",
+      "Serve with the crispy potato bites"
+    ],
+    "macros": {
+      "calories": 158,
+      "protein": 12,
+      "carbs": 17,
+      "fat": 4
+    },
+    "ingredientTags": ["potato", "cottage cheese", "mozzarella", "parmesan", "greek yogurt"]
+  },
+  {
+    "id": "one-tray-red-thai-chicken-rice-bake",
+    "name": "One Tray Red Thai Chicken Rice Bake",
+    "ingredients": [
+      "180g white rice",
+      "550g chicken breast, diced",
+      "200g broccoli",
+      "2 peppers, diced",
+      "110g green beans, chopped",
+      "60g red Thai curry paste",
+      "1 tin reduced fat coconut milk",
+      "15g ginger purée",
+      "4 tsp lazy garlic",
+      "1 tbsp smoked paprika",
+      "1 tbsp black pepper",
+      "½ tbsp chilli flakes",
+      "½ tbsp salt",
+      "Fresh coriander (optional)",
+      "Fresh chilli (optional)"
+    ],
+    "method": [
+      "Add the rice, chicken, broccoli, peppers and green beans to a large baking dish",
+      "Add the curry paste, ginger, garlic and seasonings",
+      "Pour over the coconut milk and enough water to cover the rice",
+      "Mix well",
+      "Cover tightly with foil",
+      "Bake at 190°C for 45 minutes",
+      "Remove the foil and bake for a further 5 minutes",
+      "Garnish with coriander and chilli if using",
+      "Serve"
+    ],
+    "macros": {
+      "calories": 573,
+      "protein": 50,
+      "carbs": 61,
+      "fat": 14
+    },
+    "ingredientTags": ["chicken", "rice", "broccoli", "peppers", "coconut milk", "curry paste"]
+  }
+]
