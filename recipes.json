@@ -448,5 +448,171 @@
       "fat": 0
     },
     "ingredientTags": ["chicken", "noodles", "soy sauce", "honey", "sriracha", "ginger"]
+  },
+  {
+    "id": "high-protein-taco-beef-pasta-bake",
+    "name": "High Protein Taco Beef Pasta Bake",
+    "ingredients": [
+      "500g 5% lean beef mince",
+      "200g bowtie pasta (dry)",
+      "400g chopped tomatoes (with herbs)",
+      "30g taco seasoning",
+      "160g light cream cheese",
+      "80g light mozzarella",
+      "2-3 red peppers, chopped",
+      "1 medium onion, diced",
+      "Splash of water"
+    ],
+    "method": [
+      "Preheat oven to 180°C",
+      "Chuck everything into a big baking dish",
+      "Add a small splash of water and mix it all together",
+      "Cover with foil",
+      "Bake for 45 minutes",
+      "Take foil off and bake for another 5 minutes",
+      "Let it sit for a few minutes before serving"
+    ],
+    "macros": {
+      "calories": 554,
+      "protein": 46,
+      "carbs": 56,
+      "fat": 16
+    },
+    "ingredientTags": ["beef mince", "pasta", "cream cheese", "mozzarella", "peppers", "taco seasoning"]
+  },
+  {
+    "id": "easy-protein-cinnamon-buns",
+    "name": "Easy Protein Cinnamon Buns",
+    "ingredients": [
+      "300g bread flour",
+      "1.5 tsp baking powder",
+      "0.5 tsp baking soda",
+      "50g 0 cal sweetener",
+      "Pinch of salt",
+      "400g 0% Greek yoghurt",
+      "1 egg yolk",
+      "30g light butter",
+      "30-50g brown stevia (filling)",
+      "Cinnamon, generous amount (filling)",
+      "15g light butter (for tray)",
+      "45g light cream cheese (frosting)",
+      "45g vanilla protein powder (frosting)",
+      "1 tsp vanilla extract (frosting)",
+      "Sweetener to taste (frosting)",
+      "Splash of water (frosting)"
+    ],
+    "method": [
+      "Mix the flour, baking powder, baking soda, sweetener and salt",
+      "Add the yoghurt and egg yolk and mix until it forms a dough",
+      "Knead into a smooth ball",
+      "Roll it out flat",
+      "Spread the butter over it",
+      "Sprinkle cinnamon and brown stevia all over",
+      "Roll it up into a log and slice into buns",
+      "Grease your tray with butter and place the buns in",
+      "Bake at 180°C for 25 to 30 minutes",
+      "Mix the frosting ingredients with a splash of water until thick",
+      "Drizzle frosting all over once baked"
+    ],
+    "macros": {
+      "calories": 308,
+      "protein": 20,
+      "carbs": 39,
+      "fat": 7
+    },
+    "ingredientTags": ["flour", "greek yogurt", "protein powder", "cream cheese", "cinnamon"]
+  },
+  {
+    "id": "chicken-and-rice-bake",
+    "name": "Chicken & Rice Bake",
+    "ingredients": [
+      "200g rice",
+      "150g peas",
+      "150g carrots, finely chopped or grated",
+      "150g onion",
+      "400ml chicken stock",
+      "1 tbsp olive oil",
+      "1 tbsp garlic paste",
+      "Turmeric, cumin, paprika, salt and pepper",
+      "250g chicken breast",
+      "250g skinless chicken thighs",
+      "100g 0% Greek yoghurt",
+      "1 tbsp curry paste",
+      "Paprika, cumin, salt and pepper (for chicken)",
+      "100g tomatoes (salad)",
+      "50g red onion (salad)",
+      "Coriander (salad)",
+      "1 lime (salad)",
+      "Salt (salad)"
+    ],
+    "method": [
+      "Mix all the rice ingredients in a large oven dish",
+      "Chop chicken, mix with yoghurt, curry paste and spices",
+      "Place chicken on top of the rice with skewers",
+      "Cover and cook at 180°C for 45 minutes",
+      "Remove cover and cook for another 5 to 10 minutes",
+      "Mix salad ingredients and serve on the side"
+    ],
+    "macros": {
+      "calories": 0,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "rice", "peas", "carrots", "greek yogurt", "curry paste"]
+  },
+  {
+    "id": "bacon-and-egg-tortilla-cups",
+    "name": "Bacon & Egg Tortilla Cups",
+    "ingredients": [
+      "2 small tortillas",
+      "3 eggs",
+      "2 rashers cooked bacon, chopped",
+      "Grated cheddar cheese",
+      "Salt and pepper"
+    ],
+    "method": [
+      "Push your tortillas into a muffin tray to make little bowls",
+      "In a bowl mix the eggs, bacon, cheese, salt and pepper",
+      "Mix well",
+      "Pour the mix into your tortilla cups",
+      "Bake at 180°C for 18 to 20 minutes"
+    ],
+    "macros": {
+      "calories": 620,
+      "protein": 48,
+      "carbs": 34,
+      "fat": 33
+    },
+    "ingredientTags": ["eggs", "bacon", "tortilla", "cheddar"]
+  },
+  {
+    "id": "salmon-protein-quiche",
+    "name": "Salmon Protein Quiche",
+    "ingredients": [
+      "1 high protein wrap",
+      "70g smoked salmon",
+      "Handful of fresh dill, chopped",
+      "3 eggs",
+      "Salt and pepper",
+      "Sweet chilli jam (optional)"
+    ],
+    "method": [
+      "Preheat oven to 180°C",
+      "Push the wrap into a cake tin or bowl to form a quiche shell",
+      "Add the smoked salmon and chopped dill",
+      "Crack in the eggs",
+      "Season with salt and pepper",
+      "Give it a gentle mix with a fork",
+      "Bake for about 15 minutes until set",
+      "Let cool slightly, then add sweet chilli jam on top if using"
+    ],
+    "macros": {
+      "calories": 500,
+      "protein": 43,
+      "carbs": 31,
+      "fat": 22
+    },
+    "ingredientTags": ["salmon", "eggs", "wrap", "dill"]
   }
 ]
