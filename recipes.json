@@ -914,5 +914,162 @@
       "fat": 26
     },
     "ingredientTags": ["chicken", "soy sauce", "honey", "sesame", "cornflour", "ketchup"]
+  },
+  {
+    "id": "high-protein-wrap-quiche",
+    "name": "High Protein Wrap Quiche",
+    "ingredients": [
+      "1 high protein wrap",
+      "3 medium eggs",
+      "45g feta",
+      "40g spinach",
+      "100g low fat cottage cheese",
+      "Salt",
+      "Pepper",
+      "Garlic granules"
+    ],
+    "method": [
+      "Crack the eggs into a bowl",
+      "Add the cottage cheese",
+      "Season with salt, pepper and a generous shake of garlic granules",
+      "Mix well",
+      "Lay the wrap into a baking dish",
+      "Add spinach",
+      "Pour the egg mixture over",
+      "Sprinkle the feta on top",
+      "Bake at 180°C for 20 minutes until set and slightly golden"
+    ],
+    "macros": {
+      "calories": 610,
+      "protein": 53,
+      "carbs": 25,
+      "fat": 32
+    },
+    "ingredientTags": ["eggs", "feta", "spinach", "cottage cheese", "wrap"]
+  },
+  {
+    "id": "one-tray-peri-peri-chicken-pasta",
+    "name": "One Tray Peri Peri Chicken Pasta",
+    "ingredients": [
+      "200g pasta (dry weight)",
+      "600g diced chicken breast",
+      "80g grated mozzarella",
+      "1 onion",
+      "2 peppers",
+      "1 packet peri peri seasoning",
+      "1 tin chopped tomatoes (400g)",
+      "125g peri peri sauce",
+      "Salt and pepper"
+    ],
+    "method": [
+      "Preheat oven to 190°C",
+      "Dice chicken and veg",
+      "Mix everything except the mozzarella in a large oven dish",
+      "Season and stir well",
+      "Top with mozzarella",
+      "Cover and bake for 45 minutes",
+      "Uncover for 5 minutes",
+      "Rest for 5 to 10 minutes",
+      "Serve"
+    ],
+    "macros": {
+      "calories": 532,
+      "protein": 50,
+      "carbs": 50,
+      "fat": 13
+    },
+    "ingredientTags": ["chicken", "pasta", "mozzarella", "peppers", "peri peri"]
+  },
+  {
+    "id": "buffalo-chicken-burrito",
+    "name": "Buffalo Chicken Burrito",
+    "ingredients": [
+      "350g chicken breast",
+      "20g low fat cheese",
+      "2 tortilla wraps",
+      "2 tbsp cornflour",
+      "2 tsp Cajun seasoning",
+      "4 tbsp hot sauce (buffalo sauce)",
+      "1 tsp low fat butter (buffalo sauce)",
+      "1 tsp honey (buffalo sauce)",
+      "Cabbage (coleslaw)",
+      "Carrot (coleslaw)",
+      "Onion (coleslaw)",
+      "4 tbsp low fat mayo (coleslaw)",
+      "1 garlic clove (coleslaw)",
+      "½ tsp onion powder (coleslaw)",
+      "½ tsp dried dill (coleslaw)",
+      "Salt and pepper"
+    ],
+    "method": [
+      "Slice chicken into chunks, coat with cornflour and Cajun seasoning",
+      "Air fry at 200°C for 12 minutes, or bake at 200°C for 20 to 25 minutes flipping halfway",
+      "While chicken cooks, finely slice the onion and cabbage, grate the carrot, then mix everything together for the slaw",
+      "Heat buffalo sauce ingredients in a pan, simmer for a couple of minutes, then toss in the cooked chicken until coated",
+      "Add chicken, cheese and coleslaw to your wrap, roll tightly and toast if you want a bit of crunch"
+    ],
+    "macros": {
+      "calories": 0,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "tortilla", "hot sauce", "coleslaw", "cajun"]
+  },
+  {
+    "id": "protein-blueberry-donut-holes",
+    "name": "Protein Blueberry Donut Holes",
+    "ingredients": [
+      "120g almond flour",
+      "240g plain Greek yoghurt",
+      "1 tsp baking powder",
+      "50g blueberries",
+      "30-40g sugar free white chocolate chips, melted (for drizzle)"
+    ],
+    "method": [
+      "Mix the almond flour, baking powder and Greek yoghurt in a bowl, knead until smooth and firm — add more almond flour if sticky",
+      "Gently fold in the blueberries and roll into small golf ball-sized balls",
+      "Spray lightly with oil and air fry at 180°C for 8 to 10 minutes until golden",
+      "Drizzle the melted white chocolate on top and let it set"
+    ],
+    "macros": {
+      "calories": 0,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["almond flour", "greek yogurt", "blueberries", "white chocolate"]
+  },
+  {
+    "id": "healthy-high-protein-breakfast-bagels",
+    "name": "Healthy High Protein Breakfast Bagels",
+    "ingredients": [
+      "400g sliced bacon",
+      "16 eggs",
+      "10g freshly grated parmesan",
+      "1 tsp salt",
+      "1 tsp onion and garlic powder",
+      "400g low fat blended cottage cheese",
+      "8 toasted bagels",
+      "25g sriracha or hot sauce (optional)",
+      "8 cheddar cheese slices"
+    ],
+    "method": [
+      "Cook your bacon until crispy",
+      "Crack 16 eggs into a large bowl",
+      "Add the blended cottage cheese, parmesan, salt and onion and garlic powder",
+      "Mix well",
+      "Pour enough of the egg mix into a frying pan to cover the bottom, add a lid and fry for about 2 minutes",
+      "Fold into a pocket and set aside",
+      "Toast your bagels",
+      "Spread sriracha on the bagel, add an egg pocket, then the bacon, top with a cheddar slice and close"
+    ],
+    "macros": {
+      "calories": 513,
+      "protein": 40,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["eggs", "bacon", "bagel", "cottage cheese", "cheddar"]
   }
 ]
