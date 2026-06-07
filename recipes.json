@@ -1219,5 +1219,97 @@
       "fat": 13
     },
     "ingredientTags": ["chicken", "pasta", "mozzarella", "cream cheese", "peppers", "fajita"]
+  },
+  {
+    "id": "doritos-crusted-chicken-tenders",
+    "name": "Doritos Crusted Chicken Tenders",
+    "ingredients": [
+      "600g chicken tenders or chicken breast sliced into strips",
+      "200g chilli heatwave Doritos, crushed",
+      "50g plain flour",
+      "2 eggs, beaten",
+      "Oil spray",
+      "1½ tsp smoked paprika",
+      "1 tsp salt",
+      "1 tsp cayenne pepper",
+      "½ tsp onion powder",
+      "½ tsp garlic powder",
+      "½ tsp black pepper"
+    ],
+    "method": [
+      "Preheat oven to 200°C or preheat the air fryer",
+      "Crush the Doritos until they resemble chunky breadcrumbs, not dust",
+      "Set up three bowls: flour mixed with all seasoning, beaten eggs, crushed Doritos",
+      "Lightly season the chicken with a pinch of salt, then coat each piece in flour, then egg, then Doritos pressing them on firmly",
+      "Place on a rack over a tray or in the air fryer and spray with oil",
+      "Air fry at 200°C for 10 to 12 minutes, flipping halfway and spraying again — or oven bake at 200°C for 15 to 18 minutes",
+      "Cook until golden and crispy on the outside and cooked through"
+    ],
+    "macros": {
+      "calories": 515,
+      "protein": 31,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "doritos", "eggs", "flour", "cornflakes"]
+  },
+  {
+    "id": "strawberry-frozen-yoghurt-cheesecake",
+    "name": "Strawberry Frozen Yoghurt Cheesecake",
+    "ingredients": [
+      "150g strawberries",
+      "80g Greek yoghurt",
+      "80ml milk",
+      "Drizzle of honey",
+      "Crumbled digestive biscuit",
+      "Coconut (optional)"
+    ],
+    "method": [
+      "Blend the strawberries, yoghurt and milk",
+      "Freeze",
+      "Add to the Ninja Creami and select Frozen Yoghurt",
+      "Add honey and crumbled digestive biscuit",
+      "Mix again in the Creami"
+    ],
+    "macros": {
+      "calories": 0,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["strawberries", "greek yogurt", "milk", "honey", "digestive"]
+  },
+  {
+    "id": "bang-bang-chicken-sliders",
+    "name": "Bang Bang Chicken Sliders",
+    "ingredients": [
+      "450g chicken breast",
+      "Salt, garlic powder and black pepper",
+      "60g plain flour",
+      "2 eggs",
+      "60g cornflakes, crushed",
+      "60ml sweet chilli sauce",
+      "120g 0% Greek yoghurt (bang bang sauce)",
+      "45g light mayo (bang bang sauce)",
+      "30ml sweet chilli sauce (bang bang sauce)",
+      "Sriracha to taste (bang bang sauce, optional)",
+      "150g coleslaw mix",
+      "4 slider buns"
+    ],
+    "method": [
+      "Season chicken, coat in flour, then egg, then crushed cornflakes",
+      "Air fry at 190°C for 14 to 16 minutes, flipping halfway",
+      "Toss the cooked chicken in sweet chilli sauce",
+      "Mix bang bang sauce ingredients together",
+      "Mix slaw with a bit of the sauce",
+      "Build sliders and serve"
+    ],
+    "macros": {
+      "calories": 375,
+      "protein": 33,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "cornflakes", "sweet chilli", "greek yogurt", "coleslaw", "slider buns"]
   }
 ]
