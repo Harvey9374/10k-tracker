@@ -1071,5 +1071,153 @@
       "fat": 0
     },
     "ingredientTags": ["eggs", "bacon", "bagel", "cottage cheese", "cheddar"]
+  },
+  {
+    "id": "big-mac-fakeaway",
+    "name": "Big Mac Fakeaway",
+    "ingredients": [
+      "Beef mince (for 2 patties)",
+      "1 burger bun",
+      "1 cheese slice",
+      "Lettuce",
+      "Salt and garlic powder",
+      "Ketchup (sauce)",
+      "Mayo (sauce)",
+      "Mustard (sauce)",
+      "Gherkin juice (sauce)",
+      "Sliced gherkins (sauce)",
+      "Diced onions (sauce)"
+    ],
+    "method": [
+      "Mix sauce ingredients together (ketchup, mayo, mustard, gherkin juice, sliced gherkins and diced onions)",
+      "Flatten two patties, season with salt and garlic powder and fry for 2 minutes each side, adding cheese on top while the second side cooks",
+      "Toast your buns for 1 to 2 minutes",
+      "Stack: bun, sauce, lettuce, patty — repeat — gherkins on top"
+    ],
+    "macros": {
+      "calories": 504,
+      "protein": 36,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["beef mince", "burger bun", "cheese", "gherkins", "lettuce"]
+  },
+  {
+    "id": "ninja-creami-chocolate-protein-ice-cream",
+    "name": "Ninja Creami Chocolate Protein Ice Cream",
+    "ingredients": [
+      "1 chocolate protein shake (350-400ml)",
+      "Sweetener to taste",
+      "10g cocoa powder",
+      "Pinch of salt",
+      "1g xanthan gum (about ¼ tsp)",
+      "10g nuts of choice (mix-in)",
+      "10g mini marshmallows (mix-in)"
+    ],
+    "method": [
+      "Add all base ingredients to a blender and blitz until smooth",
+      "Pour into your Ninja Creami pint and freeze for at least 16 hours",
+      "Run the pint under hot water for about 60 seconds",
+      "Spin on Lite Ice Cream setting",
+      "If it's powdery, hit Re-spin",
+      "Make a hole down the middle with a butter knife and add the nuts and marshmallows",
+      "Run the Mix-In cycle",
+      "Eat straight from the tub"
+    ],
+    "macros": {
+      "calories": 273,
+      "protein": 34,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["protein shake", "cocoa powder", "marshmallows", "nuts"]
+  },
+  {
+    "id": "vanilla-biscoff-protein-ice-cream",
+    "name": "Vanilla Biscoff Protein Ice Cream",
+    "ingredients": [
+      "300ml semi skimmed milk",
+      "1 scoop vanilla protein powder",
+      "10-15g custard powder",
+      "Sweetener to taste",
+      "Crushed Biscoff biscuit (mix-in)",
+      "Melted Biscoff spread (drizzle)"
+    ],
+    "method": [
+      "Mix milk, protein powder, custard powder and sweetener together",
+      "Freeze for 24 hours",
+      "Spin in the Ninja Creami, then re-spin with a splash of milk",
+      "Mix in crushed Biscoff biscuit and drizzle melted Biscoff spread on top"
+    ],
+    "macros": {
+      "calories": 140,
+      "protein": 10,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["protein powder", "milk", "biscoff", "custard powder"]
+  },
+  {
+    "id": "protein-breakfast-boats",
+    "name": "Protein Breakfast Boats",
+    "ingredients": [
+      "6 medium eggs",
+      "160g diced ham",
+      "150g plum tomatoes",
+      "150g spinach",
+      "Taco boats",
+      "Taco seasoning",
+      "300g low fat cottage cheese",
+      "150g salsa",
+      "136g low fat cheddar"
+    ],
+    "method": [
+      "Preheat oven to 180°C",
+      "Mix everything except the taco boats and cheese",
+      "Fill the boats evenly",
+      "Top with cheese",
+      "Bake for 20 to 25 minutes"
+    ],
+    "macros": {
+      "calories": 260,
+      "protein": 21,
+      "carbs": 24,
+      "fat": 10
+    },
+    "ingredientTags": ["eggs", "ham", "spinach", "cottage cheese", "cheddar", "salsa"]
+  },
+  {
+    "id": "cheesy-chicken-fajita-pasta-bake",
+    "name": "Cheesy Chicken Fajita Pasta Bake",
+    "ingredients": [
+      "200g dry pasta",
+      "650g chicken breast",
+      "80g grated mozzarella",
+      "1 onion",
+      "2 peppers",
+      "200g low-fat cream cheese",
+      "4 tsp lazy garlic",
+      "1 fajita seasoning packet",
+      "1 tin chopped tomatoes (400g)",
+      "Salt and pepper",
+      "100ml water"
+    ],
+    "method": [
+      "Preheat oven to 190°C",
+      "Dice the chicken, onion and peppers",
+      "Add everything except the mozzarella into a large ovenproof dish",
+      "Rinse out the chopped tomato tin with 100ml water and pour it in, then mix everything well",
+      "Sprinkle the mozzarella evenly over the top",
+      "Cover with foil and bake for 45 minutes at 190°C, then uncover and bake for another 5 minutes",
+      "Rest for 5 to 10 minutes so the sauce thickens and the pasta soaks everything up",
+      "Serve"
+    ],
+    "macros": {
+      "calories": 551,
+      "protein": 57,
+      "carbs": 55,
+      "fat": 13
+    },
+    "ingredientTags": ["chicken", "pasta", "mozzarella", "cream cheese", "peppers", "fajita"]
   }
 ]
