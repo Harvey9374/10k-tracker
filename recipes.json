@@ -276,5 +276,177 @@
       "fat": 0
     },
     "ingredientTags": ["chicken", "tikka masala", "passata", "double cream", "rice", "almonds"]
+  },
+  {
+    "id": "high-protein-cheesecake-overnight-weetabix",
+    "name": "High Protein Cheesecake Overnight Weetabix",
+    "ingredients": [
+      "2 Weetabix (40g)",
+      "150g 0% Greek yoghurt",
+      "30g vanilla whey protein",
+      "10g chia seeds",
+      "15g reduced sugar jam",
+      "30-50ml milk",
+      "Vanilla extract (optional)",
+      "Sweetener (optional)",
+      "Cinnamon (optional)"
+    ],
+    "method": [
+      "Crush the Weetabix into a bowl or jar",
+      "Add a splash of milk and press it down",
+      "Mix the yoghurt and protein powder together until smooth",
+      "Spread over the Weetabix base",
+      "Sprinkle over the chia seeds",
+      "Add the jam on top",
+      "Leave in the fridge overnight"
+    ],
+    "macros": {
+      "calories": 440,
+      "protein": 42,
+      "carbs": 48,
+      "fat": 9
+    },
+    "ingredientTags": ["weetabix", "greek yogurt", "whey protein", "chia seeds", "jam"]
+  },
+  {
+    "id": "creamy-garlic-chicken-wraps",
+    "name": "Creamy Garlic Chicken Wraps",
+    "ingredients": [
+      "500g chicken breast",
+      "4 medium wraps",
+      "80g low fat mozzarella",
+      "120g low fat cream cheese",
+      "20g parmesan",
+      "60g spinach",
+      "3 garlic cloves",
+      "80ml semi skimmed milk",
+      "1 tsp paprika",
+      "1 tsp garlic powder",
+      "1 tsp onion powder",
+      "1 tsp oregano",
+      "Salt and black pepper",
+      "Spray oil"
+    ],
+    "method": [
+      "Chop chicken breast into chunks",
+      "Season with paprika, garlic powder, onion powder, oregano, salt and pepper",
+      "Mix well",
+      "Fry chicken in a pan for around 6 to 8 minutes until cooked through",
+      "Add grated garlic and cook for 30 seconds",
+      "Add low fat cream cheese and stir while it melts",
+      "Add milk and mix until smooth",
+      "Add parmesan and spinach",
+      "Cook until the spinach wilts",
+      "Add mozzarella to the middle of your wraps",
+      "Add the creamy chicken filling",
+      "Wrap tightly",
+      "Spray with oil and sprinkle oregano on top",
+      "Air fry at 200°C for 6 to 8 minutes until golden and crispy"
+    ],
+    "macros": {
+      "calories": 430,
+      "protein": 40,
+      "carbs": 27,
+      "fat": 14
+    },
+    "ingredientTags": ["chicken", "wrap", "mozzarella", "cream cheese", "spinach", "garlic"]
+  },
+  {
+    "id": "tuna-and-egg-salad",
+    "name": "Tuna & Egg Salad",
+    "ingredients": [
+      "2 tins tuna in water, drained",
+      "4 eggs",
+      "100g light cream cheese",
+      "50g gherkins, chopped",
+      "50g red onion, finely chopped",
+      "Fresh dill",
+      "Juice of 1 lemon",
+      "Hot sauce (optional)"
+    ],
+    "method": [
+      "Boil your eggs for around 7 minutes",
+      "Peel and chop them up",
+      "Throw everything into a bowl",
+      "Mix well",
+      "Serve in sandwiches, wraps, potatoes or eat as is"
+    ],
+    "macros": {
+      "calories": 230,
+      "protein": 27,
+      "carbs": 3,
+      "fat": 11
+    },
+    "ingredientTags": ["tuna", "eggs", "cream cheese", "gherkins", "red onion"]
+  },
+  {
+    "id": "chicken-tacos",
+    "name": "Chicken Tacos",
+    "ingredients": [
+      "900g chicken thighs",
+      "10 mini tortillas",
+      "1 pepper",
+      "1 onion",
+      "1 tin black beans (240g drained)",
+      "100g sweetcorn",
+      "1 packet taco seasoning",
+      "100g mozzarella cheese",
+      "Garlic powder",
+      "Salt and pepper",
+      "Spray oil",
+      "0% Greek yoghurt (optional)",
+      "Salsa (optional)",
+      "Coriander (optional)"
+    ],
+    "method": [
+      "Slice chicken thighs into thin strips and season with 2/3 of the taco seasoning, garlic powder, salt and pepper",
+      "Fry the chicken until cooked through and slightly crispy",
+      "Dice the onion and pepper and fry in the same pan",
+      "Add the sweetcorn and black beans, then add the rest of the taco seasoning",
+      "Add the chicken back in and mix everything together",
+      "Spray one side of each mini tortilla with oil",
+      "Fill each tortilla with the taco mix, fold in half and stack upright in a baking dish",
+      "Sprinkle each taco with mozzarella",
+      "Bake at 180°C for 12 to 15 minutes until golden and crispy",
+      "Top with Greek yoghurt, salsa and coriander"
+    ],
+    "macros": {
+      "calories": 268,
+      "protein": 26,
+      "carbs": 24,
+      "fat": 7
+    },
+    "ingredientTags": ["chicken", "tortilla", "black beans", "sweetcorn", "mozzarella"]
+  },
+  {
+    "id": "slow-cooker-honey-sriracha-chicken-noodles",
+    "name": "Slow Cooker Honey Sriracha Chicken Noodles",
+    "ingredients": [
+      "400g chicken thighs",
+      "7 tbsp dark soy sauce",
+      "7 tbsp honey",
+      "1 tbsp cornflour mixed with 1 tbsp water",
+      "Garlic (generous amount)",
+      "4 tbsp sriracha",
+      "100ml chicken stock",
+      "200g noodles",
+      "1 tbsp hoisin sauce",
+      "1 tbsp fresh ginger",
+      "Spring onions to top"
+    ],
+    "method": [
+      "Throw everything except the noodles and spring onions into the slow cooker",
+      "Cook on high for 3 to 4 hours or low for 7 to 8 hours",
+      "Shred the chicken slightly and stir it all together",
+      "Cook your noodles separately and toss them in",
+      "Top with spring onions and serve"
+    ],
+    "macros": {
+      "calories": 500,
+      "protein": 0,
+      "carbs": 0,
+      "fat": 0
+    },
+    "ingredientTags": ["chicken", "noodles", "soy sauce", "honey", "sriracha", "ginger"]
   }
 ]
