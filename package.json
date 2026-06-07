@@ -1,0 +1,12 @@
+{
+  "name": "10k-tracker-scripts",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "extract": "node extract-recipes.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.54.0"
+  }
+}
