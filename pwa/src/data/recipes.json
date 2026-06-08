@@ -1563,6 +1563,40 @@
     "mealType": "Pudding"
   },
   {
+    "id": "biscoff-overnight-weetabix",
+    "name": "Biscoff Overnight Weetabix",
+    "mealType": "Breakfast",
+    "ingredients": [
+      "2 Weetabix",
+      "120ml milk",
+      "100g Greek yoghurt",
+      "20g vanilla protein powder",
+      "1 tbsp melted Biscoff spread",
+      "1 Biscoff biscuit, crushed"
+    ],
+    "method": [
+      "Add the Weetabix to a dish and pour over the milk",
+      "Leave for a few seconds, then mash together until softened",
+      "Mix the Greek yoghurt and protein powder until smooth",
+      "Spread the yoghurt mixture over the Weetabix layer",
+      "Top with melted Biscoff and a crushed Biscoff biscuit",
+      "Refrigerate overnight for best results, or enjoy straight away"
+    ],
+    "macros": {
+      "calories": 453,
+      "protein": 36,
+      "carbs": 53,
+      "fat": 11
+    },
+    "ingredientTags": [
+      "weetabix",
+      "greek yogurt",
+      "protein powder",
+      "biscoff",
+      "milk"
+    ]
+  },
+  {
     "id": "bang-bang-chicken-sliders",
     "name": "Bang Bang Chicken Sliders",
     "ingredients": [
