@@ -1,6 +1,6 @@
-import type { Phase } from '../types'
+import type { Phase, CalibratedZones } from '../types'
 
-export const PLAN_START = new Date('2026-05-26')
+export const PLAN_START = new Date('2026-05-25')
 export const RACE_DATE = new Date('2027-05-15')
 export const TOTAL_WEEKS = 52
 
@@ -61,7 +61,7 @@ export const PHASES: Phase[] = [
       items: [
         'Warm-up: 5 min walk + 5 min dynamic movement',
         'Easy run: 40–50 mins (Weeks 1–6) / 50–60 mins (Weeks 7–12)',
-        'Strength circuit: 15–20 mins',
+        'Strength circuit — 1–2 rounds post-run: 15–20 mins',
         'Cool-down: 5 min walk + calf stretch',
       ],
     },
@@ -69,7 +69,7 @@ export const PHASES: Phase[] = [
       title: 'Strength + Conditioning (90 mins)',
       items: [
         'Warm-up: 5 min ropeless skip at easy pace',
-        'Strength session: 50–60 mins',
+        'Strength session — 3 rounds full circuit: 50–60 mins',
         'Skip finisher: 10 mins varied pace',
         'Cool-down and stretch: 10 mins',
       ],
@@ -119,7 +119,31 @@ export const PHASES: Phase[] = [
       '  Plank: 45–60 second hold',
       '  Dead bug: 10 reps each side',
       '',
-      '3 rounds total. Rest 60–90 sec between rounds.',
+      'Tuesday (full session): 3 rounds. Monday (post-run finisher): 1–2 rounds. Rest 60–90 sec between rounds.',
+    ],
+    mobilityCircuit: [
+      'Hip flexor stretch (kneeling lunge): 60 sec each side',
+      'Standing hamstring stretch: 60 sec each side',
+      'Calf stretch against wall — straight leg: 60 sec each leg',
+      'Calf stretch against wall — bent knee: 45 sec each leg',
+      'Ankle circles: 10 slow reps each direction',
+    ],
+    recoveryCircuit: [
+      'FOAM ROLLING (60 sec each — roll slowly, pause on tight spots)',
+      '  Calves: ankle to back of knee',
+      '  Shins: knuckles or edge of roller, shin to knee',
+      '  Quads: hip to knee, front of thigh',
+      '  IT band: outer thigh, side-lying position',
+      '',
+      'STATIC STRETCHES (hold still — no bouncing)',
+      '  Seated hamstring stretch: 60 sec each side',
+      '  Pigeon pose (glutes/hip flexors): 90 sec each side',
+      '  Standing quad stretch: 45 sec each side',
+      '',
+      'BREATHING (5 mins)',
+      '  Lie flat, hands on belly',
+      '  Box breathing: 4 sec in — 4 hold — 4 out — 4 hold',
+      '  Repeat 5–8 cycles. Focus on belly rising, not chest.',
     ],
     notes: [
       'Weeks 1–4 skip: 15 mins steady',
@@ -146,7 +170,7 @@ export const PHASES: Phase[] = [
         'Warm-up: 10 mins easy jog',
         'Tempo run: 20–30 mins at 5:40–5:55/km',
         'Cool-down jog: 10 mins easy',
-        'Optional: 15 mins strength accessory work',
+        'Optional: strength accessory work 1–2 rounds post-run (15 mins)',
         '⚡ From Week 18: replace with intervals twice/month',
         '   6 × 800m at 5:10–5:25/km, 90-sec easy jog recovery',
         '   Progress to 8 × 800m by end of Phase 2',
@@ -155,7 +179,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Strength + Skip (90 mins)',
       items: [
-        'Full strength session: 60 mins',
+        'Full strength session — 3–4 rounds: 60 mins',
         'Skip finisher: 15 mins including 5 × 1-min hard efforts',
       ],
     },
@@ -196,7 +220,33 @@ export const PHASES: Phase[] = [
       'Press-ups: max controlled reps',
       'Plank variations: 3 × 45–60 sec',
       '',
-      '3–4 rounds. Rest 60–90 sec between rounds.',
+      'Tuesday (full session): 3–4 rounds. Monday (optional, post-run): 1–2 rounds. Rest 60–90 sec between rounds.',
+    ],
+    mobilityCircuit: [
+      'Hip flexor stretch (kneeling lunge): 60 sec each side',
+      'Deep pigeon pose (glutes/hip flexors): 90 sec each side',
+      'Standing hamstring stretch: 60 sec each side',
+      'Lying IT band cross-body stretch: 60 sec each side',
+      'Calf stretch against wall — straight leg: 60 sec each leg',
+      'Calf stretch against wall — bent knee: 45 sec each leg',
+      'Hip circle rotations (standing): 10 reps each direction',
+    ],
+    recoveryCircuit: [
+      'FOAM ROLLING (60–90 sec each — spend longer on sore spots)',
+      '  Calves: ankle to back of knee',
+      '  Shins: knuckles or edge of roller',
+      '  Quads: hip to knee',
+      '  IT band: outer thigh, side-lying',
+      '  Glutes: seated on roller, cross one leg over',
+      '',
+      'STATIC STRETCHES',
+      '  Seated hamstring: 60 sec each side',
+      '  Pigeon pose: 90 sec each side',
+      '  Hip flexor lunge stretch: 60 sec each side',
+      '',
+      'BREATHING (5 mins)',
+      '  Box breathing: 4 sec in — 4 hold — 4 out — 4 hold',
+      '  5–8 cycles lying flat, focus on belly rising',
     ],
   },
   {
@@ -227,7 +277,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Strength + Easy Run (90 mins)',
       items: [
-        'Strength: 45 mins (maintain, do not increase load)',
+        'Strength — 3 rounds (maintain, do not increase load): 45 mins',
         'Easy run: 20–25 mins after strength',
       ],
     },
@@ -261,6 +311,32 @@ export const PHASES: Phase[] = [
         'Long run: 65–75 mins at easy pace',
       ],
     },
+    strengthCircuit: [
+      'Maintain Phase 2 circuit — do not increase load.',
+      '',
+      'Bulgarian split squat: 12 reps each leg × 15kg (3-sec lower)',
+      'Single-leg RDL: 10 reps each leg × 15kg each hand',
+      'Goblet squat: 15 reps × 15kg, explosive up',
+      'Explosive step-up: 12 reps each leg, 15kg optional',
+      'Single-leg calf raise on step: 20 reps each leg, 15kg held',
+      'Bent-over row: 12 reps × 15kg each',
+      'Press-ups: max controlled reps',
+      'Plank variations: 3 × 45–60 sec',
+      '',
+      '3 rounds. Rest 60–90 sec between rounds.',
+    ],
+    mobilityCircuit: [
+      'SOFT TISSUE WORK',
+      '  Foam roll calves and shins: 60–90 sec each',
+      '  Lacrosse ball or roller on glutes: 2 mins each side',
+      '',
+      'MOBILITY STRETCHES',
+      '  Deep pigeon pose: 90 sec each side',
+      '  Hip flexor lunge with rotation: 60 sec each side',
+      '  Standing hamstring stretch: 60 sec each side',
+      '  Calf stretch — straight leg + bent knee: 60 sec each, each leg',
+      '  Child\'s pose with side reach: 45 sec each side',
+    ],
     notes: [
       'Friday steady runs are your key benchmark — comfortable at 5:15/km means sub-50 is on track.',
     ],
@@ -292,7 +368,7 @@ export const PHASES: Phase[] = [
     tuesday: {
       title: 'Reduced Strength + Easy Run (90 mins)',
       items: [
-        'Strength: 35 mins, reduced load',
+        'Strength — 2 rounds, reduced load: 35 mins',
         'Easy run: 30 mins',
       ],
     },
@@ -323,6 +399,13 @@ export const PHASES: Phase[] = [
         'Easy long run: 60 mins',
       ],
     },
+    mobilityCircuit: [
+      'Gentle hip flexor stretch: 60 sec each side',
+      'Standing hamstring stretch: 45 sec each side',
+      'Calf stretch — straight leg: 60 sec each leg',
+      'Child\'s pose: 60 sec',
+      'Keep it gentle — maintenance only, not deep tissue work',
+    ],
     notes: [
       'Weeks 47–48: Cut volume 30%. Keep all sessions, shorten runs 20–25%. Maintain intensity.',
       'Week 49: Cut volume 50%. Easy runs only (30 min max). One short interval: 5 × 400m at race pace.',
@@ -378,4 +461,23 @@ export function formatTime(totalSeconds: number): string {
 
 export function calcPaceSeconds(distanceKm: number, durationMins: number): number {
   return (durationMins * 60) / distanceKm
+}
+
+export function riegelPredict10K(distanceKm: number, timeMins: number): number {
+  return timeMins * Math.pow(10 / distanceKm, 1.06)
+}
+
+export function calcCalibratedZones(distanceKm: number, timeMins: number): CalibratedZones {
+  const predicted10KMins = riegelPredict10K(distanceKm, timeMins)
+  const rp = (predicted10KMins * 60) / 10
+  return {
+    easy:     { min: Math.round(rp + 70), max: Math.round(rp + 90) },
+    tempo:    { min: Math.round(rp + 15), max: Math.round(rp + 25) },
+    interval: { min: Math.round(rp - 10), max: Math.round(rp - 5) },
+    racePace: Math.round(rp),
+    predicted10KMins,
+    calibratedAt: new Date().toISOString(),
+    basedOnDistanceKm: distanceKm,
+    basedOnTimeMins: timeMins,
+  }
 }

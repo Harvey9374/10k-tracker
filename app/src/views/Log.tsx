@@ -8,6 +8,24 @@ interface Props {
   onDelete: (id: string) => void
 }
 
+const STRENGTH_SESSION_TYPES = new Set(['Strength + Conditioning'])
+
+function getStrengthSuggestion(rounds: number, rpe: number): { text: string; color: string } {
+  if (rpe <= 4) {
+    if (rounds >= 3) return { text: 'Very manageable — add 1–2 reps per exercise next session', color: 'var(--accent)' }
+    return { text: 'Light effort — try adding an extra round or 1–2 reps next session', color: 'var(--accent)' }
+  }
+  if (rpe <= 6) {
+    if (rounds >= 3) return { text: 'Spot on — maintain current reps and load', color: 'var(--accent)' }
+    return { text: 'Good effort — work towards completing full rounds before adding reps', color: 'var(--warn)' }
+  }
+  if (rpe <= 8) {
+    if (rounds >= 3) return { text: 'Strong effort — hold reps for 1–2 more sessions before increasing', color: 'var(--warn)' }
+    return { text: 'Solid work — aim to complete target rounds at current reps next session', color: 'var(--warn)' }
+  }
+  return { text: 'Very hard — reduce reps by ~10% to maintain form and aid recovery', color: '#ef4444' }
+}
+
 const SESSION_TYPES = [
   'Easy Run',
   'Tempo Run',
@@ -50,7 +68,8 @@ function fmtDate(iso: string) {
 }
 
 export default function Log({ logs, onAdd, onDelete }: Props) {
-  const today = new Date().toISOString().slice(0, 10)
+  const d = new Date()
+  const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
   const [tab, setTab] = useState<'add' | 'history'>('add')
 
   const [date, setDate] = useState(today)
@@ -59,7 +78,11 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const [durationMins, setDurationMins] = useState('')
   const [effort, setEffort] = useState(5)
   const [notes, setNotes] = useState('')
+  const [injuryFlag, setInjuryFlag] = useState(false)
+  const [roundsCompleted, setRoundsCompleted] = useState<number | ''>('')
   const [saved, setSaved] = useState(false)
+
+  const isStrengthSession = STRENGTH_SESSION_TYPES.has(sessionType)
 
   const dist = parseFloat(distanceKm)
   const dur = parseFloat(durationMins)
@@ -74,13 +97,17 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       distanceKm: dist || undefined,
       durationMins: dur || undefined,
       perceivedEffort: effort,
+      roundsCompleted: isStrengthSession && roundsCompleted !== '' ? roundsCompleted : undefined,
       notes: notes.trim() || undefined,
+      injuryFlag: injuryFlag || undefined,
       completed: true,
     })
     setDistanceKm('')
     setDurationMins('')
     setNotes('')
     setEffort(5)
+    setRoundsCompleted('')
+    setInjuryFlag(false)
     setDate(today)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
@@ -150,9 +177,74 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
               </div>
             </div>
 
+            {isStrengthSession && (
+              <div className="form-group">
+                <label className="form-label">Rounds completed</label>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  {[1, 2, 3, 4].map(r => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRoundsCompleted(roundsCompleted === r ? '' : r)}
+                      style={{
+                        width: 52, height: 52, borderRadius: 'var(--radius-sm)',
+                        border: `2px solid ${roundsCompleted === r ? 'var(--accent-2)' : 'var(--border)'}`,
+                        background: roundsCompleted === r ? 'rgba(139,92,246,0.12)' : 'var(--surface)',
+                        color: roundsCompleted === r ? 'var(--accent-2)' : 'var(--text)',
+                        fontSize: 18, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
+                      }}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                {roundsCompleted !== '' && (
+                  <div style={{
+                    marginTop: 10, padding: '10px 14px', borderRadius: 'var(--radius-sm)',
+                    border: `1px solid ${getStrengthSuggestion(roundsCompleted, effort).color}40`,
+                    background: `${getStrengthSuggestion(roundsCompleted, effort).color}0d`,
+                    fontSize: 13,
+                  }}>
+                    <div style={{ fontWeight: 700, color: getStrengthSuggestion(roundsCompleted, effort).color, marginBottom: 2 }}>
+                      Recommendation
+                    </div>
+                    <div style={{ color: 'var(--text-muted)' }}>
+                      {getStrengthSuggestion(roundsCompleted, effort).text}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <div className="form-group">
               <label className="form-label">Notes (optional)</label>
               <textarea className="form-textarea" placeholder="How did it feel? Any shin discomfort? Weather?" value={notes} onChange={e => setNotes(e.target.value)} />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Injury / Niggle</label>
+              <button
+                type="button"
+                onClick={() => setInjuryFlag(f => !f)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  border: `1.5px solid ${injuryFlag ? 'var(--danger)' : 'var(--border)'}`,
+                  borderRadius: 'var(--radius-sm)',
+                  background: injuryFlag ? 'rgba(239,68,68,0.08)' : 'var(--surface)',
+                  color: injuryFlag ? 'var(--danger)' : 'var(--text-muted)',
+                  fontSize: 14,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {injuryFlag ? '⚠️ Niggle flagged — tap to clear' : '⚑ Flag injury / niggle'}
+              </button>
+              {injuryFlag && (
+                <div className="form-hint" style={{ color: '#f87171', marginTop: 6 }}>Session will appear in your injury log on the Progress tab.</div>
+              )}
             </div>
 
             <button className="btn btn-primary" onClick={handleSave}>
@@ -175,9 +267,9 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                 ? formatPace(calcPaceSeconds(log.distanceKm, log.durationMins))
                 : null
               return (
-                <div key={log.id} className="log-item">
-                  <div className={`log-icon ${sessionClass(log.sessionType)}`}>
-                    {sessionIcon(log.sessionType)}
+                <div key={log.id} className="log-item" style={log.injuryFlag ? { borderColor: 'rgba(239,68,68,0.4)' } : undefined}>
+                  <div className={`log-icon ${sessionClass(log.sessionType)}`} style={log.injuryFlag ? { background: 'rgba(239,68,68,0.12)' } : undefined}>
+                    {log.injuryFlag ? '⚠️' : sessionIcon(log.sessionType)}
                   </div>
                   <div className="log-meta">
                     <div className="log-title">{log.sessionType}</div>
@@ -190,6 +282,9 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                   </div>
                   <div className="log-right">
                     {pace && <div className="log-pace">{pace}</div>}
+                    {log.roundsCompleted && (
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{log.roundsCompleted} round{log.roundsCompleted !== 1 ? 's' : ''}</div>
+                    )}
                     {log.perceivedEffort && (
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>RPE {log.perceivedEffort}/10</div>
                     )}

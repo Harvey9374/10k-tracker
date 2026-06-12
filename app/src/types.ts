@@ -5,8 +5,10 @@ export interface WorkoutLog {
   distanceKm?: number
   durationMins?: number
   perceivedEffort?: number
+  roundsCompleted?: number
   notes?: string
   completed: boolean
+  injuryFlag?: boolean
 }
 
 export interface TimeTrial {
@@ -15,6 +17,17 @@ export interface TimeTrial {
   distanceKm: number
   timeSeconds: number
   notes?: string
+}
+
+export interface CalibratedZones {
+  easy: { min: number; max: number }
+  tempo: { min: number; max: number }
+  interval: { min: number; max: number }
+  racePace: number
+  predicted10KMins: number
+  calibratedAt: string
+  basedOnDistanceKm: number
+  basedOnTimeMins: number
 }
 
 export interface PhaseSession {
@@ -45,7 +58,43 @@ export interface Phase {
   friday: PhaseSession
   weekend: PhaseSession
   strengthCircuit?: string[]
+  mobilityCircuit?: string[]
+  recoveryCircuit?: string[]
   notes?: string[]
 }
 
-export type ViewName = 'today' | 'log' | 'progress' | 'plan'
+export type ViewName = 'today' | 'log' | 'progress' | 'plan' | 'strava'
+
+export interface StravaAthlete {
+  id: number
+  firstname: string
+  lastname: string
+  profile_medium: string
+}
+
+export interface StravaTokens {
+  access_token: string
+  refresh_token: string
+  expires_at: number
+  athlete: StravaAthlete
+}
+
+export interface StravaSplit {
+  split: number
+  distance: number
+  elapsed_time: number
+  moving_time: number
+  average_speed: number
+}
+
+export interface StravaActivity {
+  id: number
+  name: string
+  type: string
+  start_date_local: string
+  distance: number
+  moving_time: number
+  total_elevation_gain: number
+  average_speed: number
+  splits_metric?: StravaSplit[]
+}

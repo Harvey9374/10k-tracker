@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
-import { useWorkoutLogs, useTimeTrials } from './hooks/useStore'
+import React, { useState, useEffect } from 'react'
+import { useWorkoutLogs, useTimeTrials, useCalibratedZones, useInjuryMode } from './hooks/useStore'
+import { calcCalibratedZones } from './data/plan'
 import Today from './views/Today'
 import Log from './views/Log'
 import Progress from './views/Progress'
 import Plan from './views/Plan'
+import StravaView from './views/StravaView'
 import type { ViewName } from './types'
 
 function IconToday() {
@@ -21,6 +23,11 @@ function IconProgress() {
     <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
   )
 }
+function IconStrava() {
+  return (
+    <svg viewBox="0 0 24 24"><path d="M10.5 3L6 13.5h3.75L10.5 3zm3 10.5L12 17.25 10.5 13.5H6.75L12 24l5.25-10.5H13.5z"/></svg>
+  )
+}
 function IconPlan() {
   return (
     <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
@@ -31,6 +38,7 @@ const NAV: { id: ViewName; label: string; icon: () => React.ReactElement }[] = [
   { id: 'today',    label: 'Today',    icon: IconToday },
   { id: 'log',      label: 'Log',      icon: IconLog },
   { id: 'progress', label: 'Progress', icon: IconProgress },
+  { id: 'strava',   label: 'Strava',   icon: IconStrava },
   { id: 'plan',     label: 'Plan',     icon: IconPlan },
 ]
 
@@ -38,36 +46,75 @@ const TITLES: Record<ViewName, string> = {
   today:    '10K Sub-50 Tracker',
   log:      'Log Session',
   progress: 'Progress',
+  strava:   'Strava',
   plan:     'Training Plan',
 }
 
+function getInitialTheme(): 'dark' | 'light' {
+  try { return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark' }
+  catch { return 'dark' }
+}
+
+const NAV_ORDER = NAV.map(n => n.id)
+
 export default function App() {
   const [view, setView] = useState<ViewName>('today')
+  const [slideDir, setSlideDir] = useState<'left' | 'right'>('right')
+  const [theme, setTheme] = useState<'dark' | 'light'>(getInitialTheme)
   const { logs, addLog, deleteLog } = useWorkoutLogs()
-  const { trials, addTrial, deleteTrial } = useTimeTrials()
+  const { trials, addTrial: addTrialBase, deleteTrial } = useTimeTrials()
+  const { zones: calibratedZones, saveZones, clearZones } = useCalibratedZones()
+  const { injuryMode, toggleInjuryMode } = useInjuryMode()
 
-  function goToLog() {
-    setView('log')
+  function addTrial(trial: Parameters<typeof addTrialBase>[0]) {
+    addTrialBase(trial)
+    saveZones(calcCalibratedZones(trial.distanceKm, trial.timeSeconds / 60))
   }
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('code')) setView('strava')
+  }, [])
+
+  function navigate(next: ViewName) {
+    const from = NAV_ORDER.indexOf(view)
+    const to = NAV_ORDER.indexOf(next)
+    setSlideDir(to >= from ? 'right' : 'left')
+    setView(next)
+  }
+  function goToLog() { navigate('log') }
+  function toggleTheme() { setTheme(t => t === 'dark' ? 'light' : 'dark') }
 
   return (
     <>
       <header className="header">
         <h1>{TITLES[view]}</h1>
         {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
+        {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
+        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
       </header>
 
-      {view === 'today' && <Today logs={logs} onGoLog={goToLog} />}
-      {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
-      {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} />}
-      {view === 'plan' && <Plan />}
+      <div key={view} className={`view-anim slide-${slideDir}`}>
+        {view === 'today' && <Today logs={logs} onGoLog={goToLog} calibratedZones={calibratedZones} injuryMode={injuryMode} onToggleInjuryMode={toggleInjuryMode} />}
+        {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
+        {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} calibratedZones={calibratedZones} onClearZones={clearZones} />}
+        {view === 'strava' && <StravaView calibratedZones={calibratedZones} />}
+        {view === 'plan' && <Plan />}
+      </div>
 
       <nav className="bottom-nav">
         {NAV.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             className={`nav-btn ${view === id ? 'active' : ''}`}
-            onClick={() => setView(id)}
+            onClick={() => navigate(id)}
           >
             <Icon />
             {label}
