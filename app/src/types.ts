@@ -9,6 +9,7 @@ export interface WorkoutLog {
   notes?: string
   completed: boolean
   injuryFlag?: boolean
+  stravaId?: number
 }
 
 export interface TimeTrial {
@@ -85,6 +86,7 @@ export interface StravaSplit {
   elapsed_time: number
   moving_time: number
   average_speed: number
+  elevation_difference?: number
 }
 
 export interface StravaActivity {
@@ -96,5 +98,6 @@ export interface StravaActivity {
   moving_time: number
   total_elevation_gain: number
   average_speed: number
+  workout_type?: number
   splits_metric?: StravaSplit[]
 }

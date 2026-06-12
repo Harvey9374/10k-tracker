@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useStrava } from '../hooks/useStrava'
 import { getWeekNumber, getPhase, formatTime } from '../data/plan'
-import type { StravaActivity, StravaSplit, CalibratedZones } from '../types'
+import type { StravaActivity, StravaSplit, CalibratedZones, WorkoutLog } from '../types'
 
 const CLIENT_ID = '250705'
 
@@ -72,8 +72,21 @@ function getZone(paceSecPerKm: number, phaseNum: number, calibrated?: Calibrated
 type RunInsight = { icon: string; text: string; positive: boolean }
 type RunAssessment = { verdict: string; verdictColor: string; insights: RunInsight[]; tip: string }
 
+function inferSessionType(activity: StravaActivity, phaseNum: number, calibrated?: CalibratedZones | null): string {
+  if (activity.workout_type === 1) return 'Time Trial'
+  const pace = speedToPace(activity.average_speed)
+  const zone = getZone(pace, phaseNum, calibrated)
+  if (zone.label === 'Race pace') return 'Race Pace Session'
+  if (zone.label === 'Interval') return 'Interval Session'
+  if (zone.label === 'Tempo') return 'Tempo Run'
+  if (activity.distance >= 12000) return 'Long Run'
+  return 'Easy Run'
+}
+
 function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: CalibratedZones | null): RunAssessment {
   const paces = splits.map(s => speedToPace(s.average_speed))
+  const elevs = splits.map(s => s.elevation_difference ?? 0)
+  const totalClimb = elevs.filter(e => e > 0).reduce((a, b) => a + b, 0)
   const avgPace = paces.reduce((a, b) => a + b, 0) / paces.length
   const firstPace = paces[0]
   const lastPace = paces[paces.length - 1]
@@ -83,10 +96,13 @@ function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: Calibra
   const splitDiffPct = ((lastPace - firstPace) / firstPace) * 100
   if (splitDiffPct > 10) {
     let fadeKm = -1
+    let fadeElev = 0
     for (let i = 1; i < paces.length; i++) {
-      if ((paces[i] - paces[i - 1]) / paces[i - 1] > 0.07) { fadeKm = i + 1; break }
+      if ((paces[i] - paces[i - 1]) / paces[i - 1] > 0.07) { fadeKm = i + 1; fadeElev = elevs[i] ?? 0; break }
     }
-    if (fadeKm > 0) {
+    if (fadeKm > 0 && fadeElev > 15) {
+      insights.push({ icon: '↗', text: `Pace dropped at km ${fadeKm} (+${Math.round(fadeElev)}m climb) — elevation explains this split, not a fitness issue.`, positive: true })
+    } else if (fadeKm > 0) {
       insights.push({ icon: '⚠', text: `Pace dropped sharply at km ${fadeKm} — you went out ${Math.round((paces[0] - avgPace) / avgPace * 100)}% faster than your average. Start slower next time.`, positive: false })
     } else {
       insights.push({ icon: '⚠', text: `Positive split: finished ${Math.round(splitDiffPct)}% slower than you started — energy ran out before the end.`, positive: false })
@@ -97,18 +113,22 @@ function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: Calibra
     insights.push({ icon: '✓', text: `Even pacing throughout — consistent effort, good control.`, positive: true })
   }
 
-  // 2. First km relative to average
-  if (firstPace < avgPace * 0.93) {
+  // 2. First km relative to average (ignore if km 1 was a significant downhill)
+  if (firstPace < avgPace * 0.93 && (elevs[0] ?? 0) < 10) {
     insights.push({ icon: '⚡', text: `Km 1 (${fmtPace(firstPace)}) was ${Math.round((avgPace - firstPace) / avgPace * 100)}% faster than your run average — classic fast start, dial it back.`, positive: false })
   }
 
-  // 3. Consistency
+  // 3. Consistency (elevation-aware)
   const variance = paces.reduce((sum, p) => sum + Math.pow(p - avgPace, 2), 0) / paces.length
   const cv = Math.sqrt(variance) / avgPace * 100
   if (cv < 3) {
     insights.push({ icon: '✓', text: `Excellent consistency — splits varied by only ±${cv.toFixed(1)}%.`, positive: true })
   } else if (cv > 9) {
-    insights.push({ icon: '⚠', text: `Erratic pacing — splits varied by ±${Math.round(cv)}%. Aim for a steadier effort.`, positive: false })
+    if (totalClimb > 40) {
+      insights.push({ icon: '↗', text: `Pace varied ±${Math.round(cv)}% — the ${Math.round(totalClimb)}m of elevation on this route explains the spread.`, positive: true })
+    } else {
+      insights.push({ icon: '⚠', text: `Erratic pacing — splits varied by ±${Math.round(cv)}%. Aim for a steadier effort.`, positive: false })
+    }
   }
 
   // 4. Strong finish
@@ -130,6 +150,11 @@ function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: Calibra
     if (tooFast > paces.length * 0.4) {
       insights.push({ icon: '⚠', text: `${tooFast}/${paces.length} km splits above easy zone — accumulating unnecessary fatigue. Slow down on easy days.`, positive: false })
     }
+  }
+
+  // 6. Elevation summary
+  if (totalClimb > 30) {
+    insights.push({ icon: '↗', text: `Route included ${Math.round(totalClimb)}m of climbing — factor this in when comparing to flat run paces.`, positive: true })
   }
 
   const pos = insights.filter(i => i.positive).length
@@ -168,24 +193,32 @@ function fmtDate(iso: string) {
 function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNum: number; calibrated?: CalibratedZones | null }) {
   const pace = speedToPace(split.average_speed)
   const zone = getZone(pace, phaseNum, calibrated)
+  const elev = split.elevation_difference
+  const elevStr = elev != null && Math.abs(elev) >= 5 ? `${elev > 0 ? '+' : ''}${Math.round(elev)}m` : null
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--border)' }}>
       <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 36 }}>km {split.split}</span>
-      <span style={{ fontSize: 14, fontWeight: 700 }}>{fmtPace(pace)}</span>
+      {elevStr && (
+        <span style={{ fontSize: 11, color: elev! > 0 ? '#f97316' : 'var(--accent)', minWidth: 34 }}>{elevStr}</span>
+      )}
+      <span style={{ fontSize: 14, fontWeight: 700, flex: 1, textAlign: elevStr ? 'center' : 'left' }}>{fmtPace(pace)}</span>
       <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20, background: zone.bg, color: zone.color }}>{zone.label}</span>
     </div>
   )
 }
 
-function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
+function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged }: {
   activity: StravaActivity
   phaseNum: number
   onExpand: () => Promise<StravaActivity | null>
   calibrated?: CalibratedZones | null
+  onAddLog?: (log: Omit<WorkoutLog, 'id'>) => void
+  isLogged?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState<StravaActivity | null>(null)
   const [loading, setLoading] = useState(false)
+  const [justLogged, setJustLogged] = useState(false)
 
   const pace = speedToPace(activity.average_speed)
   const zone = getZone(pace, phaseNum, calibrated)
@@ -200,6 +233,22 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
     setOpen(o => !o)
   }
 
+  function handleLog(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!onAddLog || isLogged || justLogged) return
+    onAddLog({
+      date: activity.start_date_local.slice(0, 10),
+      sessionType: inferSessionType(activity, phaseNum, calibrated),
+      distanceKm: parseFloat((activity.distance / 1000).toFixed(2)),
+      durationMins: parseFloat((activity.moving_time / 60).toFixed(1)),
+      notes: activity.name,
+      completed: true,
+      stravaId: activity.id,
+    })
+    setJustLogged(true)
+  }
+
+  const logged = isLogged || justLogged
   const tooFast = zone.label === 'Too fast'
 
   return (
@@ -209,6 +258,7 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
           <div style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activity.name}</div>
           <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
             {fmtDate(activity.start_date_local)} · {fmtDist(activity.distance)} · {fmtTime(activity.moving_time)}
+            {activity.total_elevation_gain > 10 && <span style={{ color: '#f97316' }}> · ↗{Math.round(activity.total_elevation_gain)}m</span>}
           </div>
           {tooFast && (
             <div style={{ fontSize: 11, color: '#fca5a5', marginTop: 4 }}>⚠ Faster than easy pace target — check your zones</div>
@@ -218,6 +268,25 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
           <div style={{ fontSize: 15, fontWeight: 800 }}>{fmtPace(pace)}</div>
           <div style={{ fontSize: 11, fontWeight: 600, color: zone.color, marginTop: 2 }}>{zone.label}</div>
         </div>
+        {onAddLog && (
+          <button
+            onClick={handleLog}
+            style={{
+              flexShrink: 0,
+              background: logged ? 'var(--accent-dim)' : 'var(--surface)',
+              border: `1px solid ${logged ? 'var(--accent)' : 'var(--border)'}`,
+              borderRadius: 6,
+              color: logged ? 'var(--accent)' : 'var(--text-muted)',
+              fontSize: 11,
+              fontWeight: 700,
+              padding: '5px 9px',
+              cursor: logged ? 'default' : 'pointer',
+              lineHeight: 1,
+            }}
+          >
+            {logged ? '✓' : '＋ Log'}
+          </button>
+        )}
         <span style={{ color: 'var(--text-muted)', fontSize: 11, flexShrink: 0 }}>{open ? '▲' : '▼'}</span>
       </div>
 
@@ -259,7 +328,11 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated }: {
   )
 }
 
-export default function StravaView({ calibratedZones }: { calibratedZones?: CalibratedZones | null }) {
+export default function StravaView({ calibratedZones, logs, onAddLog }: {
+  calibratedZones?: CalibratedZones | null
+  logs?: WorkoutLog[]
+  onAddLog?: (log: Omit<WorkoutLog, 'id'>) => void
+}) {
   const week = getWeekNumber()
   const phase = getPhase(week)
   const phaseNum = phase?.number ?? 1
@@ -442,6 +515,8 @@ export default function StravaView({ calibratedZones }: { calibratedZones?: Cali
               phaseNum={phaseNum}
               onExpand={() => fetchDetail(a.id)}
               calibrated={calibratedZones}
+              onAddLog={onAddLog}
+              isLogged={logs?.some(l => l.stravaId === a.id)}
             />
           ))
         )}

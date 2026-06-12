@@ -46,7 +46,7 @@ const SESSION_ICONS: Record<string, string> = {
   'Race Pace Session': '🎯',
   'Strength + Conditioning': '💪',
   'Long Run': '🛣️',
-  'Skip + Mobility': '🦨',
+  'Skip + Mobility': '🦘',
   'Recovery / Mobility': '🧘',
   'Time Trial': '⏱️',
   'Other': '📝',

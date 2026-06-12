@@ -335,7 +335,7 @@ export const PHASES: Phase[] = [
       '  Hip flexor lunge with rotation: 60 sec each side',
       '  Standing hamstring stretch: 60 sec each side',
       '  Calf stretch — straight leg + bent knee: 60 sec each, each leg',
-      "  Child's pose with side reach: 45 sec each side",
+      '  Child\'s pose with side reach: 45 sec each side',
     ],
     notes: [
       'Friday steady runs are your key benchmark — comfortable at 5:15/km means sub-50 is on track.',
@@ -403,7 +403,7 @@ export const PHASES: Phase[] = [
       'Gentle hip flexor stretch: 60 sec each side',
       'Standing hamstring stretch: 45 sec each side',
       'Calf stretch — straight leg: 60 sec each leg',
-      "Child's pose: 60 sec",
+      'Child\'s pose: 60 sec',
       'Keep it gentle — maintenance only, not deep tissue work',
     ],
     notes: [
