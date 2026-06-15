@@ -1636,5 +1636,211 @@
       "slider buns"
     ],
     "mealType": "Dinner"
+  },
+  {
+    "id": "scrambled-oats",
+    "name": "Scrambled Oats",
+    "mealType": "Breakfast",
+    "ingredients": [
+      "35g oats",
+      "1 egg",
+      "70g banana",
+      "14g protein powder",
+      "A few drops of flavouring or stevia",
+      "Cinnamon",
+      "0% Greek yoghurt (optional topping)",
+      "Fruit of choice (optional topping)"
+    ],
+    "method": [
+      "Add the oats, egg, banana, protein powder, flavour drops and cinnamon to a bowl",
+      "Mix well",
+      "Pour into a non-stick frying pan over a low heat",
+      "Keep stirring and scrambling until it thickens up and looks like scrambled oats",
+      "Serve up",
+      "Top with 0% Greek yoghurt and fruit if you're feeling fancy"
+    ],
+    "macros": {
+      "calories": 389,
+      "protein": 36,
+      "carbs": 41,
+      "fat": 8
+    },
+    "ingredientTags": [
+      "oats",
+      "eggs",
+      "banana",
+      "protein powder"
+    ]
+  },
+  {
+    "id": "charred-sweetcorn-chicken-salad",
+    "name": "Charred Sweetcorn Chicken Salad",
+    "mealType": "Lunch",
+    "ingredients": [
+      "800g chicken breast, diced",
+      "2 tbsp lime juice",
+      "1 tbsp avocado oil",
+      "2 tsp chilli powder",
+      "1½ tsp ground cumin",
+      "1 tsp garlic powder",
+      "1 tsp paprika",
+      "1 tsp salt",
+      "½ tsp black pepper",
+      "2 cups sweetcorn, around 2 drained tins",
+      "1 large red onion, finely diced",
+      "1 large red bell pepper, finely diced",
+      "3 jalapeños, finely diced",
+      "1 handful fresh coriander, chopped",
+      "50g Cotija cheese, crumbled",
+      "250g 0% Greek yogurt (sauce)",
+      "Juice of ½ lime (sauce)",
+      "1 tbsp hot sauce (sauce)",
+      "1 tsp Tajín seasoning (sauce)",
+      "120ml water (sauce)",
+      "Salt and pepper to taste (sauce)"
+    ],
+    "method": [
+      "Add the chicken, lime juice, avocado oil, chilli powder, cumin, garlic powder, paprika, salt and pepper to a bowl and mix well",
+      "Marinate for at least 15 to 30 minutes",
+      "Meanwhile, drain the sweetcorn and pat dry with kitchen roll",
+      "Heat a large pan over high heat and char the sweetcorn until slightly blackened, then set aside to cool",
+      "Cook the chicken in a large frying pan until fully cooked through and slightly browned",
+      "In a large bowl, combine the sweetcorn, red onion, red pepper, jalapeños, coriander and Cotija cheese",
+      "In a separate bowl mix the Greek yogurt, lime juice, hot sauce, Tajín, water, salt and pepper",
+      "Pour the sauce over the salad mixture and stir well",
+      "Add the cooked chicken and mix everything together",
+      "Serve immediately or divide into meal prep containers"
+    ],
+    "macros": {
+      "calories": 475,
+      "protein": 58,
+      "carbs": 21,
+      "fat": 18
+    },
+    "ingredientTags": [
+      "chicken",
+      "sweetcorn",
+      "greek yogurt",
+      "jalapeños",
+      "red pepper"
+    ]
+  },
+  {
+    "id": "high-protein-vanilla-mousse",
+    "name": "High Protein Vanilla Mousse",
+    "mealType": "Pudding",
+    "ingredients": [
+      "80g cashews or almonds",
+      "450g 0% Greek yogurt",
+      "1 tbsp honey",
+      "60g chia seeds",
+      "2 tsp vanilla extract",
+      "80ml semi skimmed milk",
+      "1 scoop vanilla whey protein powder"
+    ],
+    "method": [
+      "Chuck everything into a blender",
+      "Blend until smooth and creamy",
+      "Pour evenly into 3 serving pots or jars",
+      "Refrigerate for 2 to 3 hours or overnight",
+      "Top with mixed berries, dark chocolate or granola if you like"
+    ],
+    "macros": {
+      "calories": 380,
+      "protein": 30,
+      "carbs": 28,
+      "fat": 14
+    },
+    "ingredientTags": [
+      "greek yogurt",
+      "whey protein",
+      "chia seeds",
+      "cashews",
+      "honey"
+    ]
+  },
+  {
+    "id": "chicken-and-egg-potato-bake",
+    "name": "Chicken & Egg Potato Bake",
+    "mealType": "Dinner",
+    "ingredients": [
+      "200g potato",
+      "3 eggs",
+      "100g chicken breast",
+      "40g onion",
+      "75g cherry tomatoes",
+      "25g low fat grated mozzarella",
+      "Salt",
+      "Black pepper",
+      "Paprika",
+      "Garlic powder"
+    ],
+    "method": [
+      "Microwave a peeled potato for around 8 minutes until soft",
+      "Mash the potato into the base of an ovenproof dish",
+      "In a separate bowl combine the eggs, diced chicken, diced onion, halved tomatoes and mozzarella",
+      "Season with salt, pepper, paprika and garlic powder",
+      "Pour the egg mixture over the mashed potato base",
+      "Bake at 180°C for around 60 minutes or until the egg is set and the chicken is cooked through"
+    ],
+    "macros": {
+      "calories": 552,
+      "protein": 52,
+      "carbs": 33,
+      "fat": 19
+    },
+    "ingredientTags": [
+      "chicken",
+      "eggs",
+      "potato",
+      "mozzarella",
+      "tomatoes"
+    ]
+  },
+  {
+    "id": "beef-mince-egg-wraps",
+    "name": "Beef Mince Egg Wraps",
+    "mealType": "Lunch",
+    "ingredients": [
+      "400g extra lean beef mince",
+      "100g mixed frozen veg",
+      "100g low fat grated mozzarella",
+      "6 large eggs",
+      "300ml egg whites",
+      "200g turkey bacon",
+      "1 tbsp chives",
+      "30g taco seasoning",
+      "6 low calorie high protein wraps",
+      "2 tbsp lighter than light mayonnaise (sauce)",
+      "1 tsp chipotle paste (sauce)",
+      "Garlic granules (sauce)",
+      "Paprika (sauce)",
+      "A squeeze of lime juice (sauce)"
+    ],
+    "method": [
+      "Cook the turkey bacon until crispy",
+      "Add the beef mince, frozen veg and taco seasoning and cook through",
+      "In a bowl whisk together the eggs and egg whites",
+      "Pour into a lined baking tray",
+      "Top with the mince mixture and mozzarella",
+      "Bake at 180°C for around 15 minutes until fully cooked through",
+      "Slice into 6 portions and load into wraps",
+      "Roll them up and toast if you want them crispy",
+      "Mix the mayo, chipotle paste, garlic granules, paprika and lime juice for the sauce and serve alongside"
+    ],
+    "macros": {
+      "calories": 465,
+      "protein": 50,
+      "carbs": 26,
+      "fat": 20
+    },
+    "ingredientTags": [
+      "beef mince",
+      "eggs",
+      "egg whites",
+      "turkey bacon",
+      "mozzarella",
+      "wrap"
+    ]
   }
 ]
