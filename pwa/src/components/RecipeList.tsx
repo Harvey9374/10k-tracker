@@ -13,19 +13,31 @@ const MEAL_TYPES: Array<MealType | 'All'> = ['All', 'Breakfast', 'Snack', 'Lunch
 export default function RecipeList({ recipes, onSelect }: Props) {
   const [query, setQuery] = useState('');
   const [mealType, setMealType] = useState<MealType | 'All'>('All');
-  const [proteinTag, setProteinTag] = useState<string | null>(null);
+  const [proteinTags, setProteinTags] = useState<string[]>([]);
   const [secondTag, setSecondTag] = useState<string | null>(null);
+
+  function toggleProtein(tag: string) {
+    setProteinTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    );
+    setSecondTag(null);
+  }
+
+  function clearFilters() {
+    setProteinTags([]);
+    setSecondTag(null);
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return recipes.filter(r => {
       if (mealType !== 'All' && r.mealType !== mealType) return false;
-      if (proteinTag && !r.ingredientTags.includes(proteinTag)) return false;
+      if (proteinTags.length > 0 && !proteinTags.some(p => r.ingredientTags.includes(p))) return false;
       if (secondTag && !r.ingredientTags.includes(secondTag)) return false;
       if (!q) return true;
       return r.name.toLowerCase().includes(q) || r.ingredientTags.some(t => t.includes(q));
     });
-  }, [recipes, query, mealType, proteinTag, secondTag]);
+  }, [recipes, query, mealType, proteinTags, secondTag]);
 
   return (
     <div style={styles.page}>
@@ -57,10 +69,11 @@ export default function RecipeList({ recipes, onSelect }: Props) {
 
       <ProteinFilter
         recipes={recipes}
-        proteinTag={proteinTag}
+        proteinTags={proteinTags}
         secondTag={secondTag}
-        onProteinChange={setProteinTag}
+        onProteinToggle={toggleProtein}
         onSecondChange={setSecondTag}
+        onClear={clearFilters}
       />
 
       <div style={styles.count}>
