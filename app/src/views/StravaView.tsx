@@ -219,6 +219,8 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   const [detail, setDetail] = useState<StravaActivity | null>(null)
   const [loading, setLoading] = useState(false)
   const [justLogged, setJustLogged] = useState(false)
+  const [showRpeModal, setShowRpeModal] = useState(false)
+  const [rpe, setRpe] = useState(5)
 
   const pace = speedToPace(activity.average_speed)
   const zone = getZone(pace, phaseNum, calibrated)
@@ -236,23 +238,89 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   function handleLog(e: React.MouseEvent) {
     e.stopPropagation()
     if (!onAddLog || isLogged || justLogged) return
+    setShowRpeModal(true)
+  }
+
+  function confirmLog() {
+    if (!onAddLog) return
     onAddLog({
       date: activity.start_date_local.slice(0, 10),
       sessionType: inferSessionType(activity, phaseNum, calibrated),
       distanceKm: parseFloat((activity.distance / 1000).toFixed(2)),
       durationMins: parseFloat((activity.moving_time / 60).toFixed(1)),
+      perceivedEffort: rpe,
       notes: activity.name,
       completed: true,
       stravaId: activity.id,
     })
     setJustLogged(true)
+    setShowRpeModal(false)
   }
 
   const logged = isLogged || justLogged
   const tooFast = zone.label === 'Too fast'
 
+  const rpeLabel = rpe <= 3 ? 'Very easy — conversational'
+    : rpe <= 5 ? 'Comfortable — easy breathing'
+    : rpe <= 7 ? 'Moderate — focused effort'
+    : rpe <= 9 ? 'Hard — limited conversation'
+    : 'Maximum effort'
+
   return (
     <div style={{ borderBottom: '1px solid var(--border)', padding: '12px 0' }}>
+      {/* RPE modal */}
+      {showRpeModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}
+          onClick={() => setShowRpeModal(false)}
+        >
+          <div
+            style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '22px 20px', width: '100%', maxWidth: 360 }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>Log Run</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 18 }}>
+              {activity.name} · {fmtDist(activity.distance)} · {fmtTime(activity.moving_time)} · {fmtPace(pace)}
+            </div>
+
+            <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>
+              How did it feel? — RPE {rpe}/10
+            </div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 8 }}>
+              {Array.from({ length: 10 }, (_, i) => (
+                <div
+                  key={i}
+                  onClick={() => setRpe(i + 1)}
+                  style={{
+                    flex: 1, height: 28, borderRadius: 4, cursor: 'pointer',
+                    background: i < rpe
+                      ? (i < 3 ? 'var(--accent)' : i < 7 ? 'var(--warn)' : '#ef4444')
+                      : 'var(--border)',
+                    transition: 'background 0.1s',
+                  }}
+                />
+              ))}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>{rpeLabel}</div>
+
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => setShowRpeModal(false)}
+                style={{ flex: 1, padding: '12px', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLog}
+                style={{ flex: 2, padding: '12px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+              >
+                Save to Log
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer' }} onClick={toggle}>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{activity.name}</div>
