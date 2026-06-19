@@ -9,20 +9,26 @@
 [functions."remove-bg"]
   runtime = "python3.11"
 
-# Redirect bare /wardrobe to /wardrobe/
+# Serve wardrobe SPA — force ensures it wins even over static file lookup
 [[redirects]]
   from = "/wardrobe"
-  to = "/wardrobe/"
-  status = 301
+  to = "/wardrobe/index.html"
+  status = 200
   force = true
 
-# SPA fallback for wardrobe deep-links
+[[redirects]]
+  from = "/wardrobe/"
+  to = "/wardrobe/index.html"
+  status = 200
+  force = true
+
 [[redirects]]
   from = "/wardrobe/*"
   to = "/wardrobe/index.html"
   status = 200
+  force = true
 
-# SPA fallback for root app
+# SPA fallback for root fitness app
 [[redirects]]
   from = "/*"
   to = "/index.html"
