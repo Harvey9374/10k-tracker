@@ -1,6 +1,6 @@
 [build]
   base = "app"
-  command = "npm run build"
+  command = "npm install && tsc -b && vite build && npm --prefix ../wardrobe install && npm --prefix ../wardrobe run build && mkdir -p dist/wardrobe && cp -r ../wardrobe/dist/. dist/wardrobe/"
   publish = "dist"
 
 [functions]
@@ -9,7 +9,6 @@
 [functions."remove-bg"]
   runtime = "python3.11"
 
-# Serve wardrobe SPA — force ensures it wins even over static file lookup
 [[redirects]]
   from = "/wardrobe"
   to = "/wardrobe/index.html"
@@ -28,7 +27,6 @@
   status = 200
   force = true
 
-# SPA fallback for root fitness app
 [[redirects]]
   from = "/*"
   to = "/index.html"

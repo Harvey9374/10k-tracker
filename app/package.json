@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && npm run build:wardrobe",
-    "build:wardrobe": "cd ../wardrobe && npm install && npm run build && mkdir -p ../app/dist/wardrobe && cp -r dist/. ../app/dist/wardrobe/",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
