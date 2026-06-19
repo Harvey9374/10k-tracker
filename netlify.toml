@@ -25,7 +25,6 @@
   from = "/wardrobe/*"
   to = "/wardrobe/index.html"
   status = 200
-  force = true
 
 [[redirects]]
   from = "/*"
