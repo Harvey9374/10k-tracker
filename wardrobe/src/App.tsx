@@ -35,7 +35,11 @@ export function App() {
 
   const { items, loading: wardrobeLoading, addItem, updateItem, removeItem } = useWardrobe();
   const { logs, addLog, updateLog, removeLog, toggleFavourite, confirmOutfit } = useOutfitHistory();
-  const { weather, loading: weatherLoading, error: weatherError, lat, lon, updateLocation } = useWeather();
+  const {
+    weather, loading: weatherLoading, error: weatherError,
+    lat, lon, targetHour, needsTimePrompt,
+    updateLocation, setTargetHour, confirmTargetHour,
+  } = useWeather();
 
   // Generate outfits when activity or weather changes (after initial load)
   const generate = () => {
@@ -183,7 +187,11 @@ export function App() {
               error={weatherError}
               lat={lat}
               lon={lon}
+              targetHour={targetHour}
+              needsTimePrompt={needsTimePrompt}
               onUpdateLocation={updateLocation}
+              onSetTargetHour={setTargetHour}
+              onConfirmTargetHour={confirmTargetHour}
             />
 
             <div style={{ marginBottom: 16 }}>
