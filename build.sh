@@ -1,23 +1,21 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# Build main 10k tracker app
-echo "Building 10k tracker..."
+echo "=== Building 10k tracker ==="
 cd app
 npm install
 npm run build
 cd ..
 
-# Build wardrobe stylist app
-echo "Building wardrobe stylist..."
+echo "=== Building wardrobe stylist ==="
 cd wardrobe
 npm install
 npm run build
 cd ..
 
-# Merge wardrobe dist into main dist under /wardrobe/
-echo "Merging builds..."
+echo "=== Merging builds ==="
 mkdir -p app/dist/wardrobe
 cp -r wardrobe/dist/. app/dist/wardrobe/
 
-echo "Done. All assets in app/dist/"
+echo "=== Done. Files in app/dist/wardrobe: ==="
+ls app/dist/wardrobe/
