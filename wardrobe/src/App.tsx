@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useWardrobe } from './hooks/useWardrobe';
 import { useOutfitHistory } from './hooks/useOutfitHistory';
 import { useWeather } from './hooks/useWeather';
+import { useGoogleDriveSync } from './hooks/useGoogleDriveSync';
 import { generateOutfits, surpriseOutfit, getAlternatives, uuid } from './outfitEngine';
 import { OutfitCombo, OutfitLog, WardrobeItem } from './types';
 import { ActivityPicker } from './components/ActivityPicker';
@@ -13,6 +14,8 @@ import { FavouritesView } from './components/FavouritesView';
 import { PackingList } from './components/PackingList';
 import { FlatLayView } from './components/FlatLayView';
 import { NotificationSetup } from './components/NotificationSetup';
+import { SyncButton } from './components/SyncButton';
+import { saveItem, deleteItem, saveLog } from './db';
 
 type Tab = 'today' | 'wardrobe' | 'history' | 'favourites' | 'packing';
 
@@ -33,8 +36,9 @@ export function App() {
   const [flatLayCombo, setFlatLayCombo] = useState<OutfitCombo | null>(null);
   const [hasGenerated, setHasGenerated] = useState(false);
 
-  const { items, loading: wardrobeLoading, addItem, updateItem, removeItem } = useWardrobe();
-  const { logs, addLog, updateLog, removeLog, toggleFavourite, confirmOutfit } = useOutfitHistory();
+  const { items, loading: wardrobeLoading, addItem, updateItem, removeItem, refresh: refreshWardrobe } = useWardrobe();
+  const { logs, addLog, updateLog, removeLog, toggleFavourite, confirmOutfit, refresh: refreshLogs } = useOutfitHistory();
+  const driveSync = useGoogleDriveSync();
   const {
     weather, loading: weatherLoading, error: weatherError,
     lat, lon, targetHour, needsTimePrompt,
@@ -148,6 +152,19 @@ export function App() {
     return existing ? existing.confirmed : log.confirmed;
   };
 
+  const handleDriveSave = () => driveSync.save(items, logs);
+
+  const handleDriveLoad = async () => {
+    const data = await driveSync.load();
+    if (!data) { alert('No backup found on Google Drive.'); return; }
+    // Write all items and logs into IndexedDB then refresh
+    for (const item of data.items) await saveItem(item);
+    for (const log of data.logs) await saveLog(log);
+    await refreshWardrobe();
+    await refreshLogs();
+    alert(`Loaded ${data.items.length} items and ${data.logs.length} logs from Google Drive.`);
+  };
+
   return (
     <div className="app-container">
       {/* Header */}
@@ -156,6 +173,14 @@ export function App() {
           <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--accent)', letterSpacing: -0.5 }}>
             👔 Wardrobe
           </h1>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <SyncButton
+              status={driveSync.status}
+              lastSynced={driveSync.lastSynced}
+              configured={driveSync.configured}
+              onSave={handleDriveSave}
+              onLoad={handleDriveLoad}
+            />
           {tab === 'today' && !wardrobeLoading && items.length > 0 && (
             <button
               onClick={handleSurprise}
@@ -173,6 +198,7 @@ export function App() {
               🎲 Surprise me
             </button>
           )}
+          </div>
         </div>
       </header>
 
