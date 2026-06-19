@@ -1,0 +1,1 @@
+{"name":"Wardrobe Stylist","short_name":"Wardrobe","description":"AI-powered outfit stylist","start_url":"/wardrobe/","display":"standalone","background_color":"#1a1a2e","theme_color":"#1a1a2e","lang":"en","scope":"/wardrobe/","icons":[{"src":"/wardrobe/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/wardrobe/icon-512.png","sizes":"512x512","type":"image/png"}]}

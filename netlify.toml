@@ -1,6 +1,6 @@
 [build]
   base = "app"
-  command = "npm install && tsc -b && vite build && npm --prefix ../wardrobe install && npm --prefix ../wardrobe run build && mkdir -p dist/wardrobe && cp -r ../wardrobe/dist/. dist/wardrobe/"
+  command = "npm run build"
   publish = "dist"
 
 [functions]
