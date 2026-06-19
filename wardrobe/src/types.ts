@@ -21,7 +21,7 @@ export interface OutfitCombo {
   topId?: string;         // shirt or outerwear worn open
   outerwearId?: string;
   bottomsId: string;
-  shoesId: string;
+  shoesId?: string;
   accessoryIds: string[];
 }
 

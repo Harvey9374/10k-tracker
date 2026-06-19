@@ -136,7 +136,7 @@ export function OutfitCard({
         <SwapDrawer
           category={swapCategory}
           currentId={
-            swapCategory === 'shoes' ? combo.shoesId :
+            swapCategory === 'shoes' ? (combo.shoesId ?? '') :
             swapCategory === 'shirt' ? (combo.topId ?? '') :
             combo.bottomsId
           }

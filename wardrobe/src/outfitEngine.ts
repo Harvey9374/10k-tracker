@@ -256,10 +256,6 @@ export function generateOutfits(
       if (!outer) continue;
     }
 
-    // ── Shoes ──
-    const shoe = pick(shoes);
-    if (!shoe) continue;
-
     // ── Accessories (optional) ──
     const accIds: string[] = [];
     if (accessories.length > 0 && Math.random() > 0.6) {
@@ -274,7 +270,6 @@ export function generateOutfits(
       topId: top?.id,
       outerwearId: outer?.id,
       bottomsId: bottoms.id,
-      shoesId: shoe.id,
       accessoryIds: accIds,
     };
 
@@ -305,9 +300,8 @@ export function generateOutfits(
   while (results.length < count) {
     const bottom = pick([...trousers, ...shorts]);
     const base   = pick([...tees, ...vests]);
-    const shoe   = pick(shoes);
-    if (!bottom || !shoe) break;
-    results.push({ baseLayerId: base?.id, bottomsId: bottom.id, shoesId: shoe.id, accessoryIds: [] });
+    if (!bottom) break;
+    results.push({ baseLayerId: base?.id, bottomsId: bottom.id, accessoryIds: [] });
   }
 
   return results;
@@ -318,9 +312,8 @@ export function surpriseOutfit(items: WardrobeItem[]): OutfitCombo | null {
   const p = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
   const bottoms = p(usable.filter(i => i.category === 'shorts' || i.category === 'trousers'));
   const base    = p(usable.filter(i => i.category === 'tee' || i.category === 'vest'));
-  const shoe    = p(usable.filter(i => i.category === 'shoes'));
-  if (!bottoms || !shoe) return null;
-  return { baseLayerId: base?.id, bottomsId: bottoms.id, shoesId: shoe.id, accessoryIds: [] };
+  if (!bottoms) return null;
+  return { baseLayerId: base?.id, bottomsId: bottoms.id, accessoryIds: [] };
 }
 
 export function getAlternatives(
