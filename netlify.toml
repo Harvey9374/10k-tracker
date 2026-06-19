@@ -1,21 +1,22 @@
 [build]
-  command = "bash build.sh"
-  publish = "app/dist"
+  base = "app"
+  command = "npm run build"
+  publish = "dist"
 
 [functions]
-  directory = "app/netlify/functions"
+  directory = "netlify/functions"
 
 [functions."remove-bg"]
   runtime = "python3.11"
 
-# Redirect /wardrobe (no slash) to /wardrobe/
+# Redirect bare /wardrobe to /wardrobe/
 [[redirects]]
   from = "/wardrobe"
   to = "/wardrobe/"
   status = 301
   force = true
 
-# SPA fallback for all wardrobe deep-links
+# SPA fallback for wardrobe deep-links
 [[redirects]]
   from = "/wardrobe/*"
   to = "/wardrobe/index.html"
