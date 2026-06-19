@@ -1,5 +1,4 @@
 [build]
-  base = ""
   command = "bash build.sh"
   publish = "app/dist"
 
@@ -9,11 +8,20 @@
 [functions."remove-bg"]
   runtime = "python3.11"
 
+# Redirect /wardrobe (no slash) to /wardrobe/
+[[redirects]]
+  from = "/wardrobe"
+  to = "/wardrobe/"
+  status = 301
+  force = true
+
+# SPA fallback for all wardrobe deep-links
 [[redirects]]
   from = "/wardrobe/*"
   to = "/wardrobe/index.html"
   status = 200
 
+# SPA fallback for root app
 [[redirects]]
   from = "/*"
   to = "/index.html"
