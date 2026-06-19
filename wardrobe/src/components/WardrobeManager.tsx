@@ -35,19 +35,84 @@ function guessCategory(filename: string): ItemCategory {
   return 'other';
 }
 
-function sampleCentreColour(imageData: string): Promise<string> {
+interface ImageAnalysis {
+  colour: string;
+  pattern: ItemPattern;
+}
+
+function analyseImage(imageData: string): Promise<ImageAnalysis> {
   return new Promise(resolve => {
     const img = new Image();
     img.onload = () => {
+      const SIZE = 40;
       const canvas = document.createElement('canvas');
-      canvas.width = 10; canvas.height = 10;
+      canvas.width = SIZE; canvas.height = SIZE;
       const ctx = canvas.getContext('2d');
-      if (!ctx) { resolve('#888888'); return; }
-      ctx.drawImage(img, img.width * 0.4, img.height * 0.4, img.width * 0.2, img.height * 0.2, 0, 0, 10, 10);
-      const d = ctx.getImageData(5, 5, 1, 1).data;
-      resolve('#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join(''));
+      if (!ctx) { resolve({ colour: '#888888', pattern: 'plain' }); return; }
+
+      // Draw the central 60% of the image (avoids background edges)
+      const sx = img.width * 0.2, sy = img.height * 0.2;
+      const sw = img.width * 0.6, sh = img.height * 0.6;
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, SIZE, SIZE);
+      const pixels = ctx.getImageData(0, 0, SIZE, SIZE).data;
+
+      // Collect non-transparent pixel RGB values
+      const rs: number[] = [], gs: number[] = [], bs: number[] = [];
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (pixels[i + 3] < 30) continue; // skip transparent (bg-removed)
+        rs.push(pixels[i]);
+        gs.push(pixels[i + 1]);
+        bs.push(pixels[i + 2]);
+      }
+
+      if (rs.length === 0) { resolve({ colour: '#888888', pattern: 'plain' }); return; }
+
+      // Mean colour
+      const mean = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
+      const mr = mean(rs), mg = mean(gs), mb = mean(bs);
+      const colour = '#' + [mr, mg, mb].map(v => Math.round(v).toString(16).padStart(2, '0')).join('');
+
+      // Std deviation of each channel
+      const std = (arr: number[], m: number) =>
+        Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length);
+      const sr = std(rs, mr), sg = std(gs, mg), sb = std(bs, mb);
+      const avgStd = (sr + sg + sb) / 3;
+
+      // Spatial variance: divide into 4x4 blocks and compare block means
+      const BLOCKS = 4;
+      const blockMeans: number[] = [];
+      for (let by = 0; by < BLOCKS; by++) {
+        for (let bx = 0; bx < BLOCKS; bx++) {
+          const x0 = Math.floor(bx * SIZE / BLOCKS), x1 = Math.floor((bx + 1) * SIZE / BLOCKS);
+          const y0 = Math.floor(by * SIZE / BLOCKS), y1 = Math.floor((by + 1) * SIZE / BLOCKS);
+          let sum = 0, count = 0;
+          for (let y = y0; y < y1; y++) {
+            for (let x = x0; x < x1; x++) {
+              const i = (y * SIZE + x) * 4;
+              if (pixels[i + 3] < 30) continue;
+              sum += (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+              count++;
+            }
+          }
+          if (count > 0) blockMeans.push(sum / count);
+        }
+      }
+      const spatialStd = blockMeans.length > 1 ? std(blockMeans, mean(blockMeans)) : 0;
+
+      // Classify
+      let pattern: ItemPattern = 'plain';
+      if (avgStd > 55 || spatialStd > 30) {
+        // Very high variance — likely graphic/text (concentrated contrast)
+        pattern = 'graphic';
+      } else if (avgStd > 30 || spatialStd > 18) {
+        // Moderate variance spread across blocks — likely pattern or stripe
+        pattern = spatialStd > avgStd ? 'stripe' : 'pattern';
+      }
+      // else: plain
+
+      resolve({ colour, pattern });
     };
-    img.onerror = () => resolve('#888888');
+    img.onerror = () => resolve({ colour: '#888888', pattern: 'plain' });
     img.src = imageData;
   });
 }
@@ -96,14 +161,17 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
       const file = arr[i];
       try {
         const imageData = await readFileAsBase64(file);
-        const [{ processed, didProcess }, colour] = await Promise.all([
+        const [{ processed, didProcess }, analysis] = await Promise.all([
           removeBackground(imageData),
-          sampleCentreColour(imageData),
+          analyseImage(imageData),
         ]);
+
+        // Re-analyse on the bg-removed version if available for better accuracy
+        const finalAnalysis = didProcess ? await analyseImage(processed) : analysis;
 
         setPendingItems(prev => prev.map((p, idx) =>
           idx === i
-            ? { ...p, imageData, processedData: processed, didProcess, primaryColour: colour, processingState: 'done' }
+            ? { ...p, imageData, processedData: processed, didProcess, primaryColour: finalAnalysis.colour, pattern: finalAnalysis.pattern, processingState: 'done' }
             : p
         ));
       } catch {
