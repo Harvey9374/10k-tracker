@@ -6,6 +6,9 @@
 [functions]
   directory = "app/netlify/functions"
 
+[functions."remove-bg"]
+  runtime = "python3.11"
+
 [[redirects]]
   from = "/wardrobe/*"
   to = "/wardrobe/index.html"

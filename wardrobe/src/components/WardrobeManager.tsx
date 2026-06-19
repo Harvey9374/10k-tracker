@@ -1,12 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { WardrobeItem, ItemCategory, ItemStatus } from '../types';
 import { ItemEditModal } from './ItemEditModal';
+import { removeBackground } from '../removeBg';
 
 interface PendingItem {
+  id: string;
   filename: string;
-  imageData: string;
+  imageData: string;          // original
+  processedData: string;      // bg-removed (or same as imageData if unavailable)
+  didProcess: boolean;
   category: ItemCategory;
   primaryColour: string;
+  processingState: 'pending' | 'done' | 'error';
 }
 
 interface Props {
@@ -34,14 +39,12 @@ function sampleCentreColour(imageData: string): Promise<string> {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = 10;
-      canvas.height = 10;
+      canvas.width = 10; canvas.height = 10;
       const ctx = canvas.getContext('2d');
       if (!ctx) { resolve('#888888'); return; }
       ctx.drawImage(img, img.width * 0.4, img.height * 0.4, img.width * 0.2, img.height * 0.2, 0, 0, 10, 10);
       const d = ctx.getImageData(5, 5, 1, 1).data;
-      const hex = '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join('');
-      resolve(hex);
+      resolve('#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join(''));
     };
     img.onerror = () => resolve('#888888');
     img.src = imageData;
@@ -57,6 +60,8 @@ function readFileAsBase64(file: File): Promise<string> {
   });
 }
 
+function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
 export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
@@ -65,39 +70,62 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
   const [filterStatus, setFilterStatus] = useState<ItemStatus | 'all'>('all');
   const [filterCategory, setFilterCategory] = useState<ItemCategory | 'all'>('all');
   const [isDragOver, setIsDragOver] = useState(false);
-  const [processingPending, setProcessingPending] = useState<(PendingItem & { id: string; category: ItemCategory })[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const processFiles = async (files: FileList | File[]) => {
     const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
-    const results: PendingItem[] = [];
-    for (const file of arr) {
-      const imageData = await readFileAsBase64(file);
-      const colour = await sampleCentreColour(imageData);
-      results.push({
-        filename: file.name,
-        imageData,
-        category: guessCategory(file.name),
-        primaryColour: colour,
-      });
+    if (!arr.length) return;
+
+    // Create placeholder entries immediately so user sees progress
+    const placeholders: PendingItem[] = arr.map(f => ({
+      id: uid(),
+      filename: f.name,
+      imageData: '',
+      processedData: '',
+      didProcess: false,
+      category: guessCategory(f.name),
+      primaryColour: '#888888',
+      processingState: 'pending',
+    }));
+    setPendingItems(placeholders);
+
+    // Process each file: read → remove bg → colour sample
+    for (let i = 0; i < arr.length; i++) {
+      const file = arr[i];
+      try {
+        const imageData = await readFileAsBase64(file);
+        const [{ processed, didProcess }, colour] = await Promise.all([
+          removeBackground(imageData),
+          sampleCentreColour(imageData),
+        ]);
+
+        setPendingItems(prev => prev.map((p, idx) =>
+          idx === i
+            ? { ...p, imageData, processedData: processed, didProcess, primaryColour: colour, processingState: 'done' }
+            : p
+        ));
+      } catch {
+        setPendingItems(prev => prev.map((p, idx) =>
+          idx === i ? { ...p, processingState: 'error' } : p
+        ));
+      }
     }
-    const withIds = results.map(p => ({ ...p, id: Math.random().toString(36).slice(2) + Date.now().toString(36) }));
-    setProcessingPending(withIds);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(false);
-    if (e.dataTransfer.files.length > 0) {
-      processFiles(e.dataTransfer.files);
-    }
+    if (e.dataTransfer.files.length > 0) processFiles(e.dataTransfer.files);
   };
 
   const confirmPending = async () => {
-    for (const p of processingPending) {
+    setSaving(true);
+    for (const p of pendingItems) {
+      if (!p.imageData) continue;
       const item: WardrobeItem = {
         id: p.id,
         filename: p.filename,
-        imageData: p.imageData,
+        imageData: p.processedData || p.imageData,
         category: p.category,
         primaryColour: p.primaryColour,
         description: p.filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
@@ -107,8 +135,12 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
       };
       await onAdd(item);
     }
-    setProcessingPending([]);
+    setPendingItems([]);
+    setSaving(false);
   };
+
+  const allDone = pendingItems.length > 0 && pendingItems.every(p => p.processingState !== 'pending');
+  const processingCount = pendingItems.filter(p => p.processingState === 'pending').length;
 
   const filtered = items.filter(i => {
     if (filterStatus !== 'all' && i.status !== filterStatus) return false;
@@ -117,10 +149,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
   });
 
   const statusColors: Record<ItemStatus, string> = {
-    active: '#2a7a2a',
-    reserve: '#7a6a2a',
-    dirty: '#7a3a2a',
-    retired: '#4a4a4a',
+    active: '#2a7a2a', reserve: '#7a6a2a', dirty: '#7a3a2a', retired: '#4a4a4a',
   };
 
   return (
@@ -132,53 +161,70 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         onDragLeave={() => setIsDragOver(false)}
         style={{
           border: `2px dashed ${isDragOver ? 'var(--accent)' : 'var(--border)'}`,
-          borderRadius: 12,
-          padding: 24,
-          textAlign: 'center',
-          marginBottom: 16,
+          borderRadius: 12, padding: 24, textAlign: 'center', marginBottom: 16,
           background: isDragOver ? 'rgba(201,169,110,0.1)' : 'var(--surface)',
           transition: 'all 0.2s',
         }}
       >
         <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
-        <p style={{ margin: '0 0 12px', color: 'var(--muted)', fontSize: 13 }}>Drop images here, or</p>
+        <p style={{ margin: '0 0 4px', color: 'var(--muted)', fontSize: 13 }}>Drop images here, or</p>
+        <p style={{ margin: '0 0 12px', color: 'var(--accent)', fontSize: 11 }}>
+          ✨ Backgrounds removed automatically
+        </p>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            style={uploadBtnStyle}
-          >
-            Select Files
-          </button>
-          <button
-            onClick={() => folderInputRef.current?.click()}
-            style={uploadBtnStyle}
-          >
-            Select Folder
-          </button>
+          <button onClick={() => fileInputRef.current?.click()} style={uploadBtnStyle}>Select Files</button>
+          <button onClick={() => folderInputRef.current?.click()} style={uploadBtnStyle}>Select Folder</button>
         </div>
-        <input ref={fileInputRef} type="file" multiple accept="image/*" style={{ display: 'none' }} onChange={e => e.target.files && processFiles(e.target.files)} />
+        <input ref={fileInputRef} type="file" multiple accept="image/*" style={{ display: 'none' }}
+          onChange={e => e.target.files && processFiles(e.target.files)} />
         <input ref={folderInputRef} type="file" multiple accept="image/*" style={{ display: 'none' }}
           // @ts-ignore
           webkitdirectory="true"
-          onChange={e => e.target.files && processFiles(e.target.files)}
-        />
+          onChange={e => e.target.files && processFiles(e.target.files)} />
       </div>
 
       {/* Review pending */}
-      {processingPending.length > 0 && (
+      {pendingItems.length > 0 && (
         <div style={{ background: 'var(--surface)', borderRadius: 12, padding: 16, marginBottom: 16, border: '1px solid var(--accent)' }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: 15 }}>Review {processingPending.length} items before saving</h3>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+            <h3 style={{ margin: 0, fontSize: 15 }}>
+              {processingCount > 0
+                ? `Removing backgrounds… ${pendingItems.length - processingCount}/${pendingItems.length}`
+                : `Review ${pendingItems.length} items`}
+            </h3>
+            {processingCount > 0 && (
+              <div style={{ fontSize: 12, color: 'var(--accent)' }}>⏳ Processing…</div>
+            )}
+          </div>
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginBottom: 12 }}>
-            {processingPending.map((p, idx) => (
-              <div key={p.id} style={{ background: 'var(--bg)', borderRadius: 8, padding: 8 }}>
-                <img src={p.imageData} alt={p.filename} style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: 6 }} />
+            {pendingItems.map((p, idx) => (
+              <div key={p.id} style={{ background: 'var(--bg)', borderRadius: 8, padding: 8, position: 'relative' }}>
+                {p.processingState === 'pending' ? (
+                  <div style={{ width: '100%', aspectRatio: '1', borderRadius: 6, background: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
+                    ⏳
+                  </div>
+                ) : (
+                  <>
+                    <img
+                      src={p.processedData || p.imageData}
+                      alt={p.filename}
+                      style={{ width: '100%', aspectRatio: '1', objectFit: 'contain', borderRadius: 6, background: 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 0 0 / 12px 12px' }}
+                    />
+                    {p.didProcess && (
+                      <div style={{ position: 'absolute', top: 12, left: 12, background: 'var(--accent)', color: '#000', fontSize: 9, fontWeight: 700, padding: '2px 5px', borderRadius: 4 }}>
+                        BG REMOVED
+                      </div>
+                    )}
+                  </>
+                )}
                 <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.filename}</div>
                 <select
                   value={p.category}
                   onChange={e => {
-                    const updated = [...processingPending];
+                    const updated = [...pendingItems];
                     updated[idx] = { ...updated[idx], category: e.target.value as ItemCategory };
-                    setProcessingPending(updated);
+                    setPendingItems(updated);
                   }}
                   style={{ width: '100%', marginTop: 4, padding: '4px 6px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', fontSize: 11 }}
                 >
@@ -189,11 +235,16 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
               </div>
             ))}
           </div>
+
           <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={confirmPending} style={{ flex: 1, padding: '10px', background: 'var(--accent)', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 700, color: '#000' }}>
-              Save All to Wardrobe
+            <button
+              onClick={confirmPending}
+              disabled={!allDone || saving}
+              style={{ flex: 1, padding: '10px', background: allDone && !saving ? 'var(--accent)' : 'var(--surface)', border: 'none', borderRadius: 8, cursor: allDone && !saving ? 'pointer' : 'default', fontWeight: 700, color: allDone && !saving ? '#000' : 'var(--muted)' }}
+            >
+              {saving ? 'Saving…' : allDone ? 'Save All to Wardrobe' : 'Processing…'}
             </button>
-            <button onClick={() => setProcessingPending([])} style={{ padding: '10px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', color: 'var(--text)' }}>
+            <button onClick={() => setPendingItems([])} style={{ padding: '10px 16px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, cursor: 'pointer', color: 'var(--text)' }}>
               Cancel
             </button>
           </div>
@@ -234,18 +285,9 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
               <img
                 src={item.imageData}
                 alt={item.description || item.filename}
-                style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', display: 'block' }}
+                style={{ width: '100%', aspectRatio: '1', objectFit: 'contain', display: 'block', background: 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 0 0 / 10px 10px' }}
               />
-              <div style={{
-                position: 'absolute',
-                top: 4,
-                right: 4,
-                width: 10,
-                height: 10,
-                borderRadius: '50%',
-                background: statusColors[item.status],
-                border: '1px solid rgba(255,255,255,0.3)',
-              }} />
+              <div style={{ position: 'absolute', top: 4, right: 4, width: 10, height: 10, borderRadius: '50%', background: statusColors[item.status], border: '1px solid rgba(255,255,255,0.3)' }} />
               <div style={{ padding: '4px 6px', background: 'var(--surface)', fontSize: 10, color: 'var(--muted)', textAlign: 'left' }}>
                 {item.description || item.category}
               </div>
@@ -267,22 +309,11 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
 }
 
 const uploadBtnStyle: React.CSSProperties = {
-  padding: '8px 16px',
-  background: 'var(--accent)',
-  border: 'none',
-  borderRadius: 8,
-  cursor: 'pointer',
-  fontSize: 13,
-  fontWeight: 600,
-  color: '#000',
+  padding: '8px 16px', background: 'var(--accent)', border: 'none',
+  borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600, color: '#000',
 };
 
 const filterSelectStyle: React.CSSProperties = {
-  padding: '6px 10px',
-  background: 'var(--surface)',
-  border: '1px solid var(--border)',
-  borderRadius: 8,
-  color: 'var(--text)',
-  fontSize: 12,
-  cursor: 'pointer',
+  padding: '6px 10px', background: 'var(--surface)', border: '1px solid var(--border)',
+  borderRadius: 8, color: 'var(--text)', fontSize: 12, cursor: 'pointer',
 };
