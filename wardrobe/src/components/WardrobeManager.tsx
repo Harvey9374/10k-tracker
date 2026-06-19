@@ -126,6 +126,27 @@ function readFileAsBase64(file: File): Promise<string> {
   });
 }
 
+interface AIIdentification {
+  category: ItemCategory;
+  primaryColour: string;
+  pattern: ItemPattern;
+}
+
+async function identifyClothing(imageDataUrl: string): Promise<AIIdentification | null> {
+  try {
+    const res = await fetch('/.netlify/functions/identify-clothing', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: imageDataUrl }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return null;
+    return await res.json() as AIIdentification;
+  } catch {
+    return null;
+  }
+}
+
 function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
 export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
@@ -156,22 +177,26 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
     }));
     setPendingItems(placeholders);
 
-    // Process each file: read → remove bg → colour sample
+    // Process each file: read → remove bg + AI identify in parallel
     for (let i = 0; i < arr.length; i++) {
       const file = arr[i];
       try {
         const imageData = await readFileAsBase64(file);
-        const [{ processed, didProcess }, analysis] = await Promise.all([
+        const [{ processed, didProcess }, aiResult] = await Promise.all([
           removeBackground(imageData),
-          analyseImage(imageData),
+          identifyClothing(imageData),
         ]);
 
-        // Re-analyse on the bg-removed version if available for better accuracy
-        const finalAnalysis = didProcess ? await analyseImage(processed) : analysis;
+        // Fall back to canvas analysis for colour/pattern if AI unavailable
+        const canvasAnalysis = didProcess ? await analyseImage(processed) : await analyseImage(imageData);
+
+        const category = aiResult?.category ?? guessCategory(file.name);
+        const primaryColour = aiResult?.primaryColour ?? canvasAnalysis.colour;
+        const pattern = aiResult?.pattern ?? canvasAnalysis.pattern;
 
         setPendingItems(prev => prev.map((p, idx) =>
           idx === i
-            ? { ...p, imageData, processedData: processed, didProcess, primaryColour: finalAnalysis.colour, pattern: finalAnalysis.pattern, processingState: 'done' }
+            ? { ...p, imageData, processedData: processed, didProcess, category, primaryColour, pattern, processingState: 'done' }
             : p
         ));
       } catch {
