@@ -66,6 +66,18 @@ function colourPairScore(a: string, b: string): number {
   return 60;
 }
 
+const BUSY_PATTERNS = new Set(['graphic', 'pattern', 'check', 'stripe']);
+
+function isBusy(item: WardrobeItem): boolean {
+  return BUSY_PATTERNS.has(item.pattern ?? 'plain');
+}
+
+/** Returns true if two items clash on pattern (two busy items layered together). */
+function patternClash(a: WardrobeItem | undefined, b: WardrobeItem | undefined): boolean {
+  if (!a || !b) return false;
+  return isBusy(a) && isBusy(b);
+}
+
 /** Score the full outfit's colour harmony (returns 0–100). */
 function outfitColourScore(combo: OutfitCombo, itemMap: Map<string, WardrobeItem>): number {
   const ids = [
@@ -272,7 +284,16 @@ export function generateOutfits(
 
     // ── Score ──
     let score = outfitColourScore(combo, itemMap);
-    if (recentKeys.has(key)) score -= 40; // discourage repeats
+    if (recentKeys.has(key)) score -= 40;
+
+    // Penalise pattern clashes between visible layers
+    const baseItem = baseLayer;
+    const topItem  = top;
+    const outerItem = outer;
+    const bottomItem = bottoms;
+    if (patternClash(baseItem, topItem))   score -= 60; // tee+shirt both busy
+    if (patternClash(topItem, outerItem))  score -= 40;
+    if (patternClash(baseItem, bottomItem)) score -= 20;
 
     candidates.push({ combo, score });
   }

@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
-import { WardrobeItem, ItemCategory, ItemStatus } from '../types';
+import { WardrobeItem, ItemCategory, ItemStatus, ItemPattern } from '../types';
 
 const CATEGORIES: ItemCategory[] = ['vest', 'tee', 'shirt', 'shorts', 'trousers', 'shoes', 'outerwear', 'accessory', 'other'];
 const STATUSES: ItemStatus[] = ['active', 'retired', 'reserve', 'dirty'];
+const PATTERNS: { value: ItemPattern; label: string }[] = [
+  { value: 'plain',   label: 'Plain' },
+  { value: 'stripe',  label: 'Stripe' },
+  { value: 'check',   label: 'Check / Plaid' },
+  { value: 'graphic', label: 'Graphic / Text' },
+  { value: 'pattern', label: 'Pattern / Print' },
+];
 
 interface Props {
   item: WardrobeItem;
@@ -68,6 +75,11 @@ export function ItemEditModal({ item, onSave, onClose, onDelete }: Props) {
 
         <label style={labelStyle}>Secondary Colour (optional)</label>
         <input type="text" value={draft.secondaryColour ?? ''} onChange={e => set('secondaryColour', e.target.value || undefined)} style={inputStyle} placeholder="e.g. white stripe" />
+
+        <label style={labelStyle}>Pattern</label>
+        <select value={draft.pattern ?? 'plain'} onChange={e => set('pattern', e.target.value as ItemPattern)} style={inputStyle}>
+          {PATTERNS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
+        </select>
 
         <label style={labelStyle}>Notes</label>
         <textarea

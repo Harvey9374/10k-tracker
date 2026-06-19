@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { WardrobeItem, ItemCategory, ItemStatus } from '../types';
+import { WardrobeItem, ItemCategory, ItemStatus, ItemPattern } from '../types';
 import { ItemEditModal } from './ItemEditModal';
 import { removeBackground } from '../removeBg';
 
@@ -11,6 +11,7 @@ interface PendingItem {
   didProcess: boolean;
   category: ItemCategory;
   primaryColour: string;
+  pattern: ItemPattern;
   processingState: 'pending' | 'done' | 'error';
 }
 
@@ -85,6 +86,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
       didProcess: false,
       category: guessCategory(f.name),
       primaryColour: '#888888',
+      pattern: 'plain' as ItemPattern,
       processingState: 'pending',
     }));
     setPendingItems(placeholders);
@@ -128,6 +130,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         imageData: p.processedData || p.imageData,
         category: p.category,
         primaryColour: p.primaryColour,
+        pattern: p.pattern,
         description: p.filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
         status: 'active',
         notes: '',
@@ -231,6 +234,21 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
                   {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'] as ItemCategory[]).map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
+                </select>
+                <select
+                  value={p.pattern}
+                  onChange={e => {
+                    const updated = [...pendingItems];
+                    updated[idx] = { ...updated[idx], pattern: e.target.value as ItemPattern };
+                    setPendingItems(updated);
+                  }}
+                  style={{ width: '100%', marginTop: 4, padding: '4px 6px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', fontSize: 11 }}
+                >
+                  <option value="plain">Plain</option>
+                  <option value="stripe">Stripe</option>
+                  <option value="check">Check / Plaid</option>
+                  <option value="graphic">Graphic / Text</option>
+                  <option value="pattern">Pattern / Print</option>
                 </select>
               </div>
             ))}

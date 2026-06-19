@@ -1,5 +1,6 @@
 export type ItemCategory = 'vest' | 'tee' | 'shirt' | 'shorts' | 'trousers' | 'shoes' | 'outerwear' | 'accessory' | 'other';
 export type ItemStatus = 'active' | 'retired' | 'reserve' | 'dirty';
+export type ItemPattern = 'plain' | 'graphic' | 'pattern' | 'stripe' | 'check';
 
 export interface WardrobeItem {
   id: string;
@@ -8,6 +9,7 @@ export interface WardrobeItem {
   category: ItemCategory;
   primaryColour: string;
   secondaryColour?: string;
+  pattern?: ItemPattern;
   description: string;
   status: ItemStatus;
   notes: string;
