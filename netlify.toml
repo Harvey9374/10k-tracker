@@ -1,10 +1,18 @@
 [build]
-  base = "app"
-  command = "npm run build"
-  publish = "dist"
+  base = ""
+  command = "bash build.sh"
+  publish = "app/dist"
 
 [functions]
-  directory = "netlify/functions"
+  directory = "app/netlify/functions"
+
+[functions."remove-bg"]
+  runtime = "python3.11"
+
+[[redirects]]
+  from = "/wardrobe/*"
+  to = "/wardrobe/index.html"
+  status = 200
 
 [[redirects]]
   from = "/*"
