@@ -1,38 +1,103 @@
 import { WardrobeItem, OutfitCombo, OutfitLog, WeatherData } from './types';
 
-function uuid(): string {
+export function uuid(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-function getUsableItems(items: WardrobeItem[], recentLogs: OutfitLog[]): WardrobeItem[] {
-  // Never retired; never dirty; use reserve only if nothing active works
-  const active = items.filter(i => i.status === 'active');
-  const reserve = items.filter(i => i.status === 'reserve');
-  return active.length > 0 ? [...active, ...reserve] : reserve;
+// ── Colour compatibility ──────────────────────────────────────────────────────
+
+const NEUTRALS = new Set([
+  'white', 'cream', 'ivory', 'off-white',
+  'black', 'charcoal',
+  'grey', 'gray', 'light grey', 'dark grey',
+  'navy', 'navy blue',
+  'beige', 'tan', 'khaki', 'stone', 'sand', 'camel',
+  'brown', 'chocolate', 'taupe',
+  'denim', 'indigo',
+]);
+
+// Colours that clash badly when paired together
+const CLASHING_PAIRS: [string, string][] = [
+  ['red', 'orange'], ['red', 'pink'], ['red', 'purple'],
+  ['orange', 'pink'], ['orange', 'yellow'],
+  ['green', 'red'], ['green', 'orange'],
+  ['blue', 'green'], ['purple', 'orange'],
+  ['yellow', 'purple'],
+];
+
+function normalise(colour: string): string {
+  return colour.toLowerCase().trim();
 }
 
-function getRecentColourCombos(logs: OutfitLog[], items: WardrobeItem[], count: number): Set<string> {
-  const itemMap = new Map(items.map(i => [i.id, i]));
-  const combos = new Set<string>();
-  const recent = logs.slice(0, count);
-  for (const log of recent) {
-    const ids = [
-      log.combo.baseLayerId,
-      log.combo.topId,
-      log.combo.outerwearId,
-      log.combo.bottomsId,
-      log.combo.shoesId,
-    ].filter(Boolean) as string[];
-    const colours = ids.map(id => itemMap.get(id)?.primaryColour).filter(Boolean) as string[];
-    if (colours.length >= 2) {
-      for (let i = 0; i < colours.length; i++) {
-        for (let j = i + 1; j < colours.length; j++) {
-          combos.add([colours[i], colours[j]].sort().join('|'));
-        }
-      }
+function isNeutral(colour: string): boolean {
+  const c = normalise(colour);
+  if (NEUTRALS.has(c)) return true;
+  // partial matches
+  for (const n of NEUTRALS) {
+    if (c.includes(n) || n.includes(c)) return true;
+  }
+  return false;
+}
+
+function baseColour(colour: string): string {
+  const c = normalise(colour);
+  // strip qualifiers like "light", "dark", "pale", "bright", "olive"
+  return c
+    .replace(/\b(light|dark|pale|bright|deep|pastel|dusty|muted|faded|washed)\b/g, '')
+    .trim();
+}
+
+function coloursClash(a: string, b: string): boolean {
+  if (isNeutral(a) || isNeutral(b)) return false;
+  const ba = baseColour(a);
+  const bb = baseColour(b);
+  if (ba === bb) return false; // same hue family is fine
+  for (const [x, y] of CLASHING_PAIRS) {
+    if ((ba.includes(x) && bb.includes(y)) || (ba.includes(y) && bb.includes(x))) return true;
+  }
+  return false;
+}
+
+/** Score a pair of colours: higher = better. Range roughly 0–100. */
+function colourPairScore(a: string, b: string): number {
+  if (isNeutral(a) && isNeutral(b)) return 90;
+  if (isNeutral(a) || isNeutral(b)) return 80;
+  if (coloursClash(a, b)) return 0;
+  return 60;
+}
+
+/** Score the full outfit's colour harmony (returns 0–100). */
+function outfitColourScore(combo: OutfitCombo, itemMap: Map<string, WardrobeItem>): number {
+  const ids = [
+    combo.baseLayerId,
+    combo.topId,
+    combo.outerwearId,
+    combo.bottomsId,
+    combo.shoesId,
+  ].filter(Boolean) as string[];
+
+  const colours = ids
+    .map(id => itemMap.get(id)?.primaryColour)
+    .filter(Boolean) as string[];
+
+  if (colours.length < 2) return 80;
+
+  let total = 0;
+  let pairs = 0;
+  for (let i = 0; i < colours.length; i++) {
+    for (let j = i + 1; j < colours.length; j++) {
+      total += colourPairScore(colours[i], colours[j]);
+      pairs++;
     }
   }
-  return combos;
+  return pairs > 0 ? total / pairs : 80;
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function getUsableItems(items: WardrobeItem[]): WardrobeItem[] {
+  const active = items.filter(i => i.status === 'active');
+  return active.length > 0 ? active : items.filter(i => i.status === 'reserve');
 }
 
 function comboKey(combo: OutfitCombo): string {
@@ -77,17 +142,7 @@ function pick<T>(arr: T[]): T | undefined {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function colourConflict(combo: OutfitCombo, items: WardrobeItem[], recentCombos: Set<string>): boolean {
-  const itemMap = new Map(items.map(i => [i.id, i]));
-  const ids = [combo.baseLayerId, combo.topId, combo.outerwearId, combo.bottomsId, combo.shoesId].filter(Boolean) as string[];
-  const colours = ids.map(id => itemMap.get(id)?.primaryColour).filter(Boolean) as string[];
-  for (let i = 0; i < colours.length; i++) {
-    for (let j = i + 1; j < colours.length; j++) {
-      if (recentCombos.has([colours[i], colours[j]].sort().join('|'))) return true;
-    }
-  }
-  return false;
-}
+// ── Main generator ────────────────────────────────────────────────────────────
 
 export function generateOutfits(
   allItems: WardrobeItem[],
@@ -101,85 +156,105 @@ export function generateOutfits(
   const formality = formalityLevel(activity);
   const sortedLogs = [...logs].sort((a, b) => b.date.localeCompare(a.date));
   const recentConfirmed = sortedLogs.filter(l => l.confirmed);
-  const usable = getUsableItems(allItems, recentConfirmed);
-  const recentColours = getRecentColourCombos(recentConfirmed, allItems, 3);
+  const usable = getUsableItems(allItems);
   const recentKeys = getRecentComboKeys(recentConfirmed);
+  const itemMap = new Map(allItems.map(i => [i.id, i]));
 
   const byCategory = (cat: string) => usable.filter(i => i.category === cat);
 
-  const vests = byCategory('vest');
-  const tees = byCategory('tee');
-  const shirts = byCategory('shirt');
-  const shorts = byCategory('shorts');
-  const trousers = byCategory('trousers');
-  const shoes = byCategory('shoes');
-  const outerwear = byCategory('outerwear');
+  const vests      = byCategory('vest');
+  const tees       = byCategory('tee');
+  const shirts     = byCategory('shirt');
+  const shorts     = byCategory('shorts');
+  const trousers   = byCategory('trousers');
+  const shoes      = byCategory('shoes');
+  const outerwear  = byCategory('outerwear');
   const accessories = byCategory('accessory');
 
-  const results: OutfitCombo[] = [];
   const usedKeys = new Set<string>();
-
-  // Try to generate `count * 10` candidates and pick best
   const candidates: { combo: OutfitCombo; score: number }[] = [];
 
-  for (let attempt = 0; attempt < count * 20; attempt++) {
+  for (let attempt = 0; attempt < count * 40; attempt++) {
+    // ── Pick bottoms ──
     let bottoms: WardrobeItem | undefined;
-    let baseLayer: WardrobeItem | undefined;
-    let top: WardrobeItem | undefined;
-    let outer: WardrobeItem | undefined;
-    let shoe: WardrobeItem | undefined;
-    let accIds: string[] = [];
-
-    // Pick bottoms
     if (band === 'hot' && formality !== 'smart-casual') {
       bottoms = pick(shorts.length > 0 ? shorts : trousers);
     } else if (band === 'cold' || formality === 'smart-casual') {
       bottoms = pick(trousers.length > 0 ? trousers : shorts);
     } else {
-      const pool = [...shorts, ...trousers];
-      bottoms = pick(pool);
+      bottoms = pick([...shorts, ...trousers]);
     }
     if (!bottoms) continue;
 
-    // Pick base layer
+    // ── Decide layering strategy first ──
+    // hot: single top only (tee OR shirt, not both)
+    // mild/cold smart-casual: shirt over tee acceptable but score it
+    // mild casual: usually just one top
+    const wantDoubleLayer =
+      (band === 'mild' || band === 'cold') &&
+      (formality === 'smart-casual' || formality === 'comfortable') &&
+      Math.random() > 0.5;
+
+    let baseLayer: WardrobeItem | undefined;
+    let top: WardrobeItem | undefined;
+    let outer: WardrobeItem | undefined;
+
     if (band === 'hot') {
-      baseLayer = pick([...vests, ...tees]);
-    } else {
-      baseLayer = pick(tees);
-    }
-
-    // Pick top layer (shirt or outerwear as open layer)
-    if (band !== 'hot' || formality === 'smart-casual') {
-      if (formality === 'smart-casual') {
-        top = pick(shirts);
-      } else {
-        top = pick([...shirts, ...outerwear.slice(0, 2)]);
+      // Single layer — tee, vest, or shirt (not both tee+shirt)
+      const singlePool = formality === 'smart-casual'
+        ? [...shirts, ...tees]
+        : [...tees, ...vests, ...shirts];
+      const chosen = pick(singlePool);
+      if (!chosen) continue;
+      if (chosen.category === 'tee' || chosen.category === 'vest') baseLayer = chosen;
+      else top = chosen;
+    } else if (wantDoubleLayer && tees.length > 0 && shirts.length > 0) {
+      // Tee under open shirt — pick compatible colours
+      // Try up to 10 pairs to find a colour-compatible combo
+      let found = false;
+      for (let p = 0; p < 10; p++) {
+        const t = pick(tees)!;
+        const s = pick(shirts)!;
+        if (!coloursClash(t.primaryColour, s.primaryColour)) {
+          baseLayer = t;
+          top = s;
+          found = true;
+          break;
+        }
       }
-    } else if (Math.random() > 0.5) {
-      top = pick(shirts);
+      if (!found) {
+        // Fall back to single top
+        baseLayer = pick(tees);
+        top = undefined;
+      }
+    } else {
+      // Single top
+      const pool = formality === 'smart-casual'
+        ? [...shirts, ...tees]
+        : [...tees, ...shirts];
+      const chosen = pick(pool);
+      if (!chosen) continue;
+      if (chosen.category === 'tee' || chosen.category === 'vest') baseLayer = chosen;
+      else top = chosen;
     }
 
-    // Outerwear if cold
+    // ── Outerwear (cold only) ──
     if (band === 'cold') {
       outer = pick(outerwear);
-      if (!outer) continue; // rule: cold requires outerwear
+      if (!outer) continue;
     }
 
-    // Shoes
-    if (formality === 'relaxed' || formality === 'practical') {
-      shoe = pick(shoes);
-    } else {
-      shoe = pick(shoes);
-    }
+    // ── Shoes ──
+    const shoe = pick(shoes);
     if (!shoe) continue;
 
-    // Accessories (optional, max 1)
-    if (accessories.length > 0 && Math.random() > 0.5) {
+    // ── Accessories (optional) ──
+    const accIds: string[] = [];
+    if (accessories.length > 0 && Math.random() > 0.6) {
       const acc = pick(accessories);
-      if (acc) accIds = [acc.id];
+      if (acc) accIds.push(acc.id);
     }
 
-    // Need at least a base layer or top
     if (!baseLayer && !top) continue;
 
     const combo: OutfitCombo = {
@@ -193,34 +268,25 @@ export function generateOutfits(
 
     const key = comboKey(combo);
     if (usedKeys.has(key)) continue;
+    usedKeys.add(key);
 
-    let score = 100;
-    if (recentKeys.has(key)) score -= 50;
-    if (colourConflict(combo, allItems, recentColours)) score -= 20;
+    // ── Score ──
+    let score = outfitColourScore(combo, itemMap);
+    if (recentKeys.has(key)) score -= 40; // discourage repeats
 
     candidates.push({ combo, score });
-    usedKeys.add(key);
   }
 
-  // Sort by score desc and pick top `count`
   candidates.sort((a, b) => b.score - a.score);
+  const results = candidates.slice(0, count).map(c => c.combo);
 
-  for (const { combo } of candidates.slice(0, count)) {
-    results.push(combo);
-  }
-
-  // If we don't have enough, fill with random valid combos
+  // Fallback if not enough candidates
   while (results.length < count) {
     const bottom = pick([...trousers, ...shorts]);
-    const base = pick([...tees, ...vests]);
-    const shoe = pick(shoes);
+    const base   = pick([...tees, ...vests]);
+    const shoe   = pick(shoes);
     if (!bottom || !shoe) break;
-    results.push({
-      baseLayerId: base?.id,
-      bottomsId: bottom.id,
-      shoesId: shoe.id,
-      accessoryIds: [],
-    });
+    results.push({ baseLayerId: base?.id, bottomsId: bottom.id, shoesId: shoe.id, accessoryIds: [] });
   }
 
   return results;
@@ -228,17 +294,12 @@ export function generateOutfits(
 
 export function surpriseOutfit(items: WardrobeItem[]): OutfitCombo | null {
   const usable = items.filter(i => i.status === 'active' || i.status === 'reserve');
-  const pick = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
-  const bottoms = pick(usable.filter(i => i.category === 'shorts' || i.category === 'trousers'));
-  const base = pick(usable.filter(i => i.category === 'tee' || i.category === 'vest'));
-  const shoe = pick(usable.filter(i => i.category === 'shoes'));
+  const p = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
+  const bottoms = p(usable.filter(i => i.category === 'shorts' || i.category === 'trousers'));
+  const base    = p(usable.filter(i => i.category === 'tee' || i.category === 'vest'));
+  const shoe    = p(usable.filter(i => i.category === 'shoes'));
   if (!bottoms || !shoe) return null;
-  return {
-    baseLayerId: base?.id,
-    bottomsId: bottoms.id,
-    shoesId: shoe.id,
-    accessoryIds: [],
-  };
+  return { baseLayerId: base?.id, bottomsId: bottoms.id, shoesId: shoe.id, accessoryIds: [] };
 }
 
 export function getAlternatives(
@@ -250,5 +311,3 @@ export function getAlternatives(
     i => i.category === category && i.id !== currentId && i.status !== 'retired' && i.status !== 'dirty'
   );
 }
-
-export { uuid };
