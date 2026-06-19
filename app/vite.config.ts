@@ -10,6 +10,7 @@ export default defineConfig({
       workbox: {
         skipWaiting: true,
         clientsClaim: true,
+        navigateFallbackDenylist: [/^\/wardrobe/],
       },
       manifest: {
         name: '10K Sub-50 Tracker',
