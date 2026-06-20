@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { WardrobeItem, OutfitLog } from '../types';
 
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 const METADATA_FILENAME = 'wardrobe-backup.json';
 
@@ -30,6 +29,20 @@ declare global {
 }
 
 let accessToken: string | null = null;
+let clientIdCache: string | null = null;
+
+async function fetchClientId(): Promise<string | null> {
+  if (clientIdCache) return clientIdCache;
+  try {
+    const res = await fetch('/.netlify/functions/get-config');
+    if (!res.ok) return null;
+    const data = await res.json();
+    clientIdCache = data.googleClientId ?? null;
+    return clientIdCache;
+  } catch {
+    return null;
+  }
+}
 
 function loadGsiScript(): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -44,6 +57,7 @@ function loadGsiScript(): Promise<void> {
 
 async function getAccessToken(): Promise<string> {
   if (accessToken) return accessToken;
+  const CLIENT_ID = await fetchClientId();
   if (!CLIENT_ID) throw new Error('Google Client ID not configured');
 
   await loadGsiScript();
@@ -128,13 +142,10 @@ export function useGoogleDriveSync() {
   const [lastSynced, setLastSynced] = useState<string | null>(
     localStorage.getItem('wardrobe_last_synced')
   );
-  const [configured] = useState(!!CLIENT_ID);
+  const [configured, setConfigured] = useState(false);
 
-  // Auto-pull on load if previously signed in
   useEffect(() => {
-    if (lastSynced) {
-      // Token expired — don't auto-sign-in, just show last synced time
-    }
+    fetchClientId().then(id => setConfigured(!!id));
   }, []);
 
   const save = useCallback(async (items: WardrobeItem[], logs: OutfitLog[]) => {
