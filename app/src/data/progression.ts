@@ -1,11 +1,21 @@
 // Equipment: 2 × 15kg dumbbells, skip rope, foam roller, step/box, bodyweight
 import type { WorkoutLog } from '../types'
 
+export type ExerciseUnit = 'reps' | 'reps each leg' | 'reps each side' | 'reps each direction' | 'sec' | 'sec each side'
+
+export type Exercise = {
+  name: string
+  reps: number          // target reps or seconds for time-based
+  unit: ExerciseUnit
+  weight?: string
+  note?: string
+}
+
 export type CircuitVariation = {
   label: string
   focus: string
-  lower: string[]
-  upper: string[]
+  lower: Exercise[]
+  upper: Exercise[]
   rounds: string
 }
 
@@ -22,24 +32,32 @@ export type ProgressionAdvice = {
   specifics: string[]
 }
 
-// ─── STRENGTH CIRCUITS ────────────────────────────────────────────────────────
-// 3 variations per phase: A = Compound, B = Power/Explosive, C = Stability/Balance
-// Rotates A→B→C→A based on session count so it never repeats back-to-back.
+// ─── FORMAT HELPER ────────────────────────────────────────────────────────────
+
+export function exerciseToString(e: Exercise): string {
+  const isTime = e.unit.startsWith('sec')
+  const repStr = isTime ? `${e.reps}${e.unit === 'sec each side' ? ' sec each side' : ' sec'}` : `${e.reps} ${e.unit}`
+  const weightStr = e.weight ? ` × ${e.weight}` : ''
+  const noteStr = e.note ? ` (${e.note})` : ''
+  return `${e.name} — ${repStr}${weightStr}${noteStr}`
+}
+
+// ─── PHASE 1 CIRCUITS ─────────────────────────────────────────────────────────
 
 const PHASE1_CIRCUITS: CircuitVariation[] = [
   {
     label: 'A',
     focus: 'Compound strength',
     lower: [
-      'Bulgarian split squat — 10 reps each leg × 15kg (3-sec lower)',
-      'Single-leg Romanian deadlift — 10 reps each leg × 15kg',
-      'Lateral lunge — 12 reps each direction (bodyweight)',
-      'Single-leg calf raise on step — 20 reps each leg × 15kg',
+      { name: 'Bulgarian split squat',       reps: 10, unit: 'reps each leg',       weight: '15kg',          note: '3-sec lower' },
+      { name: 'Single-leg Romanian deadlift', reps: 10, unit: 'reps each leg',       weight: '15kg' },
+      { name: 'Lateral lunge',               reps: 12, unit: 'reps each direction', weight: 'bodyweight' },
+      { name: 'Single-leg calf raise on step', reps: 20, unit: 'reps each leg',    weight: '15kg' },
     ],
     upper: [
-      'Bent-over row — 12 reps × 15kg each hand',
-      'Overhead press — 10 reps × 15kg each',
-      'Plank — 45–60 sec hold',
+      { name: 'Bent-over row',    reps: 12, unit: 'reps', weight: '15kg each hand' },
+      { name: 'Overhead press',   reps: 10, unit: 'reps', weight: '15kg each' },
+      { name: 'Plank',            reps: 50, unit: 'sec',  note: 'aim for 45–60 sec' },
     ],
     rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
   },
@@ -47,15 +65,15 @@ const PHASE1_CIRCUITS: CircuitVariation[] = [
     label: 'B',
     focus: 'Power + explosiveness',
     lower: [
-      'Explosive step-up — 12 reps each leg × 15kg (drive hard)',
-      'Goblet squat — 15 reps × 15kg, explosive up, slow down',
-      'Glute bridge — 12 reps, 3-sec hold at top',
-      'Single-leg glute bridge — 10 reps each leg, 2-sec hold',
+      { name: 'Explosive step-up',        reps: 12, unit: 'reps each leg', weight: '15kg',        note: 'drive hard' },
+      { name: 'Goblet squat',             reps: 15, unit: 'reps',          weight: '15kg',        note: 'explosive up, slow down' },
+      { name: 'Glute bridge',             reps: 12, unit: 'reps',          weight: 'bodyweight',  note: '3-sec hold at top' },
+      { name: 'Single-leg glute bridge',  reps: 10, unit: 'reps each leg', weight: 'bodyweight',  note: '2-sec hold' },
     ],
     upper: [
-      'Press-ups — max controlled reps (pause at bottom)',
-      'Renegade row — 8 reps each side × 15kg',
-      'Dead bug — 10 reps each side, slow',
+      { name: 'Press-ups',     reps: 10, unit: 'reps',          weight: 'bodyweight', note: 'aim for max — pause at bottom' },
+      { name: 'Renegade row',  reps: 8,  unit: 'reps each side', weight: '15kg' },
+      { name: 'Dead bug',      reps: 10, unit: 'reps each side', weight: 'bodyweight', note: 'slow and controlled' },
     ],
     rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
   },
@@ -63,34 +81,36 @@ const PHASE1_CIRCUITS: CircuitVariation[] = [
     label: 'C',
     focus: 'Balance + stability',
     lower: [
-      'Walking lunge — 12 reps each leg × 15kg',
-      'Sumo squat — 15 reps × 15kg, pause at bottom',
-      'Single-leg Romanian deadlift — 10 reps each leg × 15kg',
-      'Single-leg calf raise — 20 reps each leg (slow, bodyweight)',
+      { name: 'Walking lunge',               reps: 12, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Sumo squat',                  reps: 15, unit: 'reps',           weight: '15kg',       note: 'pause at bottom' },
+      { name: 'Single-leg Romanian deadlift', reps: 10, unit: 'reps each leg', weight: '15kg' },
+      { name: 'Single-leg calf raise',       reps: 20, unit: 'reps each leg',  weight: 'bodyweight', note: 'slow eccentric' },
     ],
     upper: [
-      'Bent-over row — 12 reps × 15kg each hand',
-      'Side plank — 40 sec each side',
-      'Superman hold — 10 reps, 3-sec hold',
+      { name: 'Bent-over row',   reps: 12, unit: 'reps',          weight: '15kg each hand' },
+      { name: 'Side plank',      reps: 40, unit: 'sec each side' },
+      { name: 'Superman hold',   reps: 10, unit: 'reps',           weight: 'bodyweight', note: '3-sec hold each rep' },
     ],
     rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
   },
 ]
+
+// ─── PHASE 2 CIRCUITS ─────────────────────────────────────────────────────────
 
 const PHASE2_CIRCUITS: CircuitVariation[] = [
   {
     label: 'A',
     focus: 'Compound strength',
     lower: [
-      'Bulgarian split squat — 12 reps each leg × 15kg (3-sec lower)',
-      'Single-leg RDL — 10 reps each leg × 15kg each hand',
-      'Explosive step-up — 12 reps each leg × 15kg',
-      'Single-leg calf raise on step — 20 reps each leg × 15kg',
+      { name: 'Bulgarian split squat',        reps: 12, unit: 'reps each leg',  weight: '15kg',          note: '3-sec lower' },
+      { name: 'Single-leg RDL',               reps: 10, unit: 'reps each leg',  weight: '15kg each hand' },
+      { name: 'Explosive step-up',            reps: 12, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Single-leg calf raise on step', reps: 20, unit: 'reps each leg', weight: '15kg' },
     ],
     upper: [
-      'Bent-over row — 12 reps × 15kg each hand',
-      'Overhead press — 10 reps × 15kg each',
-      'Plank — 60 sec hold',
+      { name: 'Bent-over row',  reps: 12, unit: 'reps', weight: '15kg each hand' },
+      { name: 'Overhead press', reps: 10, unit: 'reps', weight: '15kg each' },
+      { name: 'Plank',          reps: 60, unit: 'sec' },
     ],
     rounds: '3–4 rounds · Rest 60–90 sec between rounds',
   },
@@ -98,15 +118,15 @@ const PHASE2_CIRCUITS: CircuitVariation[] = [
     label: 'B',
     focus: 'Power + explosiveness',
     lower: [
-      'Goblet squat — 15 reps × 15kg, explosive up',
-      'Explosive step-up — 12 reps each leg × 15kg',
-      'Lateral lunge — 12 reps each direction (bodyweight)',
-      'Sumo squat — 15 reps × 15kg, pause at bottom',
+      { name: 'Goblet squat',    reps: 15, unit: 'reps',          weight: '15kg',       note: 'explosive up' },
+      { name: 'Explosive step-up', reps: 12, unit: 'reps each leg', weight: '15kg' },
+      { name: 'Lateral lunge',   reps: 12, unit: 'reps each direction', weight: 'bodyweight' },
+      { name: 'Sumo squat',      reps: 15, unit: 'reps',          weight: '15kg',       note: 'pause at bottom' },
     ],
     upper: [
-      'Press-ups — max reps (aim to beat last session)',
-      'Renegade row — 8 reps each side × 15kg',
-      'Dead bug — 10 reps each side',
+      { name: 'Press-ups',    reps: 12, unit: 'reps',           weight: 'bodyweight', note: 'aim for max' },
+      { name: 'Renegade row', reps: 8,  unit: 'reps each side', weight: '15kg' },
+      { name: 'Dead bug',     reps: 10, unit: 'reps each side', weight: 'bodyweight' },
     ],
     rounds: '3–4 rounds · Rest 60–90 sec between rounds',
   },
@@ -114,15 +134,15 @@ const PHASE2_CIRCUITS: CircuitVariation[] = [
     label: 'C',
     focus: 'Balance + control',
     lower: [
-      'Walking lunge — 12 reps each leg × 15kg',
-      'Single-leg glute bridge — 10 reps each leg, 3-sec hold',
-      'Single-leg RDL — 10 reps each leg × 15kg',
-      'Single-leg calf raise on step — 20 reps each leg × 15kg',
+      { name: 'Walking lunge',              reps: 12, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Single-leg glute bridge',    reps: 10, unit: 'reps each leg',  weight: 'bodyweight', note: '3-sec hold' },
+      { name: 'Single-leg RDL',             reps: 10, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Single-leg calf raise on step', reps: 20, unit: 'reps each leg', weight: '15kg' },
     ],
     upper: [
-      'Bent-over row — 12 reps × 15kg each hand',
-      'Side plank — 45 sec each side',
-      'Overhead press — 10 reps × 15kg each',
+      { name: 'Bent-over row',  reps: 12, unit: 'reps',          weight: '15kg each hand' },
+      { name: 'Side plank',     reps: 45, unit: 'sec each side' },
+      { name: 'Overhead press', reps: 10, unit: 'reps',          weight: '15kg each' },
     ],
     rounds: '3–4 rounds · Rest 60–90 sec between rounds',
   },
@@ -135,7 +155,7 @@ const PHASE3_CIRCUITS: CircuitVariation[] = PHASE2_CIRCUITS.map(c => ({
 
 const PHASE4_CIRCUITS: CircuitVariation[] = PHASE2_CIRCUITS.map(c => ({
   ...c,
-  rounds: '2 rounds, reduced load · Taper phase — maintain sharpness',
+  rounds: '2 rounds, reduced load · Taper phase',
 }))
 
 function getPhaseCircuits(phaseNum: number): CircuitVariation[] {
@@ -151,51 +171,29 @@ function getSkipPool(phaseNum: number): SkipVariation[] {
   if (phaseNum <= 1) return [
     {
       label: 'A — Steady rhythm',
-      structure: [
-        'Easy steady skip: 15 mins',
-        'Focus: light on feet, consistent rhythm, relaxed shoulders',
-      ],
+      structure: ['Easy steady skip: 15 mins', 'Focus: light on feet, consistent rhythm, relaxed shoulders'],
     },
     {
       label: 'B — Intervals',
-      structure: [
-        'Easy warm-up: 4 mins',
-        '4 × 1-min faster pace, 90-sec easy recovery between',
-        'Easy cool-down: 3 mins',
-      ],
+      structure: ['Easy warm-up: 4 mins', '4 × 1-min faster pace, 90-sec easy recovery between', 'Easy cool-down: 3 mins'],
     },
     {
       label: 'C — Pyramid build',
-      structure: [
-        '3 min easy → 2 min moderate → 1 min fast',
-        '→ 2 min moderate → 3 min easy',
-        'Repeat once — ~22 mins total',
-      ],
+      structure: ['3 min easy → 2 min moderate → 1 min fast', '→ 2 min moderate → 3 min easy', 'Repeat once — ~22 mins total'],
     },
   ]
   if (phaseNum === 2) return [
     {
       label: 'A — Steady pace',
-      structure: [
-        'Easy skip: 5 mins',
-        'Moderate steady pace: 10 mins',
-        'Easy cool-down: 5 mins — total 20 mins',
-      ],
+      structure: ['Easy skip: 5 mins', 'Moderate steady pace: 10 mins', 'Easy cool-down: 5 mins — total 20 mins'],
     },
     {
       label: 'B — Intervals',
-      structure: [
-        'Easy warm-up: 4 mins',
-        '5 × 1-min hard effort, 60-sec easy between',
-        'Easy cool-down: 4 mins — total ~19 mins',
-      ],
+      structure: ['Easy warm-up: 4 mins', '5 × 1-min hard effort, 60-sec easy between', 'Easy cool-down: 4 mins'],
     },
     {
       label: 'C — Progressive build',
-      structure: [
-        '5 min easy → 5 min moderate → 3 min hard',
-        '→ 3 min moderate → 4 min easy — total 20 mins',
-      ],
+      structure: ['5 min easy → 5 min moderate → 3 min hard', '→ 3 min moderate → 4 min easy — total 20 mins'],
     },
   ]
   return [
@@ -205,40 +203,26 @@ function getSkipPool(phaseNum: number): SkipVariation[] {
     },
     {
       label: 'B — Intervals',
-      structure: [
-        'Easy warm-up: 5 mins',
-        '6 × 1-min hard, 60-sec easy between',
-        'Easy cool-down: 4 mins',
-      ],
+      structure: ['Easy warm-up: 5 mins', '6 × 1-min hard, 60-sec easy between', 'Easy cool-down: 4 mins'],
     },
     {
       label: 'C — Mixed pace',
-      structure: [
-        '5 min easy → 4 × (2 min hard + 90 sec easy) → 5 min easy',
-        'Total ~25 mins',
-      ],
+      structure: ['5 min easy → 4 × (2 min hard + 90 sec easy) → 5 min easy', 'Total ~25 mins'],
     },
   ]
 }
 
-// ─── SELECTION FUNCTIONS ──────────────────────────────────────────────────────
+// ─── SELECTION ────────────────────────────────────────────────────────────────
 
-export function isStrengthLog(sessionType: string) {
-  return /strength/i.test(sessionType)
-}
-
-export function isSkipLog(sessionType: string) {
-  return /skip|mobility/i.test(sessionType)
-}
+export function isStrengthLog(sessionType: string) { return /strength/i.test(sessionType) }
+export function isSkipLog(sessionType: string) { return /skip|mobility/i.test(sessionType) }
 
 export function getCircuitVariation(strengthSessionCount: number, phaseNum: number): CircuitVariation {
-  const pool = getPhaseCircuits(phaseNum)
-  return pool[strengthSessionCount % 3]
+  return getPhaseCircuits(phaseNum)[strengthSessionCount % 3]
 }
 
 export function getSkipVariation(skipSessionCount: number, phaseNum: number): SkipVariation {
-  const pool = getSkipPool(phaseNum)
-  return pool[skipSessionCount % 3]
+  return getSkipPool(phaseNum)[skipSessionCount % 3]
 }
 
 // ─── PROGRESSION ADVICE ───────────────────────────────────────────────────────
@@ -249,11 +233,7 @@ function strengthSpecifics(dir: 'up' | 'down'): string[] {
     'Add 1 extra round (e.g. 2 → 3 rounds), OR',
     'Increase to 17.5–20kg if form is solid on all reps',
   ]
-  return [
-    'Drop to 2 rounds this session',
-    'Reduce reps by 2 per exercise, OR',
-    'Drop weight by ~10%',
-  ]
+  return ['Drop to 2 rounds this session', 'Reduce reps by 2 per exercise']
 }
 
 function skipSpecifics(dir: 'up' | 'down'): string[] {
@@ -262,10 +242,7 @@ function skipSpecifics(dir: 'up' | 'down'): string[] {
     'Add 1 extra interval, OR',
     'Increase hard interval from 1 min → 90 sec',
   ]
-  return [
-    'Drop all intervals — steady pace only today',
-    'Reduce total session by 5 mins',
-  ]
+  return ['Drop all intervals — steady pace only today', 'Reduce total session by 5 mins']
 }
 
 export function getProgressionAdvice(logs: WorkoutLog[], sessionType: string): ProgressionAdvice | null {
@@ -273,7 +250,8 @@ export function getProgressionAdvice(logs: WorkoutLog[], sessionType: string): P
   const isSkip = isSkipLog(sessionType)
 
   const recent = logs
-    .filter(l => (isStrength ? isStrengthLog(l.sessionType) : isSkip ? isSkipLog(l.sessionType) : false)
+    .filter(l =>
+      (isStrength ? isStrengthLog(l.sessionType) : isSkip ? isSkipLog(l.sessionType) : false)
       && typeof l.perceivedEffort === 'number')
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, 3)
@@ -282,8 +260,23 @@ export function getProgressionAdvice(logs: WorkoutLog[], sessionType: string): P
 
   const avgRPE = recent.reduce((s, l) => s + (l.perceivedEffort ?? 0), 0) / recent.length
   const count = recent.length
+
+  // Check if exercise targets were consistently hit (for strength sessions)
+  const recentWithExercises = recent.filter(l => l.exerciseLogs && l.exerciseLogs.length > 0)
+  const notHittingTargets = recentWithExercises.length > 0 &&
+    recentWithExercises.some(l => l.exerciseLogs!.some(e => e.actualReps < e.targetReps))
+
   const label = `RPE avg ${avgRPE.toFixed(1)}/10 (last ${count} session${count > 1 ? 's' : ''})`
 
+  if (notHittingTargets && avgRPE >= 6) {
+    return {
+      direction: 'consolidate',
+      icon: '⏸',
+      color: 'var(--warn)',
+      message: `${label} — still building to target reps, hold this load`,
+      specifics: ['Focus on hitting all target reps before increasing weight or rounds'],
+    }
+  }
   if (avgRPE <= 3.5) {
     return {
       direction: 'up',
