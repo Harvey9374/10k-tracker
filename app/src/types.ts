@@ -1,3 +1,10 @@
+export interface ExerciseLog {
+  name: string
+  targetReps: number
+  actualReps: number
+  unit: string
+}
+
 export interface WorkoutLog {
   id: string
   date: string
@@ -10,6 +17,7 @@ export interface WorkoutLog {
   completed: boolean
   injuryFlag?: boolean
   stravaId?: number
+  exerciseLogs?: ExerciseLog[]
 }
 
 export interface TimeTrial {

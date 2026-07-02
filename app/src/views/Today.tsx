@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
-import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog } from '../data/progression'
+import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog, exerciseToString } from '../data/progression'
 import { useSessionCompletions } from '../hooks/useStore'
 import { useWeather, calcHeatAdj } from '../hooks/useWeather'
 import type { WorkoutLog, Phase, CalibratedZones } from '../types'
@@ -91,10 +91,10 @@ function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null;
   // Build circuit lines for strength variation
   const variedCircuit: string[] = circuitVariation ? [
     'LOWER BODY',
-    ...circuitVariation.lower.map(e => `  ${e}`),
+    ...circuitVariation.lower.map(e => `  ${exerciseToString(e)}`),
     '',
     'UPPER BODY + CORE',
-    ...circuitVariation.upper.map(e => `  ${e}`),
+    ...circuitVariation.upper.map(e => `  ${exerciseToString(e)}`),
     '',
     circuitVariation.rounds,
   ] : []

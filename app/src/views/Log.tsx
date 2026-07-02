@@ -1,14 +1,14 @@
-import { useState } from 'react'
-import type { WorkoutLog } from '../types'
+import { useState, useEffect } from 'react'
+import type { WorkoutLog, ExerciseLog } from '../types'
 import { formatPace, calcPaceSeconds, formatTime } from '../data/plan'
+import { getCircuitVariation, isStrengthLog } from '../data/progression'
+import type { Exercise } from '../data/progression'
 
 interface Props {
   logs: WorkoutLog[]
   onAdd: (log: Omit<WorkoutLog, 'id'>) => void
   onDelete: (id: string) => void
 }
-
-const STRENGTH_SESSION_TYPES = new Set(['Strength + Conditioning'])
 
 function getStrengthSuggestion(rounds: number, rpe: number): { text: string; color: string } {
   if (rpe <= 4) {
@@ -81,8 +81,27 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const [injuryFlag, setInjuryFlag] = useState(false)
   const [roundsCompleted, setRoundsCompleted] = useState<number | ''>('')
   const [saved, setSaved] = useState(false)
+  const [exerciseReps, setExerciseReps] = useState<Record<string, number>>({})
 
-  const isStrengthSession = STRENGTH_SESSION_TYPES.has(sessionType)
+  const isStrengthSession = sessionType === 'Strength + Conditioning'
+
+  // Get current circuit variation for strength sessions
+  const strengthCount = logs.filter(l => isStrengthLog(l.sessionType)).length
+  const phaseNum = 1 // default; ideally passed as prop but 1 is safe fallback
+  const circuitVariation = isStrengthSession ? getCircuitVariation(strengthCount, phaseNum) : null
+  const allExercises: Exercise[] = circuitVariation
+    ? [...circuitVariation.lower, ...circuitVariation.upper]
+    : []
+
+  // Initialise exerciseReps from circuit variation when it changes
+  useEffect(() => {
+    if (!circuitVariation) { setExerciseReps({}); return }
+    const init: Record<string, number> = {}
+    for (const e of [...circuitVariation.lower, ...circuitVariation.upper]) {
+      init[e.name] = e.reps
+    }
+    setExerciseReps(init)
+  }, [circuitVariation?.label])
 
   const dist = parseFloat(distanceKm)
   const dur = parseFloat(durationMins)
@@ -91,6 +110,15 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const paceLabel = paceSeconds ? formatPace(paceSeconds) : null
 
   function handleSave() {
+    const exerciseLogsData: ExerciseLog[] | undefined = isStrengthSession && allExercises.length > 0
+      ? allExercises.map(e => ({
+          name: e.name,
+          targetReps: e.reps,
+          actualReps: exerciseReps[e.name] ?? e.reps,
+          unit: e.unit,
+        }))
+      : undefined
+
     onAdd({
       date,
       sessionType,
@@ -101,6 +129,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       notes: notes.trim() || undefined,
       injuryFlag: injuryFlag || undefined,
       completed: true,
+      exerciseLogs: exerciseLogsData,
     })
     setDistanceKm('')
     setDurationMins('')
@@ -108,6 +137,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
     setEffort(5)
     setRoundsCompleted('')
     setInjuryFlag(false)
+    setExerciseReps({})
     setDate(today)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
@@ -178,42 +208,114 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
             </div>
 
             {isStrengthSession && (
-              <div className="form-group">
-                <label className="form-label">Rounds completed</label>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {[1, 2, 3, 4].map(r => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => setRoundsCompleted(roundsCompleted === r ? '' : r)}
-                      style={{
-                        width: 52, height: 52, borderRadius: 'var(--radius-sm)',
-                        border: `2px solid ${roundsCompleted === r ? 'var(--accent-2)' : 'var(--border)'}`,
-                        background: roundsCompleted === r ? 'rgba(139,92,246,0.12)' : 'var(--surface)',
-                        color: roundsCompleted === r ? 'var(--accent-2)' : 'var(--text)',
-                        fontSize: 18, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
-                      }}
-                    >
-                      {r}
-                    </button>
-                  ))}
+              <>
+                <div className="form-group">
+                  <label className="form-label">Rounds completed</label>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {[1, 2, 3, 4].map(r => (
+                      <button
+                        key={r}
+                        type="button"
+                        onClick={() => setRoundsCompleted(roundsCompleted === r ? '' : r)}
+                        style={{
+                          width: 52, height: 52, borderRadius: 'var(--radius-sm)',
+                          border: `2px solid ${roundsCompleted === r ? 'var(--accent-2)' : 'var(--border)'}`,
+                          background: roundsCompleted === r ? 'rgba(139,92,246,0.12)' : 'var(--surface)',
+                          color: roundsCompleted === r ? 'var(--accent-2)' : 'var(--text)',
+                          fontSize: 18, fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s',
+                        }}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                  {roundsCompleted !== '' && (
+                    <div style={{
+                      marginTop: 10, padding: '10px 14px', borderRadius: 'var(--radius-sm)',
+                      border: `1px solid ${getStrengthSuggestion(roundsCompleted, effort).color}40`,
+                      background: `${getStrengthSuggestion(roundsCompleted, effort).color}0d`,
+                      fontSize: 13,
+                    }}>
+                      <div style={{ fontWeight: 700, color: getStrengthSuggestion(roundsCompleted, effort).color, marginBottom: 2 }}>
+                        Recommendation
+                      </div>
+                      <div style={{ color: 'var(--text-muted)' }}>
+                        {getStrengthSuggestion(roundsCompleted, effort).text}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {roundsCompleted !== '' && (
-                  <div style={{
-                    marginTop: 10, padding: '10px 14px', borderRadius: 'var(--radius-sm)',
-                    border: `1px solid ${getStrengthSuggestion(roundsCompleted, effort).color}40`,
-                    background: `${getStrengthSuggestion(roundsCompleted, effort).color}0d`,
-                    fontSize: 13,
-                  }}>
-                    <div style={{ fontWeight: 700, color: getStrengthSuggestion(roundsCompleted, effort).color, marginBottom: 2 }}>
-                      Recommendation
+
+                {circuitVariation && (
+                  <div className="form-group">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                      <label className="form-label" style={{ marginBottom: 0 }}>Reps done — Variation {circuitVariation.label}</label>
+                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{circuitVariation.focus}</span>
                     </div>
-                    <div style={{ color: 'var(--text-muted)' }}>
-                      {getStrengthSuggestion(roundsCompleted, effort).text}
-                    </div>
+
+                    {[
+                      { label: 'Lower Body', exercises: circuitVariation.lower },
+                      { label: 'Upper Body + Core', exercises: circuitVariation.upper },
+                    ].map(section => (
+                      <div key={section.label} style={{ marginBottom: 12 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--accent-2)', marginBottom: 6 }}>{section.label}</div>
+                        {section.exercises.map(ex => {
+                          const actual = exerciseReps[ex.name] ?? ex.reps
+                          const isBelow = actual < ex.reps
+                          const isAbove = actual > ex.reps
+                          return (
+                            <div key={ex.name} style={{
+                              display: 'flex', alignItems: 'center', gap: 10,
+                              padding: '8px 10px', marginBottom: 6,
+                              background: 'var(--surface)',
+                              borderRadius: 'var(--radius-sm)',
+                              border: `1.5px solid ${isBelow ? 'rgba(239,68,68,0.3)' : isAbove ? 'rgba(34,197,94,0.3)' : 'var(--border)'}`,
+                            }}>
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {ex.name}
+                                </div>
+                                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+                                  target: {ex.reps} {ex.unit}{ex.weight ? ` · ${ex.weight}` : ''}
+                                </div>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                                <button
+                                  type="button"
+                                  onClick={() => setExerciseReps(r => ({ ...r, [ex.name]: Math.max(0, (r[ex.name] ?? ex.reps) - 1) }))}
+                                  style={{
+                                    width: 32, height: 32, borderRadius: 8,
+                                    border: '1.5px solid var(--border)', background: 'var(--card)',
+                                    color: 'var(--text)', fontSize: 18, fontWeight: 700,
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  }}
+                                >−</button>
+                                <div style={{
+                                  width: 36, textAlign: 'center',
+                                  fontSize: 16, fontWeight: 800,
+                                  color: isBelow ? '#ef4444' : isAbove ? '#22c55e' : 'var(--text)',
+                                }}>
+                                  {actual}
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => setExerciseReps(r => ({ ...r, [ex.name]: (r[ex.name] ?? ex.reps) + 1 }))}
+                                  style={{
+                                    width: 32, height: 32, borderRadius: 8,
+                                    border: '1.5px solid var(--border)', background: 'var(--card)',
+                                    color: 'var(--text)', fontSize: 18, fontWeight: 700,
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  }}
+                                >+</button>
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ))}
                   </div>
                 )}
-              </div>
+              </>
             )}
 
             <div className="form-group">
