@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
+import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog } from '../data/progression'
 import { useSessionCompletions } from '../hooks/useStore'
 import { useWeather, calcHeatAdj } from '../hooks/useWeather'
 import type { WorkoutLog, Phase, CalibratedZones } from '../types'
@@ -61,18 +62,46 @@ function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColo
   )
 }
 
-function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
+function isSkipItem(item: string) { return /skip/i.test(item) }
+
+function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null; logs: WorkoutLog[] }) {
   const [open, setOpen] = useState(false)
   const hasStrength = isStrengthItem(item) && !!phase?.strengthCircuit?.length
+  const hasSkip = isSkipItem(item)
   const hasMobility = isMobilityItem(item) && !!phase?.mobilityCircuit?.length
   const hasRecovery = isRecoveryItem(item) && !!phase?.recoveryCircuit?.length
-  const isExpandable = hasStrength || hasMobility || hasRecovery
+  const isExpandable = hasStrength || hasSkip || hasMobility || hasRecovery
 
   if (!isExpandable) return <li>{item}</li>
 
-  const circuit = hasStrength ? phase!.strengthCircuit! : hasMobility ? phase!.mobilityCircuit! : phase!.recoveryCircuit!
-  const accentColor = hasStrength ? 'var(--accent-2)' : 'var(--accent)'
-  const expandLabel = hasStrength ? 'show exercises' : 'show routine'
+  const phaseNum = phase?.number ?? 1
+  const accentColor = (hasStrength || hasSkip) ? 'var(--accent-2)' : 'var(--accent)'
+  const expandLabel = hasStrength ? 'show exercises' : hasSkip ? 'show session' : 'show routine'
+
+  // Compute varied content and progression advice
+  const strengthCount = logs.filter(l => isStrengthLog(l.sessionType)).length
+  const skipCount = logs.filter(l => isSkipLog(l.sessionType)).length
+
+  const circuitVariation = hasStrength ? getCircuitVariation(strengthCount, phaseNum) : null
+  const skipVariation = hasSkip && !hasStrength ? getSkipVariation(skipCount, phaseNum) : null
+
+  const adviceType = hasStrength ? 'Strength + Conditioning' : hasSkip ? 'Skip + Mobility' : ''
+  const advice = (hasStrength || hasSkip) ? getProgressionAdvice(logs, adviceType) : null
+
+  // Build circuit lines for strength variation
+  const variedCircuit: string[] = circuitVariation ? [
+    'LOWER BODY',
+    ...circuitVariation.lower.map(e => `  ${e}`),
+    '',
+    'UPPER BODY + CORE',
+    ...circuitVariation.upper.map(e => `  ${e}`),
+    '',
+    circuitVariation.rounds,
+  ] : []
+
+  const staticCircuit = !hasStrength && !hasSkip
+    ? (hasMobility ? phase!.mobilityCircuit! : phase!.recoveryCircuit!)
+    : null
 
   return (
     <li style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
@@ -82,7 +111,54 @@ function SessionItem({ item, phase }: { item: string; phase: Phase | null }) {
           {open ? '▲ hide' : `▼ ${expandLabel}`}
         </span>
       </div>
-      {open && <CircuitDetail circuit={circuit} accentColor={accentColor} />}
+      {open && (
+        <div style={{ marginTop: 8, width: '100%' }}>
+          {/* Progression advice banner */}
+          {advice && (
+            <div style={{
+              background: `${advice.color}18`,
+              border: `1px solid ${advice.color}50`,
+              borderRadius: 6,
+              padding: '8px 10px',
+              marginBottom: 10,
+            }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: advice.color }}>
+                {advice.icon} {advice.message}
+              </div>
+              {advice.specifics.map((s, i) => (
+                <div key={i} style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>• {s}</div>
+              ))}
+            </div>
+          )}
+
+          {/* Strength: varied circuit */}
+          {circuitVariation && (
+            <>
+              <div style={{ fontSize: 11, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
+                Variation {circuitVariation.label} — {circuitVariation.focus}
+              </div>
+              <CircuitDetail circuit={variedCircuit} accentColor={accentColor} />
+            </>
+          )}
+
+          {/* Skip: varied session structure */}
+          {skipVariation && (
+            <>
+              <div style={{ fontSize: 11, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
+                {skipVariation.label}
+              </div>
+              <div style={{ paddingLeft: 12, borderLeft: `2px solid ${accentColor}` }}>
+                {skipVariation.structure.map((line, i) => (
+                  <div key={i} style={{ fontSize: 13, color: 'var(--text-muted)', padding: '2px 0' }}>{line}</div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Mobility / recovery: static content */}
+          {staticCircuit && <CircuitDetail circuit={staticCircuit} accentColor={accentColor} />}
+        </div>
+      )}
     </li>
   )
 }
@@ -522,7 +598,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                 {expandedSession && (
                   <ul className="session-items">
                     {daySession.session.items.map((item, i) => (
-                      <SessionItem key={i} item={item} phase={phase} />
+                      <SessionItem key={i} item={item} phase={phase} logs={logs} />
                     ))}
                   </ul>
                 )}
