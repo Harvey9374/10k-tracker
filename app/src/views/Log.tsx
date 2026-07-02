@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { WorkoutLog, ExerciseLog } from '../types'
 import { formatPace, calcPaceSeconds, formatTime } from '../data/plan'
-import { getCircuitVariation, isStrengthLog } from '../data/progression'
+import { getCircuitVariation, isStrengthLog, adjustedReps, applyRepProgressionAdjustment, getProgressionAdvice } from '../data/progression'
 import type { Exercise } from '../data/progression'
 
 interface Props {
@@ -93,12 +93,12 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
     ? [...circuitVariation.lower, ...circuitVariation.upper]
     : []
 
-  // Initialise exerciseReps from circuit variation when it changes
+  // Initialise exerciseReps from circuit variation (including any progressive adjustments)
   useEffect(() => {
     if (!circuitVariation) { setExerciseReps({}); return }
     const init: Record<string, number> = {}
     for (const e of [...circuitVariation.lower, ...circuitVariation.upper]) {
-      init[e.name] = e.reps
+      init[e.name] = adjustedReps(e)
     }
     setExerciseReps(init)
   }, [circuitVariation?.label])
@@ -113,11 +113,19 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
     const exerciseLogsData: ExerciseLog[] | undefined = isStrengthSession && allExercises.length > 0
       ? allExercises.map(e => ({
           name: e.name,
-          targetReps: e.reps,
-          actualReps: exerciseReps[e.name] ?? e.reps,
+          targetReps: adjustedReps(e),
+          actualReps: exerciseReps[e.name] ?? adjustedReps(e),
           unit: e.unit,
         }))
       : undefined
+
+    // Auto-update rep targets for next session based on this session's result
+    if (isStrengthSession && allExercises.length > 0) {
+      const tempLog = { id: 'temp', date, sessionType, perceivedEffort: effort, completed: true, exerciseLogs: exerciseLogsData }
+      const advice = getProgressionAdvice([...logs, tempLog], sessionType)
+      if (advice?.direction === 'up') applyRepProgressionAdjustment(allExercises, 'up')
+      else if (advice?.direction === 'down') applyRepProgressionAdjustment(allExercises, 'down')
+    }
 
     onAdd({
       date,

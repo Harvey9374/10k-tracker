@@ -42,6 +42,33 @@ export function exerciseToString(e: Exercise): string {
   return `${e.name} — ${repStr}${weightStr}${noteStr}`
 }
 
+// ─── REP PROGRESSION ADJUSTMENTS ─────────────────────────────────────────────
+
+const REP_ADJ_KEY = 'repAdjustments'
+
+function loadAdjustments(): Record<string, number> {
+  try { return JSON.parse(localStorage.getItem(REP_ADJ_KEY) ?? '{}') } catch { return {} }
+}
+
+export function getRepAdjustment(name: string): number {
+  return loadAdjustments()[name] ?? 0
+}
+
+export function adjustedReps(e: Exercise): number {
+  return Math.max(1, e.reps + getRepAdjustment(e.name))
+}
+
+export function applyRepProgressionAdjustment(exercises: Exercise[], direction: 'up' | 'down'): void {
+  try {
+    const stored = loadAdjustments()
+    const delta = direction === 'up' ? 2 : -2
+    for (const e of exercises) {
+      stored[e.name] = Math.max(1 - e.reps, (stored[e.name] ?? 0) + delta)
+    }
+    localStorage.setItem(REP_ADJ_KEY, JSON.stringify(stored))
+  } catch {}
+}
+
 // ─── PHASE 1 CIRCUITS ─────────────────────────────────────────────────────────
 
 const PHASE1_CIRCUITS: CircuitVariation[] = [
