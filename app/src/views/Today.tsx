@@ -62,7 +62,7 @@ function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColo
   )
 }
 
-function isSkipItem(item: string) { return /skip/i.test(item) && !/warm.?up/i.test(item) }
+function isSkipItem(item: string) { return /^skip intervals?/i.test(item.trim()) }
 
 function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null; logs: WorkoutLog[] }) {
   const [open, setOpen] = useState(false)
