@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
-import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog, exerciseToString } from '../data/progression'
+import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog, exerciseToString, adjustedReps } from '../data/progression'
 import { useSessionCompletions } from '../hooks/useStore'
 import { useWeather, calcHeatAdj } from '../hooks/useWeather'
 import type { WorkoutLog, Phase, CalibratedZones } from '../types'
@@ -88,13 +88,13 @@ function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null;
   const adviceType = hasStrength ? 'Strength + Conditioning' : hasSkip ? 'Skip + Mobility' : ''
   const advice = (hasStrength || hasSkip) ? getProgressionAdvice(logs, adviceType) : null
 
-  // Build circuit lines for strength variation
+  // Build circuit lines for strength variation — use adjusted reps from progression
   const variedCircuit: string[] = circuitVariation ? [
     'LOWER BODY',
-    ...circuitVariation.lower.map(e => `  ${exerciseToString(e)}`),
+    ...circuitVariation.lower.map(e => `  ${exerciseToString({ ...e, reps: adjustedReps(e) })}`),
     '',
     'UPPER BODY + CORE',
-    ...circuitVariation.upper.map(e => `  ${exerciseToString(e)}`),
+    ...circuitVariation.upper.map(e => `  ${exerciseToString({ ...e, reps: adjustedReps(e) })}`),
     '',
     circuitVariation.rounds,
   ] : []
