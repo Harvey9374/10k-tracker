@@ -50,15 +50,24 @@ export function useStrava() {
     try {
       const res = await fetch('/.netlify/functions/strava-exchange', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),
       })
+      if (!res.ok) {
+        setError(`Auth function error (${res.status}) — Netlify functions may not be deployed yet`)
+        return false
+      }
       const data = await res.json()
       if (data.access_token) {
         saveTokens(data as StravaTokens)
         setTokens(data as StravaTokens)
+        setError(null)
         return true
       }
-    } catch { /* fall through */ }
+      setError(data.error || 'Strava did not return a token — check your client secret in Netlify env vars')
+    } catch {
+      setError('Could not reach /.netlify/functions/strava-exchange — check functions are deployed')
+    }
     return false
   }, [])
 
