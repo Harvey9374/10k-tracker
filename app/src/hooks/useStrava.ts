@@ -90,15 +90,28 @@ export function useStrava() {
     setSyncing(true)
     setError(null)
     try {
-      const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=20', {
+      // Step 1: verify the token works at all (requires only 'read' scope)
+      const athleteRes = await fetch('https://www.strava.com/api/v3/athlete', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      const athleteData = await athleteRes.json() as Record<string, unknown>
+      if (athleteRes.status !== 200) {
+        setDebugInfo(`athlete: status=${athleteRes.status} tok=${token.slice(0, 10)}... body=${JSON.stringify(athleteData)}`)
+        setError(`Token invalid (${athleteRes.status}): ${athleteData.message || JSON.stringify(athleteData)}`)
+        return
+      }
+
+      // Step 2: fetch activities (requires 'activity:read' scope)
+      const res = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=30&page=1', {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
+      setDebugInfo(`athlete:ok(${athleteData.id}) acts:${res.status} tok=${token.slice(0, 10)}... body=${JSON.stringify(data).slice(0, 200)}`)
       if (!Array.isArray(data)) {
-        setError(`Strava error: ${data.message || JSON.stringify(data)}`)
+        setError(`Activities error (${res.status}): ${(data as Record<string, unknown>).message || JSON.stringify(data)}`)
         return
       }
-      const runs = (data as StravaActivity[]).filter(a => a.type === 'Run')
+      const runs = (data as StravaActivity[]).filter(a => a.type === 'Run' || a.sport_type === 'Run')
       setActivities(runs)
       localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(runs))
     } catch {

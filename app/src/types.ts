@@ -101,6 +101,7 @@ export interface StravaActivity {
   id: number
   name: string
   type: string
+  sport_type?: string
   start_date_local: string
   distance: number
   moving_time: number
