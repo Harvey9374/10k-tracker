@@ -62,6 +62,11 @@ export function useStrava() {
       }
       const data = await stravaTokenRequest({ grant_type: 'authorization_code', code })
       if (data.access_token) {
+        const scope = (data.scope as string) || ''
+        if (!scope.includes('activity:read')) {
+          setError(`Connected but wrong permissions (scope: "${scope}"). Go to strava.com/settings/apps → revoke this app → reconnect`)
+          return false
+        }
         saveTokens(data as unknown as StravaTokens)
         setTokens(data as unknown as StravaTokens)
         setError(null)
