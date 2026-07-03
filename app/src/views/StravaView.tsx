@@ -458,7 +458,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
               {debugInfo}
             </div>
           )}
-          <
+          <a
             href={connectUrl}
             style={{
               display: 'inline-block',
