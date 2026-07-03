@@ -64,7 +64,10 @@ export function useStrava() {
 
   const syncActivities = useCallback(async () => {
     const token = await getValidToken()
-    if (!token) return
+    if (!token) {
+      setError('Session expired — tap Disconnect then reconnect Strava')
+      return
+    }
     setSyncing(true)
     setError(null)
     try {
@@ -72,6 +75,10 @@ export function useStrava() {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
+      if (data.errors || data.message) {
+        setError('Strava returned an error — try disconnecting and reconnecting')
+        return
+      }
       const runs = Array.isArray(data) ? (data as StravaActivity[]).filter(a => a.type === 'Run') : []
       setActivities(runs)
       localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(runs))

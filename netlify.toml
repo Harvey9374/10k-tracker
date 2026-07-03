@@ -4,27 +4,7 @@
   publish = "dist"
 
 [functions]
-  directory = "netlify/functions"
-
-[functions."remove-bg"]
-  runtime = "python3.11"
-
-[[redirects]]
-  from = "/wardrobe"
-  to = "/wardrobe/index.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/wardrobe/"
-  to = "/wardrobe/index.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/wardrobe/*"
-  to = "/wardrobe/index.html"
-  status = 200
+  directory = "../netlify/functions"
 
 [[redirects]]
   from = "/*"
