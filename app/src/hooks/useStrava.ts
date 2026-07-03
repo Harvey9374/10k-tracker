@@ -84,8 +84,8 @@ export function useStrava() {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
-      if (data.errors || data.message) {
-        setError('Strava returned an error — try disconnecting and reconnecting')
+      if (data.errors || (data.message && !Array.isArray(data))) {
+        setError(`Strava error: ${data.message || 'Unknown'} — disconnect and reconnect to re-authorise`)
         return
       }
       const runs = Array.isArray(data) ? (data as StravaActivity[]).filter(a => a.type === 'Run') : []
