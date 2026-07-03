@@ -426,7 +426,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
   }
 
   const redirectUri = window.location.origin + '/'
-  const connectUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&approval_prompt=auto&scope=activity:read_all`
+  const connectUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&approval_prompt=force&scope=activity:read_all`
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
