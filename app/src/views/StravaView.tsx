@@ -405,7 +405,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
   const phase = getPhase(week)
   const phaseNum = phase?.number ?? 1
 
-  const { isConnected, athlete, activities, syncing, error, exchangeCode, syncActivities, fetchDetail, disconnect } = useStrava()
+  const { isConnected, athlete, activities, syncing, error, debugInfo, exchangeCode, syncActivities, fetchDetail, disconnect } = useStrava()
 
   const scrollRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef(0)
@@ -449,11 +449,16 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
             Sync your runs automatically and see each km split colour-coded against your Phase {phaseNum} pace targets.
           </div>
           {error && (
-            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#fca5a5', marginBottom: 16, textAlign: 'left' }}>
+            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#fca5a5', marginBottom: 12, textAlign: 'left' }}>
               {error}
             </div>
           )}
-          <a
+          {debugInfo && (
+            <div style={{ background: 'rgba(107,125,160,0.1)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontSize: 11, color: 'var(--text-muted)', marginBottom: 16, fontFamily: 'monospace', wordBreak: 'break-all', textAlign: 'left' }}>
+              {debugInfo}
+            </div>
+          )}
+          <
             href={connectUrl}
             style={{
               display: 'inline-block',
@@ -532,6 +537,11 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
       {error && (
         <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#fca5a5', marginBottom: 12 }}>
           {error}
+        </div>
+      )}
+      {debugInfo && (
+        <div style={{ background: 'rgba(107,125,160,0.1)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, fontFamily: 'monospace', wordBreak: 'break-all' }}>
+          {debugInfo}
         </div>
       )}
 

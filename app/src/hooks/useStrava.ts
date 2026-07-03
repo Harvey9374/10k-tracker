@@ -53,6 +53,7 @@ export function useStrava() {
   const [activities, setActivities] = useState<StravaActivity[]>(loadActivities)
   const [syncing, setSyncing] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string | null>(null)
 
   const exchangeCode = useCallback(async (code: string): Promise<boolean> => {
     try {
@@ -61,10 +62,11 @@ export function useStrava() {
         return false
       }
       const data = await stravaTokenRequest({ grant_type: 'authorization_code', code })
+      const scope = (data.scope as string) || ''
+      setDebugInfo(`scope="${scope}" has_token=${!!data.access_token} secret_set=${!!CLIENT_SECRET}`)
       if (data.access_token) {
-        const scope = (data.scope as string) || ''
         if (!scope.includes('activity:read')) {
-          setError(`Connected but wrong permissions (scope: "${scope}"). Go to strava.com/settings/apps → revoke this app → reconnect`)
+          setError(`Wrong permissions — scope granted: "${scope}". Go to strava.com/settings/apps, revoke this app, then reconnect and tick "View data about your activities"`)
           return false
         }
         saveTokens(data as unknown as StravaTokens)
@@ -72,7 +74,7 @@ export function useStrava() {
         setError(null)
         return true
       }
-      setError(`Strava: ${(data.message as string) || 'Exchange failed'} — check your client secret`)
+      setError(`Exchange failed: ${(data.message as string) || JSON.stringify(data)}`)
     } catch {
       setError('Could not reach Strava — check your internet connection')
     }
@@ -131,6 +133,7 @@ export function useStrava() {
     activities,
     syncing,
     error,
+    debugInfo,
     exchangeCode,
     syncActivities,
     fetchDetail,
