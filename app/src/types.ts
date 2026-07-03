@@ -95,6 +95,7 @@ export interface StravaSplit {
   moving_time: number
   average_speed: number
   elevation_difference?: number
+  average_heartrate?: number
 }
 
 export interface StravaActivity {
@@ -107,6 +108,8 @@ export interface StravaActivity {
   moving_time: number
   total_elevation_gain: number
   average_speed: number
+  average_heartrate?: number
+  max_heartrate?: number
   workout_type?: number
   splits_metric?: StravaSplit[]
 }
