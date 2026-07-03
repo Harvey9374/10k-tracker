@@ -448,6 +448,11 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
           <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 28, lineHeight: 1.7 }}>
             Sync your runs automatically and see each km split colour-coded against your Phase {phaseNum} pace targets.
           </div>
+          {error && (
+            <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: '#fca5a5', marginBottom: 16, textAlign: 'left' }}>
+              {error}
+            </div>
+          )}
           <a
             href={connectUrl}
             style={{
