@@ -1,6 +1,9 @@
 import { useState, useCallback } from 'react'
 import type { StravaTokens, StravaActivity } from '../types'
 
+const CLIENT_ID = '250705'
+const CLIENT_SECRET = import.meta.env.VITE_STRAVA_CLIENT_SECRET as string
+
 const STORAGE_KEY = 'stravaTokens'
 const ACTIVITIES_KEY = 'stravaActivities'
 
@@ -22,18 +25,23 @@ function loadActivities(): StravaActivity[] {
   } catch { return [] }
 }
 
+async function stravaTokenRequest(body: Record<string, string>): Promise<Record<string, unknown>> {
+  const res = await fetch('https://www.strava.com/oauth/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ client_id: CLIENT_ID, client_secret: CLIENT_SECRET, ...body }),
+  })
+  return res.json() as Promise<Record<string, unknown>>
+}
+
 async function getValidToken(): Promise<string | null> {
   const t = loadTokens()
   if (!t) return null
   if (t.expires_at > Date.now() / 1000 + 60) return t.access_token
   try {
-    const res = await fetch('/.netlify/functions/strava-refresh', {
-      method: 'POST',
-      body: JSON.stringify({ refresh_token: t.refresh_token }),
-    })
-    const data = await res.json()
+    const data = await stravaTokenRequest({ grant_type: 'refresh_token', refresh_token: t.refresh_token })
     if (data.access_token) {
-      saveTokens({ ...t, ...data })
+      saveTokens({ ...t, ...data } as StravaTokens)
       return data.access_token as string
     }
   } catch { /* fall through */ }
@@ -48,25 +56,20 @@ export function useStrava() {
 
   const exchangeCode = useCallback(async (code: string): Promise<boolean> => {
     try {
-      const res = await fetch('/.netlify/functions/strava-exchange', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code }),
-      })
-      if (!res.ok) {
-        setError(`Auth function error (${res.status}) — Netlify functions may not be deployed yet`)
+      if (!CLIENT_SECRET) {
+        setError('VITE_STRAVA_CLIENT_SECRET not set — add it to Netlify environment variables')
         return false
       }
-      const data = await res.json()
+      const data = await stravaTokenRequest({ grant_type: 'authorization_code', code })
       if (data.access_token) {
-        saveTokens(data as StravaTokens)
-        setTokens(data as StravaTokens)
+        saveTokens(data as unknown as StravaTokens)
+        setTokens(data as unknown as StravaTokens)
         setError(null)
         return true
       }
-      setError(data.error || 'Strava did not return a token — check your client secret in Netlify env vars')
+      setError(`Strava: ${(data.message as string) || 'Exchange failed'} — check your client secret`)
     } catch {
-      setError('Could not reach /.netlify/functions/strava-exchange — check functions are deployed')
+      setError('Could not reach Strava — check your internet connection')
     }
     return false
   }, [])
@@ -84,11 +87,11 @@ export function useStrava() {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
-      if (data.errors || (data.message && !Array.isArray(data))) {
-        setError(`Strava error: ${data.message || 'Unknown'} — disconnect and reconnect to re-authorise`)
+      if (!Array.isArray(data)) {
+        setError(`Strava error: ${data.message || JSON.stringify(data)}`)
         return
       }
-      const runs = Array.isArray(data) ? (data as StravaActivity[]).filter(a => a.type === 'Run') : []
+      const runs = (data as StravaActivity[]).filter(a => a.type === 'Run')
       setActivities(runs)
       localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(runs))
     } catch {
@@ -114,6 +117,7 @@ export function useStrava() {
     localStorage.removeItem(ACTIVITIES_KEY)
     setTokens(null)
     setActivities([])
+    setError(null)
   }, [])
 
   return {
