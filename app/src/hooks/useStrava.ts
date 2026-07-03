@@ -63,15 +63,16 @@ export function useStrava() {
       }
       const data = await stravaTokenRequest({ grant_type: 'authorization_code', code })
       const scope = (data.scope as string) || ''
-      setDebugInfo(`scope="${scope}" has_token=${!!data.access_token} secret_set=${!!CLIENT_SECRET}`)
       if (data.access_token) {
         if (!scope.includes('activity:read')) {
+          setDebugInfo(`scope="${scope}" — missing activity:read`)
           setError(`Wrong permissions — scope granted: "${scope}". Go to strava.com/settings/apps, revoke this app, then reconnect and tick "View data about your activities"`)
           return false
         }
         saveTokens(data as unknown as StravaTokens)
         setTokens(data as unknown as StravaTokens)
         setError(null)
+        setDebugInfo(null)
         return true
       }
       setError(`Exchange failed: ${(data.message as string) || JSON.stringify(data)}`)
@@ -106,11 +107,13 @@ export function useStrava() {
         headers: { Authorization: `Bearer ${token}` },
       })
       const data = await res.json()
-      setDebugInfo(`athlete:ok(${athleteData.id}) acts:${res.status} tok=${token.slice(0, 10)}... body=${JSON.stringify(data).slice(0, 200)}`)
       if (!Array.isArray(data)) {
-        setError(`Activities error (${res.status}): ${(data as Record<string, unknown>).message || JSON.stringify(data)}`)
+        const errData = data as Record<string, unknown>
+        setDebugInfo(`acts:${res.status} tok=${token.slice(0, 10)}... body=${JSON.stringify(errData)}`)
+        setError(`Activities error (${res.status}): ${errData.message || JSON.stringify(errData)}`)
         return
       }
+      setDebugInfo(null)
       const runs = (data as StravaActivity[]).filter(a => a.type === 'Run' || a.sport_type === 'Run')
       setActivities(runs)
       localStorage.setItem(ACTIVITIES_KEY, JSON.stringify(runs))
