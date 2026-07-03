@@ -426,7 +426,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
   }
 
   const redirectUri = window.location.origin + '/'
-  const connectUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&approval_prompt=force&scope=activity:read_all`
+  const connectUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&approval_prompt=force&scope=read,activity:read_all`
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -468,6 +468,9 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
           >
             Connect with Strava
           </a>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 14, lineHeight: 1.6 }}>
+            On the Strava screen, make sure <strong style={{ color: 'var(--text)' }}>View data about your activities</strong> is checked before tapping Authorise.
+          </div>
         </div>
 
         <div className="card">
