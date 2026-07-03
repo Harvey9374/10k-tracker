@@ -157,6 +157,24 @@ function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: Calibra
     insights.push({ icon: '↗', text: `Route included ${Math.round(totalClimb)}m of climbing — factor this in when comparing to flat run paces.`, positive: true })
   }
 
+  // 7. Cardiac drift (HR climbing at steady pace = dehydration / fatigue)
+  const hrs = splits.map(s => s.average_heartrate).filter((h): h is number => h != null)
+  if (hrs.length >= 4) {
+    const third = Math.max(1, Math.floor(hrs.length / 3))
+    const earlyHr = hrs.slice(0, third).reduce((a, b) => a + b, 0) / third
+    const lateHr = hrs.slice(-third).reduce((a, b) => a + b, 0) / third
+    const drift = lateHr - earlyHr
+    const avgHr = hrs.reduce((a, b) => a + b, 0) / hrs.length
+    if (drift > 12 && cv < 8) {
+      insights.push({ icon: '💧', text: `Cardiac drift: HR climbed ${Math.round(drift)} bpm (${Math.round(earlyHr)}→${Math.round(lateHr)} bpm) at steady pace — usually means dehydration or accumulated fatigue.`, positive: false })
+    } else if (drift < -8 && cv < 8) {
+      insights.push({ icon: '✓', text: `HR settled ${Math.round(-drift)} bpm over the run at steady pace — good cardiac response and aerobic efficiency.`, positive: true })
+    }
+    if (avgHr > 0) {
+      insights.push({ icon: '❤', text: `Avg HR ${Math.round(avgHr)} bpm · Max ${Math.round(Math.max(...hrs))} bpm`, positive: true })
+    }
+  }
+
   const pos = insights.filter(i => i.positive).length
   const neg = insights.filter(i => !i.positive).length
   let verdict: string, verdictColor: string, tip: string
@@ -195,6 +213,7 @@ function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNu
   const zone = getZone(pace, phaseNum, calibrated)
   const elev = split.elevation_difference
   const elevStr = elev != null && Math.abs(elev) >= 5 ? `${elev > 0 ? '+' : ''}${Math.round(elev)}m` : null
+  const hr = split.average_heartrate
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: '1px solid var(--border)' }}>
       <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 36 }}>km {split.split}</span>
@@ -202,7 +221,10 @@ function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNu
         <span style={{ fontSize: 11, color: elev! > 0 ? '#f97316' : 'var(--accent)', minWidth: 34 }}>{elevStr}</span>
       )}
       <span style={{ fontSize: 14, fontWeight: 700, flex: 1, textAlign: elevStr ? 'center' : 'left' }}>{fmtPace(pace)}</span>
-      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20, background: zone.bg, color: zone.color }}>{zone.label}</span>
+      {hr != null && (
+        <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 48, textAlign: 'right' }}>{Math.round(hr)} bpm</span>
+      )}
+      <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20, background: zone.bg, color: zone.color, marginLeft: 6 }}>{zone.label}</span>
     </div>
   )
 }
@@ -335,6 +357,11 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <div style={{ fontSize: 15, fontWeight: 800 }}>{fmtPace(pace)}</div>
           <div style={{ fontSize: 11, fontWeight: 600, color: zone.color, marginTop: 2 }}>{zone.label}</div>
+          {activity.average_heartrate != null && (
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+              ❤ {Math.round(activity.average_heartrate)}{activity.max_heartrate != null ? `/${Math.round(activity.max_heartrate)}` : ''} bpm
+            </div>
+          )}
         </div>
         {onAddLog && (
           <button
