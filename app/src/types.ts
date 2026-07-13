@@ -112,6 +112,7 @@ export interface StravaActivity {
   average_speed: number
   average_heartrate?: number
   max_heartrate?: number
+  average_temp?: number
   workout_type?: number
   splits_metric?: StravaSplit[]
 }

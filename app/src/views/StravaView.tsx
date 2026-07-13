@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useStrava } from '../hooks/useStrava'
 import { getWeekNumber, getPhase, formatTime } from '../data/plan'
-import type { StravaActivity, StravaSplit, CalibratedZones, WorkoutLog } from '../types'
+import type { StravaActivity, StravaSplit, CalibratedZones, WorkoutLog, TimeTrial } from '../types'
 
 const CLIENT_ID = '250705'
 
@@ -196,6 +196,14 @@ function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: Calibra
 
 function fmtDist(m: number) { return (m / 1000).toFixed(2) + ' km' }
 
+// Returns the nearest standard trial distance if the run is close enough, else null
+function nearestTrialDist(distKm: number): number | null {
+  if (distKm >= 2.7 && distKm <= 3.3) return 3
+  if (distKm >= 4.75 && distKm <= 5.25) return 5
+  if (distKm >= 9.5 && distKm <= 10.5) return 10
+  return null
+}
+
 function fmtTime(secs: number) {
   const h = Math.floor(secs / 3600)
   const m = Math.floor((secs % 3600) / 60)
@@ -229,20 +237,24 @@ function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNu
   )
 }
 
-function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged }: {
+function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged, onAddTrial }: {
   activity: StravaActivity
   phaseNum: number
   onExpand: () => Promise<StravaActivity | null>
   calibrated?: CalibratedZones | null
   onAddLog?: (log: Omit<WorkoutLog, 'id'>) => void
   isLogged?: boolean
+  onAddTrial?: (t: Omit<TimeTrial, 'id'>) => void
 }) {
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState<StravaActivity | null>(null)
   const [loading, setLoading] = useState(false)
   const [justLogged, setJustLogged] = useState(false)
+  const [justLoggedTrial, setJustLoggedTrial] = useState(false)
   const [showRpeModal, setShowRpeModal] = useState(false)
   const [rpe, setRpe] = useState(5)
+
+  const trialDist = nearestTrialDist(activity.distance / 1000)
 
   const pace = speedToPace(activity.average_speed)
   const zone = getZone(pace, phaseNum, calibrated)
@@ -277,6 +289,23 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
     })
     setJustLogged(true)
     setShowRpeModal(false)
+  }
+
+  async function handleLogTrial(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!onAddTrial || !trialDist || justLoggedTrial) return
+    // Fetch detail for temperature if not already loaded
+    let d = detail
+    if (!d) d = await onExpand()
+    onAddTrial({
+      date: activity.start_date_local.slice(0, 10),
+      distanceKm: trialDist,
+      timeSeconds: activity.moving_time,
+      elevationGainM: activity.total_elevation_gain > 0 ? Math.round(activity.total_elevation_gain) : undefined,
+      temperatureC: d?.average_temp ?? undefined,
+      notes: activity.name,
+    })
+    setJustLoggedTrial(true)
   }
 
   const logged = isLogged || justLogged
@@ -363,6 +392,25 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
             </div>
           )}
         </div>
+        {onAddTrial && trialDist && (
+          <button
+            onClick={handleLogTrial}
+            style={{
+              flexShrink: 0,
+              background: justLoggedTrial ? 'var(--accent-dim)' : 'var(--surface)',
+              border: `1px solid ${justLoggedTrial ? 'var(--accent)' : 'var(--border)'}`,
+              borderRadius: 6,
+              color: justLoggedTrial ? 'var(--accent)' : 'var(--text-muted)',
+              fontSize: 11,
+              fontWeight: 700,
+              padding: '5px 9px',
+              cursor: justLoggedTrial ? 'default' : 'pointer',
+              lineHeight: 1,
+            }}
+          >
+            {justLoggedTrial ? '✓' : '⏱ Trial'}
+          </button>
+        )}
         {onAddLog && (
           <button
             onClick={handleLog}
@@ -423,10 +471,11 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   )
 }
 
-export default function StravaView({ calibratedZones, logs, onAddLog }: {
+export default function StravaView({ calibratedZones, logs, onAddLog, onAddTrial }: {
   calibratedZones?: CalibratedZones | null
   logs?: WorkoutLog[]
   onAddLog?: (log: Omit<WorkoutLog, 'id'>) => void
+  onAddTrial?: (t: Omit<TimeTrial, 'id'>) => void
 }) {
   const week = getWeekNumber()
   const phase = getPhase(week)
@@ -630,6 +679,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog }: {
               calibrated={calibratedZones}
               onAddLog={onAddLog}
               isLogged={logs?.some(l => l.stravaId === a.id)}
+              onAddTrial={onAddTrial}
             />
           ))
         )}
