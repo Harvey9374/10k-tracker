@@ -94,7 +94,7 @@ export default function App() {
     <>
       <header className="header">
         <h1>{TITLES[view]}</h1>
-        {view === 'today' && <span className="header-badge">🎯 Sub-50</span>}
+        {view === 'today' && <span className="header-badge">🎯 Sub-45</span>}
         {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
         <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
           {theme === 'dark' ? '☀️' : '🌙'}

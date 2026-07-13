@@ -16,7 +16,7 @@ function fmtPaceRange(min: number, max: number): string {
   return `${fmt(min)}–${fmt(max)}/km`
 }
 
-const GOAL_SECONDS = 50 * 60
+const GOAL_SECONDS = 45 * 60
 
 function fmtDate(iso: string) {
   const d = new Date(iso + 'T00:00:00')
@@ -329,7 +329,7 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, cali
               {gapToGoal !== null && (
                 <div style={{ marginTop: 12 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
-                    <span>Progress to sub-50:00</span>
+                    <span>Progress to sub-45:00</span>
                     <span style={{ color: gapToGoal <= 0 ? 'var(--accent)' : 'var(--warn)' }}>
                       {gapToGoal <= 0 ? '🎉 Goal achieved!' : `${formatTime(gapToGoal)} to go`}
                     </span>
@@ -349,7 +349,7 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, cali
               <div className="card-title">10km Best</div>
               <div className="empty-state" style={{ padding: '16px 0' }}>
                 <div className="empty-icon">⏱️</div>
-                <p>Log a 10km time trial to track progress towards sub-50:00</p>
+                <p>Log a 10km time trial to track progress towards sub-45:00</p>
               </div>
             </div>
           )}
@@ -476,13 +476,13 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, cali
             <div className="card-title">Target Pace</div>
             <div style={{ display: 'flex', gap: 16 }}>
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--accent-2)' }}>5:00</div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--accent-2)' }}>4:30</div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase' }}>/km</div>
               </div>
               <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: 16 }}>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>Sub-50:00 requires:</div>
-                <div style={{ fontSize: 14, fontWeight: 600 }}>5:00/km average</div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>50 min ÷ 10 km = 5:00/km</div>
+                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 4 }}>Sub-45:00 requires:</div>
+                <div style={{ fontSize: 14, fontWeight: 600 }}>4:30/km average</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>45 min ÷ 10 km = 4:30/km</div>
               </div>
             </div>
           </div>

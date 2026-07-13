@@ -5,13 +5,15 @@ export const RACE_DATE = new Date('2027-05-15')
 export const TOTAL_WEEKS = 52
 
 export const BENCHMARKS = [
-  { week: 8,  label: 'First easy 5km time trial', target: 'Under 27:00', distanceKm: 5,  targetSeconds: 27 * 60 },
-  { week: 20, label: '5km time trial',             target: 'Under 25:00', distanceKm: 5,  targetSeconds: 25 * 60 },
-  { week: 30, label: 'Solo 10km (flat)',            target: 'Under 55:00', distanceKm: 10, targetSeconds: 55 * 60 },
-  { week: 40, label: 'Solo 10km (flat)',            target: 'Under 52:00', distanceKm: 10, targetSeconds: 52 * 60 },
-  { week: 46, label: 'Race pace test (3km)',        target: '15:00 or under', distanceKm: 3, targetSeconds: 15 * 60 },
-  { week: 52, label: 'TARGET RACE',                 target: 'Sub-50:00',  distanceKm: 10, targetSeconds: 50 * 60 },
+  { week: 8,  label: 'First 5km time trial',  target: 'Under 25:30', distanceKm: 5,  targetSeconds: 25 * 60 + 30 },
+  { week: 20, label: '5km time trial',         target: 'Under 23:00', distanceKm: 5,  targetSeconds: 23 * 60 },
+  { week: 30, label: 'Solo 10km (flat)',        target: 'Under 48:00', distanceKm: 10, targetSeconds: 48 * 60 },
+  { week: 40, label: 'Solo 10km (flat)',        target: 'Under 45:00', distanceKm: 10, targetSeconds: 45 * 60 },
+  { week: 46, label: 'Race pace test (3km)',    target: '13:30 or under', distanceKm: 3, targetSeconds: 13 * 60 + 30 },
+  { week: 52, label: 'TARGET RACE',             target: 'Sub-45:00',  distanceKm: 10, targetSeconds: 45 * 60 },
 ]
+
+export const GOAL_SECONDS = 45 * 60
 
 export const PACE_GUIDE = [
   {
@@ -23,24 +25,24 @@ export const PACE_GUIDE = [
   },
   {
     phase: 2,
-    easy: '6:15–6:45/km',
-    tempo: '5:40–5:55/km',
-    interval: '5:10–5:25/km',
+    easy: '5:50–6:20/km',
+    tempo: '5:05–5:20/km',
+    interval: '4:45–5:00/km',
     racePace: '—',
   },
   {
     phase: 3,
-    easy: '6:00–6:30/km',
-    tempo: '5:20–5:35/km',
-    interval: '4:55–5:10/km',
-    racePace: '5:05/km',
+    easy: '5:30–6:00/km',
+    tempo: '4:55–5:10/km',
+    interval: '4:25–4:40/km',
+    racePace: '4:30/km',
   },
   {
     phase: 4,
-    easy: '6:00–6:30/km',
-    tempo: '5:10–5:20/km',
-    interval: '4:45–5:00/km',
-    racePace: '5:00/km',
+    easy: '5:30–6:00/km',
+    tempo: '4:45–5:00/km',
+    interval: '4:10–4:25/km',
+    racePace: '4:30/km',
   },
 ]
 
@@ -160,19 +162,19 @@ export const PHASES: Phase[] = [
     weeklyTarget: '28–38 km/week by end of phase',
     focus: 'Introduce quality sessions. Two key runs per week. Fitness begins to shift noticeably.',
     paceGuide: [
-      { label: 'Easy run',   pace: '6:15–6:45/km' },
-      { label: 'Tempo',      pace: '5:40–5:55/km' },
-      { label: 'Intervals',  pace: '5:10–5:25/km' },
+      { label: 'Easy run',   pace: '5:50–6:20/km' },
+      { label: 'Tempo',      pace: '5:05–5:20/km' },
+      { label: 'Intervals',  pace: '4:45–5:00/km' },
     ],
     monday: {
       title: 'Tempo Run (90 mins)',
       items: [
         'Warm-up: 10 mins easy jog',
-        'Tempo run: 20–30 mins at 5:40–5:55/km',
+        'Tempo run: 20–30 mins at 5:05–5:20/km',
         'Cool-down jog: 10 mins easy',
         'Optional: strength accessory work 1–2 rounds post-run (15 mins)',
         '⚡ From Week 18: replace with intervals twice/month',
-        '   6 × 800m at 5:10–5:25/km, 90-sec easy jog recovery',
+        '   6 × 800m at 4:45–5:00/km, 90-sec easy jog recovery',
         '   Progress to 8 × 800m by end of Phase 2',
       ],
     },
@@ -256,21 +258,21 @@ export const PHASES: Phase[] = [
     weekRange: [25, 36],
     dateRange: 'December 2026 – February 2027',
     weeklyTarget: '32–42 km/week',
-    focus: 'Sessions target 10km race conditions. Get comfortable at 5:05–5:10/km for extended periods.',
+    focus: 'Sessions target 10km race conditions. Build ability to sustain race pace (4:30/km) for increasing durations.',
     paceGuide: [
-      { label: 'Easy run',   pace: '6:00–6:30/km' },
-      { label: 'Steady',     pace: '5:20–5:35/km' },
-      { label: 'Intervals',  pace: '4:55–5:10/km' },
-      { label: 'Race pace',  pace: '5:05/km' },
+      { label: 'Easy run',   pace: '5:30–6:00/km' },
+      { label: 'Steady',     pace: '4:55–5:10/km' },
+      { label: 'Intervals',  pace: '4:25–4:40/km' },
+      { label: 'Race pace',  pace: '4:30/km' },
     ],
     monday: {
       title: 'Interval Session (90 mins)',
       items: [
         'Warm-up: 10 mins easy jog',
         'Rotate weekly (pick one):',
-        '  • 8 × 1km at 4:55–5:05/km, 90-sec recovery',
-        '  • 5 × 1.5km at 5:05–5:10/km, 2-min recovery',
-        '  • 12 × 400m at 4:45–4:55/km, 60-sec recovery',
+        '  • 8 × 1km at 4:25–4:35/km, 90-sec recovery',
+        '  • 5 × 1.5km at 4:35–4:40/km, 2-min recovery',
+        '  • 12 × 400m at 4:15–4:25/km, 60-sec recovery',
         'Cool-down: 10 mins easy jog',
       ],
     },
@@ -299,9 +301,9 @@ export const PHASES: Phase[] = [
       title: 'Steady Run (60 mins)',
       items: [
         'Warm-up: 5 mins',
-        'Weeks 25–28: 35 mins at 5:30–5:40/km',
-        'Weeks 29–32: 35 mins at 5:20–5:30/km',
-        'Weeks 33–36: 40 mins at 5:10–5:20/km',
+        'Weeks 25–28: 35 mins at 5:00–5:10/km',
+        'Weeks 29–32: 35 mins at 4:50–5:00/km',
+        'Weeks 33–36: 40 mins at 4:40–4:50/km',
         'Cool-down: 5 mins',
       ],
     },
@@ -338,7 +340,7 @@ export const PHASES: Phase[] = [
       '  Child\'s pose with side reach: 45 sec each side',
     ],
     notes: [
-      'Friday steady runs are your key benchmark — comfortable at 5:15/km means sub-50 is on track.',
+      'Friday steady runs are your key benchmark — comfortable at 4:50/km means sub-45 is on track.',
     ],
   },
   {
@@ -350,18 +352,18 @@ export const PHASES: Phase[] = [
     weeklyTarget: '35–45 km/week (Weeks 37–46), tapering to 10km race week',
     focus: 'Race-specific pace work. Sharp sessions, then taper to arrive sharp not flat.',
     paceGuide: [
-      { label: 'Easy run',   pace: '6:00–6:30/km' },
-      { label: 'Steady',     pace: '5:10–5:20/km' },
-      { label: 'Intervals',  pace: '4:45–5:00/km' },
-      { label: 'Race pace',  pace: '5:00/km' },
+      { label: 'Easy run',   pace: '5:30–6:00/km' },
+      { label: 'Steady',     pace: '4:45–5:00/km' },
+      { label: 'Intervals',  pace: '4:10–4:25/km' },
+      { label: 'Race pace',  pace: '4:30/km' },
     ],
     monday: {
       title: 'Race Pace Session (90 mins)',
       items: [
         'Warm-up: 10 mins',
         'Main set (alternate):',
-        '  • 3 × 3km at 5:00–5:05/km, 3-min recovery',
-        '  • 2 × 4km at 5:00/km, 4-min recovery',
+        '  • 3 × 3km at 4:30–4:35/km, 3-min recovery',
+        '  • 2 × 4km at 4:30/km, 4-min recovery',
         'Cool-down: 10 mins',
       ],
     },
@@ -389,7 +391,7 @@ export const PHASES: Phase[] = [
       title: 'Steady Run (60 mins)',
       items: [
         'Warm-up: 5 mins',
-        'Steady run: 40 mins at 5:10–5:20/km',
+        'Steady run: 40 mins at 4:45–5:00/km',
         'Cool-down: 5 mins',
       ],
     },

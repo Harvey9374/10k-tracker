@@ -31,9 +31,9 @@ type Zone = { label: string; color: string; bg: string }
 
 const PHASE_ZONES: Record<number, { easy: string; tempo?: string; interval?: string; race?: string }> = {
   1: { easy: '6:30–7:00/km' },
-  2: { easy: '6:15–6:45/km', tempo: '5:40–5:55/km', interval: '5:10–5:25/km' },
-  3: { easy: '6:00–6:30/km', tempo: '5:20–5:35/km', interval: '4:55–5:10/km', race: '5:05/km' },
-  4: { easy: '6:00–6:30/km', tempo: '5:10–5:20/km', interval: '4:45–5:00/km', race: '5:00/km' },
+  2: { easy: '5:50–6:20/km', tempo: '5:05–5:20/km', interval: '4:45–5:00/km' },
+  3: { easy: '5:30–6:00/km', tempo: '4:55–5:10/km', interval: '4:25–4:40/km', race: '4:30/km' },
+  4: { easy: '5:30–6:00/km', tempo: '4:45–5:00/km', interval: '4:10–4:25/km', race: '4:30/km' },
 }
 
 function getZone(paceSecPerKm: number, phaseNum: number, calibrated?: CalibratedZones | null): Zone {
