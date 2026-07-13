@@ -252,6 +252,9 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   const [justLogged, setJustLogged] = useState(false)
   const [justLoggedTrial, setJustLoggedTrial] = useState(false)
   const [showRpeModal, setShowRpeModal] = useState(false)
+  const [showTempModal, setShowTempModal] = useState(false)
+  const [pendingTrial, setPendingTrial] = useState<Omit<TimeTrial, 'id'> | null>(null)
+  const [tempInput, setTempInput] = useState('')
   const [rpe, setRpe] = useState(5)
 
   const trialDist = nearestTrialDist(activity.distance / 1000)
@@ -294,17 +297,33 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   async function handleLogTrial(e: React.MouseEvent) {
     e.stopPropagation()
     if (!onAddTrial || !trialDist || justLoggedTrial) return
-    // Fetch detail for temperature if not already loaded
     let d = detail
     if (!d) d = await onExpand()
-    onAddTrial({
+    const trial: Omit<TimeTrial, 'id'> = {
       date: activity.start_date_local.slice(0, 10),
       distanceKm: trialDist,
       timeSeconds: activity.moving_time,
       elevationGainM: activity.total_elevation_gain > 0 ? Math.round(activity.total_elevation_gain) : undefined,
       temperatureC: d?.average_temp ?? undefined,
       notes: activity.name,
-    })
+    }
+    if (trial.temperatureC == null) {
+      // Watch has no temp sensor — ask user
+      setPendingTrial(trial)
+      setTempInput('')
+      setShowTempModal(true)
+    } else {
+      onAddTrial(trial)
+      setJustLoggedTrial(true)
+    }
+  }
+
+  function confirmTrial(skipTemp: boolean) {
+    if (!onAddTrial || !pendingTrial) return
+    const parsed = !skipTemp && tempInput !== '' ? parseFloat(tempInput) : undefined
+    onAddTrial({ ...pendingTrial, temperatureC: isNaN(parsed ?? NaN) ? undefined : parsed })
+    setShowTempModal(false)
+    setPendingTrial(null)
     setJustLoggedTrial(true)
   }
 
@@ -319,6 +338,49 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
 
   return (
     <div style={{ borderBottom: '1px solid var(--border)', padding: '12px 0' }}>
+      {/* Temperature modal for trial logging */}
+      {showTempModal && (
+        <div
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.72)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 20px' }}
+          onClick={() => confirmTrial(true)}
+        >
+          <div
+            style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: '22px 20px', width: '100%', maxWidth: 360 }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>What was the temperature?</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 18 }}>
+              Your watch doesn't record temperature. Enter it for an accurate flat/cool equivalent time.
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <input
+                type="number"
+                placeholder="e.g. 27"
+                value={tempInput}
+                onChange={e => setTempInput(e.target.value)}
+                min="-10" max="50"
+                style={{ flex: 1, fontSize: 24, fontWeight: 700, textAlign: 'center', padding: '10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                autoFocus
+              />
+              <span style={{ fontSize: 18, color: 'var(--text-muted)', fontWeight: 600 }}>°C</span>
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button
+                onClick={() => confirmTrial(true)}
+                style={{ flex: 1, padding: '12px', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+              >
+                Skip
+              </button>
+              <button
+                onClick={() => confirmTrial(false)}
+                style={{ flex: 2, padding: '12px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: '#fff', fontSize: 14, fontWeight: 700, cursor: 'pointer' }}
+              >
+                Save with temp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* RPE modal */}
       {showRpeModal && (
         <div
