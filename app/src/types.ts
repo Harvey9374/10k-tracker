@@ -26,6 +26,8 @@ export interface TimeTrial {
   distanceKm: number
   timeSeconds: number
   notes?: string
+  temperatureC?: number
+  elevationGainM?: number
 }
 
 export interface CalibratedZones {

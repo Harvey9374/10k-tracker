@@ -92,6 +92,24 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
   )
 }
 
+// Returns the flat/cool-conditions equivalent time in seconds
+function calcAdjustedTime(timeSeconds: number, tempC?: number, elevGainM?: number): number {
+  let adj = timeSeconds
+  if (tempC != null && tempC > 10) {
+    // ~0.3% slower per °C above 10°C
+    adj = adj / (1 + (tempC - 10) * 0.003)
+  }
+  if (elevGainM != null && elevGainM > 0) {
+    // ~0.6 sec slower per metre of total climbing
+    adj = adj - elevGainM * 0.6
+  }
+  return Math.max(adj, 0)
+}
+
+function hasConditions(t: TimeTrial): boolean {
+  return t.temperatureC != null || t.elevationGainM != null
+}
+
 function TrialForm({ onAdd }: { onAdd: (t: Omit<TimeTrial, 'id'>) => void }) {
   const _d = new Date()
   const today = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, '0')}-${String(_d.getDate()).padStart(2, '0')}`
@@ -100,16 +118,25 @@ function TrialForm({ onAdd }: { onAdd: (t: Omit<TimeTrial, 'id'>) => void }) {
   const [mm, setMm] = useState('')
   const [ss, setSs] = useState('')
   const [notes, setNotes] = useState('')
+  const [tempC, setTempC] = useState('')
+  const [elevGainM, setElevGainM] = useState('')
   const [saved, setSaved] = useState(false)
 
   const timeSeconds = parseTimeInput(mm, ss)
+  const parsedTemp = tempC !== '' ? parseFloat(tempC) : undefined
+  const parsedElev = elevGainM !== '' ? parseFloat(elevGainM) : undefined
+  const adjSeconds = timeSeconds ? calcAdjustedTime(timeSeconds, parsedTemp, parsedElev) : null
+  const showAdj = adjSeconds != null && (parsedTemp != null || parsedElev != null) && Math.abs(adjSeconds - (timeSeconds ?? 0)) > 2
 
   function handleSave() {
     if (!timeSeconds) return
     const dist = parseFloat(distance)
     if (isNaN(dist) || dist <= 0) return
-    onAdd({ date, distanceKm: dist, timeSeconds, notes: notes.trim() || undefined })
-    setMm(''); setSs(''); setNotes(''); setDate(today)
+    onAdd({
+      date, distanceKm: dist, timeSeconds, notes: notes.trim() || undefined,
+      temperatureC: parsedTemp, elevationGainM: parsedElev,
+    })
+    setMm(''); setSs(''); setNotes(''); setDate(today); setTempC(''); setElevGainM('')
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -150,8 +177,29 @@ function TrialForm({ onAdd }: { onAdd: (t: Omit<TimeTrial, 'id'>) => void }) {
         )}
       </div>
       <div className="form-group">
+        <label className="form-label">Conditions (optional)</label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <div style={{ flex: 1 }}>
+            <label className="form-label" style={{ fontSize: 11, marginBottom: 4 }}>Temperature (°C)</label>
+            <input type="number" className="form-input" placeholder="e.g. 22" value={tempC}
+              onChange={e => setTempC(e.target.value)} min="-10" max="50" />
+          </div>
+          <div style={{ flex: 1 }}>
+            <label className="form-label" style={{ fontSize: 11, marginBottom: 4 }}>Elevation gain (m)</label>
+            <input type="number" className="form-input" placeholder="e.g. 45" value={elevGainM}
+              onChange={e => setElevGainM(e.target.value)} min="0" max="2000" />
+          </div>
+        </div>
+        {showAdj && (
+          <div style={{ marginTop: 8, padding: '8px 10px', background: 'var(--accent-dim)', borderRadius: 6, fontSize: 12, color: 'var(--accent)' }}>
+            ≈ <strong>{formatTime(adjSeconds!)}</strong> flat/cool equivalent
+            {parsedTemp != null && ` · ${parsedTemp}°C`}{parsedElev != null && parsedElev > 0 && ` · ↗${parsedElev}m`}
+          </div>
+        )}
+      </div>
+      <div className="form-group">
         <label className="form-label">Notes (optional)</label>
-        <textarea className="form-textarea" placeholder="Route, conditions, how it felt..." value={notes} onChange={e => setNotes(e.target.value)} style={{ minHeight: 60 }} />
+        <textarea className="form-textarea" placeholder="Route, how it felt..." value={notes} onChange={e => setNotes(e.target.value)} style={{ minHeight: 60 }} />
       </div>
       <button className="btn btn-secondary" onClick={handleSave} disabled={!timeSeconds}>
         Save Time Trial
@@ -397,6 +445,17 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, cali
                           {formatTime(t.timeSeconds)} {beatTarget && '🎉'}
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fmtDate(t.date)} · {pace}</div>
+                        {hasConditions(t) && (() => {
+                          const adj = calcAdjustedTime(t.timeSeconds, t.temperatureC, t.elevationGainM)
+                          const diff = Math.round(t.timeSeconds - adj)
+                          return diff > 2 ? (
+                            <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 3 }}>
+                              ≈ {formatTime(adj)} flat/cool equivalent
+                              {t.temperatureC != null && ` · ${t.temperatureC}°C`}
+                              {t.elevationGainM != null && t.elevationGainM > 0 && ` · ↗${t.elevationGainM}m`}
+                            </div>
+                          ) : null
+                        })()}
                         {t.notes && <div style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic', marginTop: 2 }}>{t.notes}</div>}
                       </div>
                       <button style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', fontSize: 18, padding: '2px 4px', lineHeight: 1 }} onClick={() => onDeleteTrial(t.id)}>×</button>
