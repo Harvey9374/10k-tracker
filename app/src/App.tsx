@@ -105,7 +105,7 @@ export default function App() {
         {view === 'today' && <Today logs={logs} onGoLog={goToLog} calibratedZones={calibratedZones} injuryMode={injuryMode} onToggleInjuryMode={toggleInjuryMode} />}
         {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
         {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} calibratedZones={calibratedZones} onClearZones={clearZones} />}
-        {view === 'strava' && <StravaView calibratedZones={calibratedZones} logs={logs} onAddLog={addLog} />}
+        {view === 'strava' && <StravaView calibratedZones={calibratedZones} logs={logs} onAddLog={addLog} onAddTrial={addTrial} />}
         {view === 'plan' && <Plan />}
       </div>
 
