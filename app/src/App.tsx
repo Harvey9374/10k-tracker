@@ -43,7 +43,7 @@ const NAV: { id: ViewName; label: string; icon: () => React.ReactElement }[] = [
 ]
 
 const TITLES: Record<ViewName, string> = {
-  today:    '10K Sub-50 Tracker',
+  today:    '10K Sub-45 Tracker',
   log:      'Log Session',
   progress: 'Progress',
   strava:   'Strava',
