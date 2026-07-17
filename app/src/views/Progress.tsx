@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { WorkoutLog, TimeTrial, CalibratedZones } from '../types'
-import { BENCHMARKS, getWeekNumber, formatTime, calcPaceSeconds, formatPace } from '../data/plan'
+import { BENCHMARKS, getWeekNumber, formatTime, calcPaceSeconds, formatPace, calcAdjustedTime } from '../data/plan'
 
 interface Props {
   logs: WorkoutLog[]
@@ -92,19 +92,6 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
   )
 }
 
-// Returns the flat/cool-conditions equivalent time in seconds
-function calcAdjustedTime(timeSeconds: number, tempC?: number, elevGainM?: number): number {
-  let adj = timeSeconds
-  if (tempC != null && tempC > 10) {
-    // ~0.3% slower per °C above 10°C
-    adj = adj / (1 + (tempC - 10) * 0.003)
-  }
-  if (elevGainM != null && elevGainM > 0) {
-    // ~0.6 sec slower per metre of total climbing
-    adj = adj - elevGainM * 0.6
-  }
-  return Math.max(adj, 0)
-}
 
 function hasConditions(t: TimeTrial): boolean {
   return t.temperatureC != null || t.elevationGainM != null
@@ -294,7 +281,11 @@ export default function Progress({ logs, trials, onAddTrial, onDeleteTrial, cali
                 </button>
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 10 }}>
-                Based on your {calibratedZones.basedOnDistanceKm}km trial ({formatTime(calibratedZones.basedOnTimeMins * 60)}) · Predicted 10K: {formatTime(calibratedZones.predicted10KMins * 60)}
+                Based on your {calibratedZones.basedOnDistanceKm}km trial (
+                {calibratedZones.basedOnRawTimeMins
+                  ? <>{formatTime(calibratedZones.basedOnRawTimeMins * 60)} <span style={{ color: 'var(--accent)' }}>→ {formatTime(calibratedZones.basedOnTimeMins * 60)} adj</span></>
+                  : formatTime(calibratedZones.basedOnTimeMins * 60)
+                }) · Predicted 10K: {formatTime(calibratedZones.predicted10KMins * 60)}
               </div>
               <div style={{ display: 'grid', gap: 6 }}>
                 {[

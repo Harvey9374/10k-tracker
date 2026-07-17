@@ -469,7 +469,18 @@ export function riegelPredict10K(distanceKm: number, timeMins: number): number {
   return timeMins * Math.pow(10 / distanceKm, 1.06)
 }
 
-export function calcCalibratedZones(distanceKm: number, timeMins: number): CalibratedZones {
+export function calcAdjustedTime(timeSeconds: number, tempC?: number, elevGainM?: number): number {
+  let adj = timeSeconds
+  if (tempC != null && tempC > 10) {
+    adj = adj / (1 + (tempC - 10) * 0.003)
+  }
+  if (elevGainM != null && elevGainM > 0) {
+    adj = adj - elevGainM * 0.6
+  }
+  return Math.max(adj, 0)
+}
+
+export function calcCalibratedZones(distanceKm: number, timeMins: number, rawTimeMins?: number): CalibratedZones {
   const predicted10KMins = riegelPredict10K(distanceKm, timeMins)
   const rp = (predicted10KMins * 60) / 10
   return {
@@ -481,5 +492,6 @@ export function calcCalibratedZones(distanceKm: number, timeMins: number): Calib
     calibratedAt: new Date().toISOString(),
     basedOnDistanceKm: distanceKm,
     basedOnTimeMins: timeMins,
+    basedOnRawTimeMins: rawTimeMins !== timeMins ? rawTimeMins : undefined,
   }
 }

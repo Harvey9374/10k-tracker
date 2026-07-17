@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useWorkoutLogs, useTimeTrials, useCalibratedZones, useInjuryMode } from './hooks/useStore'
-import { calcCalibratedZones } from './data/plan'
+import { calcCalibratedZones, calcAdjustedTime } from './data/plan'
 import Today from './views/Today'
 import Log from './views/Log'
 import Progress from './views/Progress'
@@ -68,7 +68,9 @@ export default function App() {
 
   function addTrial(trial: Parameters<typeof addTrialBase>[0]) {
     addTrialBase(trial)
-    saveZones(calcCalibratedZones(trial.distanceKm, trial.timeSeconds / 60))
+    const rawSecs = trial.timeSeconds
+    const adjSecs = calcAdjustedTime(rawSecs, trial.temperatureC, trial.elevationGainM)
+    saveZones(calcCalibratedZones(trial.distanceKm, adjSecs / 60, rawSecs / 60))
   }
 
   useEffect(() => {

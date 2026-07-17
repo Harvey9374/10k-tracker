@@ -39,6 +39,7 @@ export interface CalibratedZones {
   calibratedAt: string
   basedOnDistanceKm: number
   basedOnTimeMins: number
+  basedOnRawTimeMins?: number
 }
 
 export interface PhaseSession {
