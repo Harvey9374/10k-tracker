@@ -284,7 +284,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
         <div className="rh-label">Race Day Countdown</div>
         <div className="rh-days">{daysToRace}</div>
         <div className="rh-unit">days to go</div>
-        <div className="rh-date">Target: Sub-50:00 · 15 May 2027</div>
+        <div className="rh-date">Target: Sub-45:00 · 15 May 2027</div>
       </div>
 
       {!planStarted ? (
