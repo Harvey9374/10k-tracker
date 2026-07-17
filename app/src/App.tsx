@@ -73,6 +73,20 @@ export default function App() {
     saveZones(calcCalibratedZones(trial.distanceKm, adjSecs / 60, rawSecs / 60))
   }
 
+  // Auto-migrate stored zones saved before heat/elevation adjustment was applied
+  useEffect(() => {
+    if (!calibratedZones || calibratedZones.basedOnRawTimeMins !== undefined) return
+    const sourceTrial = trials.find(t =>
+      t.distanceKm === calibratedZones.basedOnDistanceKm &&
+      Math.abs(t.timeSeconds / 60 - calibratedZones.basedOnTimeMins) < 1 &&
+      (t.temperatureC != null || t.elevationGainM != null)
+    )
+    if (sourceTrial) {
+      const adjSecs = calcAdjustedTime(sourceTrial.timeSeconds, sourceTrial.temperatureC, sourceTrial.elevationGainM)
+      saveZones(calcCalibratedZones(sourceTrial.distanceKm, adjSecs / 60, sourceTrial.timeSeconds / 60))
+    }
+  }, [trials, calibratedZones])
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     localStorage.setItem('theme', theme)
