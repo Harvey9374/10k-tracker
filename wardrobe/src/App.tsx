@@ -4,7 +4,7 @@ import { useOutfitHistory } from './hooks/useOutfitHistory';
 import { useWeather } from './hooks/useWeather';
 import { useGoogleDriveSync } from './hooks/useGoogleDriveSync';
 import { useProfile } from './hooks/useProfile';
-import { generateOutfits, surpriseOutfit, getAlternatives, uuid } from './outfitEngine';
+import { generateOutfits, surpriseOutfit, getAlternatives, diagnoseWardrobe, uuid } from './outfitEngine';
 import { OutfitCombo, OutfitLog, WardrobeItem, AGE_BRACKETS } from './types';
 import { ActivityPicker } from './components/ActivityPicker';
 import { WeatherWidget } from './components/WeatherWidget';
@@ -274,8 +274,8 @@ export function App() {
             </button>
 
             {hasGenerated && outfits.length === 0 && (
-              <div style={{ textAlign: 'center', color: 'var(--muted)', padding: 40, fontSize: 14 }}>
-                Not enough items to build an outfit. Add more clothes to your wardrobe!
+              <div style={{ textAlign: 'center', color: 'var(--muted)', padding: 40, fontSize: 14, lineHeight: 1.6 }}>
+                {diagnoseWardrobe(items) ?? 'Not enough items to build an outfit. Add more clothes to your wardrobe!'}
               </div>
             )}
 
