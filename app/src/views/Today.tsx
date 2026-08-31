@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
+import { findExercise } from '../data/exercises'
 import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog, exerciseToString, adjustedReps } from '../data/progression'
 import { useSessionCompletions } from '../hooks/useStore'
 import { useWeather, calcHeatAdj } from '../hooks/useWeather'
@@ -11,6 +12,12 @@ interface Props {
   calibratedZones?: CalibratedZones | null
   injuryMode: boolean
   onToggleInjuryMode: () => void
+  weekOffset?: number
+  pausedAt?: string | null
+  isPaused?: boolean
+  onPause?: () => void
+  onResume?: () => void
+  onAdjustWeeks?: (delta: number) => void
 }
 
 function fmtPaceRange(min: number, max: number): string {
@@ -45,19 +52,61 @@ function isSectionHeader(line: string) {
   return part.length >= 3 && part === part.toUpperCase() && /[A-Z]/.test(part)
 }
 
+function ExerciseCard({ line, accentColor }: { line: string; accentColor: string }) {
+  const [open, setOpen] = useState(false)
+  const ex = findExercise(line)
+
+  if (!ex) return (
+    <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '2px 0' }}>{line}</div>
+  )
+
+  return (
+    <div style={{ margin: '4px 0', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', cursor: 'pointer', background: open ? 'var(--surface)' : 'transparent' }}
+      >
+        <span style={{ flex: 1, fontSize: 13, color: 'var(--text)' }}>{line.trim()}</span>
+        <span style={{ fontSize: 10, color: accentColor, fontWeight: 700 }}>{open ? '▲' : '▼ how'}</span>
+      </div>
+      {open && (
+        <div style={{ padding: '10px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+            <svg viewBox="0 0 100 100" width="80" height="80" style={{ flexShrink: 0, color: accentColor }}>
+              <g dangerouslySetInnerHTML={{ __html: ex.svg }} />
+            </svg>
+            <div style={{ flex: 1 }}>
+              {ex.cues.map((cue, i) => (
+                <div key={i} style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 6, marginBottom: 5 }}>
+                  <span style={{ color: accentColor, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                  <span>{cue}</span>
+                </div>
+              ))}
+              <div style={{ fontSize: 11, color: '#f97316', display: 'flex', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid var(--border)' }}>
+                <span style={{ fontWeight: 700, flexShrink: 0 }}>⚠</span>
+                <span>{ex.mistake}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColor: string }) {
   return (
-    <div style={{ marginTop: 8, paddingLeft: 12, borderLeft: `2px solid ${accentColor}` }}>
-      {circuit.map((line, i) => (
-        <div key={i} style={{
-          fontSize: 13,
-          color: isSectionHeader(line) ? 'var(--text)' : line === '' ? 'transparent' : 'var(--text-muted)',
-          fontWeight: isSectionHeader(line) ? 700 : 400,
-          padding: line === '' ? '3px 0' : '2px 0',
-        }}>
-          {line || ' '}
-        </div>
-      ))}
+    <div style={{ marginTop: 8 }}>
+      {circuit.map((line, i) => {
+        const isHeader = isSectionHeader(line)
+        const isExercise = line.startsWith('  ') && !isHeader && line.trim().length > 0
+        if (isHeader) return (
+          <div key={i} style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: accentColor, marginTop: 10, marginBottom: 4 }}>{line.trim()}</div>
+        )
+        if (isExercise) return <ExerciseCard key={i} line={line} accentColor={accentColor} />
+        if (line === '') return <div key={i} style={{ height: 4 }} />
+        return <div key={i} style={{ fontSize: 12, color: 'var(--text-muted)', padding: '2px 0' }}>{line}</div>
+      })}
     </div>
   )
 }
@@ -174,6 +223,51 @@ const INJURY_SESSIONS: Record<string, { title: string; items: string[] }> = {
 
 const DAY_TO_SESSION_KEY = ['weekend', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'weekend']
 
+function getLightSession(dayKey: string, phaseType?: string): { title: string; items: string[] } {
+  const isRun = dayKey === 'monday' || dayKey === 'friday' || dayKey === 'weekend'
+  const isStrength = dayKey === 'tuesday'
+  const isConditioning = dayKey === 'wednesday'
+
+  if (isRun) return {
+    title: 'Easy Movement — Light Day',
+    items: [
+      'Warm-up: 5 min slow walk',
+      '20–25 min very easy jog or walk-jog — RPE 3/10 only, fully conversational',
+      'No structured work, no intervals, no pace targets today',
+      'Stop early if needed — listening to your body IS the session',
+      'Cool-down: 5 min walk + gentle calf and hip stretch',
+    ],
+  }
+  if (isStrength) return {
+    title: 'Light Strength — 1 Round Only',
+    items: [
+      '1 round of the strength circuit only (drop to bodyweight if needed)',
+      'Skip the skip finisher today',
+      'No heavy loading — technique focus only',
+      'Finish with 10 min gentle stretching',
+    ],
+  }
+  if (isConditioning) return {
+    title: 'Gentle Conditioning — Light Day',
+    items: [
+      '10 min easy ropeless skip — steady, no fast efforts',
+      'Seated calf raises: 2 × 15 each leg (bodyweight only)',
+      'Hip mobility circuit: 10 mins',
+      'Skip any hard intervals today',
+    ],
+  }
+  void phaseType
+  return {
+    title: 'Rest & Recovery — Full Rest Day',
+    items: [
+      'Full rest today — no exercise',
+      'Hydrate well and prioritise sleep tonight',
+      'Gentle walk if you feel up to it: 15–20 mins flat only',
+      '5 min foam roll if any soreness',
+    ],
+  }
+}
+
 function loadStravaWeekKm(weekStartStr: string, weekEndStr: string): number {
   try {
     const raw = localStorage.getItem('stravaActivities')
@@ -206,9 +300,10 @@ function parseWeeklyKmTarget(target: string): { min: number; max: number } | nul
   return null
 }
 
-export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onToggleInjuryMode }: Props) {
+export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onToggleInjuryMode, weekOffset, pausedAt, isPaused, onPause, onResume, onAdjustWeeks }: Props) {
   const today = new Date()
-  const week = getWeekNumber(today)
+  const week = getWeekNumber(today, weekOffset ?? 0, pausedAt)
+  const [lightMode, setLightMode] = useState(false)
   const phase = getPhase(week)
   const [expandedSession, setExpandedSession] = useState(true)
   const { completions, toggleCompletion } = useSessionCompletions()
@@ -310,6 +405,42 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
               <div className="stat-value warn">{planProgress}%</div>
               <div className="stat-label">Complete</div>
             </div>
+          </div>
+
+          {/* Plan Controls */}
+          <div className="card" style={{ padding: '10px 14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              {isPaused ? (
+                <>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#f59e0b', background: 'rgba(245,158,11,0.12)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 12, padding: '3px 10px' }}>⏸ Plan Paused</span>
+                  <button
+                    onClick={onResume}
+                    style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-dim)', border: '1.5px solid var(--accent)', borderRadius: 8, padding: '4px 12px', cursor: 'pointer' }}
+                  >Resume</button>
+                </>
+              ) : (
+                <button
+                  onClick={onPause}
+                  style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 12px', cursor: 'pointer' }}
+                >⏸ Pause Plan</button>
+              )}
+              <div style={{ display: 'flex', gap: 4, marginLeft: 'auto' }}>
+                <button
+                  onClick={() => onAdjustWeeks?.(1)}
+                  style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 10px', cursor: 'pointer' }}
+                >← Back 1 week</button>
+                <button
+                  onClick={() => onAdjustWeeks?.(-1)}
+                  disabled={(weekOffset ?? 0) === 0}
+                  style={{ fontSize: 12, color: (weekOffset ?? 0) === 0 ? 'var(--text-dim)' : 'var(--text-muted)', background: 'none', border: '1px solid var(--border)', borderRadius: 8, padding: '4px 10px', cursor: (weekOffset ?? 0) === 0 ? 'default' : 'pointer', opacity: (weekOffset ?? 0) === 0 ? 0.4 : 1 }}
+                >→ Forward 1 week</button>
+              </div>
+            </div>
+            {(weekOffset ?? 0) > 0 && (
+              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 6 }}>
+                Week adjusted −{weekOffset} <button onClick={() => onAdjustWeeks?.(-(weekOffset ?? 0))} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 11, cursor: 'pointer', padding: 0 }}>Reset</button>
+              </div>
+            )}
           </div>
 
           <div className="card" style={{ paddingBottom: 12 }}>
@@ -587,7 +718,23 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                   <span className="badge badge-green" style={{ marginLeft: 'auto' }}>✓ Logged</span>
                 )}
               </div>
-              <div className="tsc-title">{daySession.session.title}</div>
+              <div className="tsc-title" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                <span style={{ flex: 1 }}>{lightMode ? getLightSession(String(daySession.key)).title : daySession.session.title}</span>
+                <button
+                  onClick={() => setLightMode(m => !m)}
+                  style={{
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: lightMode ? '#fff' : '#f59e0b',
+                    background: lightMode ? '#f59e0b' : 'rgba(245,158,11,0.1)',
+                    border: '1px solid rgba(245,158,11,0.4)',
+                    borderRadius: 12,
+                    padding: '3px 10px',
+                    cursor: 'pointer',
+                    flexShrink: 0,
+                  }}
+                >{lightMode ? '⚡ Light Mode' : 'Not feeling 100%?'}</button>
+              </div>
               <div className="tsc-body">
                 <button
                   style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: 13, marginBottom: 10, padding: 0 }}
@@ -596,11 +743,21 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                   {expandedSession ? '▲ Hide details' : '▼ Show details'}
                 </button>
                 {expandedSession && (
-                  <ul className="session-items">
-                    {daySession.session.items.map((item, i) => (
-                      <SessionItem key={i} item={item} phase={phase} logs={logs} />
-                    ))}
-                  </ul>
+                  <>
+                    {lightMode && (
+                      <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: '8px 12px', marginBottom: 10, fontSize: 13, fontWeight: 700, color: '#f59e0b' }}>
+                        ⚡ Light Mode — scaled-down session
+                      </div>
+                    )}
+                    <ul className="session-items">
+                      {lightMode
+                        ? getLightSession(String(daySession.key)).items.map((item, i) => <li key={i}>{item}</li>)
+                        : daySession.session.items.map((item, i) => (
+                            <SessionItem key={i} item={item} phase={phase} logs={logs} />
+                          ))
+                      }
+                    </ul>
+                  </>
                 )}
                 <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
                   <button className="btn btn-primary" onClick={onGoLog} style={{ flex: 1 }}>

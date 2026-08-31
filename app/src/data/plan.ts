@@ -418,11 +418,12 @@ export const PHASES: Phase[] = [
   },
 ]
 
-export function getWeekNumber(today = new Date()): number {
+export function getWeekNumber(today = new Date(), weekOffset = 0, pausedAt?: string | null): number {
+  const effectiveDate = (pausedAt ? new Date(pausedAt) : today)
   const msPerWeek = 7 * 24 * 60 * 60 * 1000
-  const diff = today.getTime() - PLAN_START.getTime()
+  const diff = effectiveDate.getTime() - PLAN_START.getTime()
   if (diff < 0) return 0
-  return Math.min(Math.floor(diff / msPerWeek) + 1, TOTAL_WEEKS)
+  return Math.min(Math.max(0, Math.floor(diff / msPerWeek) + 1 - weekOffset), TOTAL_WEEKS)
 }
 
 export function getPhase(week: number): Phase | null {

@@ -100,3 +100,29 @@ export function useSessionCompletions() {
 
   return { completions, toggleCompletion }
 }
+
+export function usePlanControl() {
+  const [weekOffset, setWeekOffset] = useState<number>(() => {
+    try { return Number(localStorage.getItem('planWeekOffset') || '0') } catch { return 0 }
+  })
+  const [pausedAt, setPausedAt] = useState<string | null>(() => {
+    try { return localStorage.getItem('planPausedAt') || null } catch { return null }
+  })
+  const pause = useCallback(() => {
+    const d = new Date().toISOString()
+    setPausedAt(d)
+    try { localStorage.setItem('planPausedAt', d) } catch {}
+  }, [])
+  const resume = useCallback(() => {
+    setPausedAt(null)
+    try { localStorage.removeItem('planPausedAt') } catch {}
+  }, [])
+  const adjustWeeks = useCallback((delta: number) => {
+    setWeekOffset(prev => {
+      const next = Math.max(0, prev + delta)
+      try { localStorage.setItem('planWeekOffset', String(next)) } catch {}
+      return next
+    })
+  }, [])
+  return { weekOffset, pausedAt, isPaused: pausedAt != null, pause, resume, adjustWeeks }
+}
