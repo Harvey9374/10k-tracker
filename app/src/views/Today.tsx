@@ -42,6 +42,25 @@ function applyHeatToStr(paceStr: string, adjSecs: number): string {
   return paceStr
 }
 
+function substituteCalibrated(item: string, zones: CalibratedZones, heatAdj: number): string {
+  const lower = item.toLowerCase()
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+  let zonePace: string | null = null
+
+  if (/interval|800m|400m|1[,.]?000m|1km rep/.test(lower)) {
+    zonePace = fmtPaceRange(zones.interval.min + heatAdj, zones.interval.max + heatAdj)
+  } else if (/tempo|threshold/.test(lower)) {
+    zonePace = fmtPaceRange(zones.tempo.min + heatAdj, zones.tempo.max + heatAdj)
+  } else if (/race pace/.test(lower)) {
+    zonePace = `${fmt(zones.racePace + heatAdj)}/km`
+  } else if (/easy/.test(lower)) {
+    zonePace = fmtPaceRange(zones.easy.min + heatAdj, zones.easy.max + heatAdj)
+  }
+
+  if (!zonePace) return item
+  return item.replace(/\d+:\d{2}[–\-]\d+:\d{2}\/km|\d+:\d{2}\/km/, zonePace)
+}
+
 function isStrengthItem(item: string) { return /strength/i.test(item) }
 function isMobilityItem(item: string) { return /^mobility/i.test(item.trim()) }
 function isRecoveryItem(item: string) { return /^foam roll/i.test(item.trim()) }
@@ -122,7 +141,8 @@ function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColo
 
 function isSkipItem(item: string) { return /^skip intervals?/i.test(item.trim()) }
 
-function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null; logs: WorkoutLog[] }) {
+function SessionItem({ item, phase, logs, calibratedZones, heatAdjSecs }: { item: string; phase: Phase | null; logs: WorkoutLog[]; calibratedZones?: CalibratedZones | null; heatAdjSecs?: number }) {
+  const displayItem = calibratedZones ? substituteCalibrated(item, calibratedZones, heatAdjSecs ?? 0) : item
   const [open, setOpen] = useState(false)
   const hasStrength = isStrengthItem(item) && !!phase?.strengthCircuit?.length
   const hasSkip = isSkipItem(item)
@@ -130,7 +150,7 @@ function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null;
   const hasRecovery = isRecoveryItem(item) && !!phase?.recoveryCircuit?.length
   const isExpandable = hasStrength || hasSkip || hasMobility || hasRecovery
 
-  if (!isExpandable) return <li>{item}</li>
+  if (!isExpandable) return <li>{displayItem}</li>
 
   const phaseNum = phase?.number ?? 1
   const accentColor = (hasStrength || hasSkip) ? 'var(--accent-2)' : 'var(--accent)'
@@ -164,7 +184,7 @@ function SessionItem({ item, phase, logs }: { item: string; phase: Phase | null;
   return (
     <li style={{ flexDirection: 'column', alignItems: 'flex-start', cursor: 'pointer' }} onClick={() => setOpen(o => !o)}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
-        <span style={{ flex: 1 }}>{item}</span>
+        <span style={{ flex: 1 }}>{displayItem}</span>
         <span style={{ fontSize: 11, color: accentColor, fontWeight: 700, flexShrink: 0 }}>
           {open ? '▲ hide' : `▼ ${expandLabel}`}
         </span>
@@ -762,7 +782,7 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
                       {lightMode
                         ? getLightSession(String(daySession.key)).items.map((item, i) => <li key={i}>{item}</li>)
                         : daySession.session.items.map((item, i) => (
-                            <SessionItem key={i} item={item} phase={phase} logs={logs} />
+                            <SessionItem key={i} item={item} phase={phase} logs={logs} calibratedZones={calibratedZones} heatAdjSecs={heatAdjSecs} />
                           ))
                       }
                     </ul>
