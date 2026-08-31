@@ -3,8 +3,9 @@ import { useWardrobe } from './hooks/useWardrobe';
 import { useOutfitHistory } from './hooks/useOutfitHistory';
 import { useWeather } from './hooks/useWeather';
 import { useGoogleDriveSync } from './hooks/useGoogleDriveSync';
+import { useProfile } from './hooks/useProfile';
 import { generateOutfits, surpriseOutfit, getAlternatives, uuid } from './outfitEngine';
-import { OutfitCombo, OutfitLog, WardrobeItem } from './types';
+import { OutfitCombo, OutfitLog, WardrobeItem, AGE_BRACKETS } from './types';
 import { ActivityPicker } from './components/ActivityPicker';
 import { WeatherWidget } from './components/WeatherWidget';
 import { OutfitCard } from './components/OutfitCard';
@@ -39,6 +40,7 @@ export function App() {
   const { items, loading: wardrobeLoading, addItem, updateItem, removeItem, refresh: refreshWardrobe } = useWardrobe();
   const { logs, addLog, updateLog, removeLog, toggleFavourite, confirmOutfit, refresh: refreshLogs } = useOutfitHistory();
   const driveSync = useGoogleDriveSync();
+  const { ageBracket, setAgeBracket } = useProfile();
   const {
     weather, loading: weatherLoading, error: weatherError,
     lat, lon, targetHour, needsTimePrompt,
@@ -48,7 +50,7 @@ export function App() {
   // Generate outfits when activity or weather changes (after initial load)
   const generate = () => {
     if (items.length === 0) return;
-    const combos = generateOutfits(items, logs, weather, activity, 3);
+    const combos = generateOutfits(items, logs, weather, activity, 3, ageBracket);
     setOutfits(combos);
     setHasGenerated(true);
 
@@ -92,6 +94,7 @@ export function App() {
     if (!item) return;
 
     if (category === 'shoes') combo.shoesId = newItemId;
+    else if (category === 'cap') combo.capId = newItemId;
     else if (category === 'shirt' || category === 'tee') combo.topId = newItemId;
     else if (category === 'shorts' || category === 'trousers') combo.bottomsId = newItemId;
     else if (category === 'outerwear') combo.outerwearId = newItemId;
@@ -174,6 +177,24 @@ export function App() {
             👔 Wardrobe
           </h1>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <select
+              value={ageBracket}
+              onChange={e => setAgeBracket(e.target.value as typeof ageBracket)}
+              title="Style bias tuned to your age — affects how loud/patterned outfit suggestions are"
+              style={{
+                padding: '4px 8px',
+                background: 'var(--surface)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                color: 'var(--text)',
+                fontSize: 11,
+                cursor: 'pointer',
+              }}
+            >
+              {AGE_BRACKETS.map(b => (
+                <option key={b.value} value={b.value}>{b.label}</option>
+              ))}
+            </select>
             <SyncButton
               status={driveSync.status}
               lastSynced={driveSync.lastSynced}
@@ -309,6 +330,7 @@ export function App() {
             items={items}
             logs={logs}
             weather={weather}
+            ageBracket={ageBracket}
           />
         )}
       </main>

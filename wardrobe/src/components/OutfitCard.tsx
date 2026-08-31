@@ -38,6 +38,7 @@ export function OutfitCard({
     combo.outerwearId ? itemMap.get(combo.outerwearId) : undefined,
     combo.bottomsId ? itemMap.get(combo.bottomsId) : undefined,
     combo.shoesId ? itemMap.get(combo.shoesId) : undefined,
+    combo.capId ? itemMap.get(combo.capId) : undefined,
     ...combo.accessoryIds.map(id => itemMap.get(id)),
   ].filter(Boolean) as WardrobeItem[];
 
@@ -57,7 +58,7 @@ export function OutfitCard({
           onClick={onFlatLay}
           style={{ background: 'none', border: '1px solid var(--border)', borderRadius: 6, padding: '4px 8px', cursor: 'pointer', color: 'var(--muted)', fontSize: 11 }}
         >
-          👔 Flat-lay
+          🧍 Preview
         </button>
       </div>
 
@@ -116,6 +117,9 @@ export function OutfitCard({
         {combo.shoesId && (
           <button onClick={() => setSwapCategory('shoes')} style={btnStyle}>↕ Shoes</button>
         )}
+        {combo.capId && (
+          <button onClick={() => setSwapCategory('cap')} style={btnStyle}>↕ Cap</button>
+        )}
         <button onClick={onRegenerate} style={btnStyle}>♻ All</button>
         <button
           onClick={onFavourite}
@@ -137,6 +141,7 @@ export function OutfitCard({
           category={swapCategory}
           currentId={
             swapCategory === 'shoes' ? (combo.shoesId ?? '') :
+            swapCategory === 'cap' ? (combo.capId ?? '') :
             swapCategory === 'shirt' ? (combo.topId ?? '') :
             combo.bottomsId
           }

@@ -28,6 +28,7 @@ export function FavouritesView({ logs, items, onToggleFavourite }: Props) {
           log.combo.outerwearId,
           log.combo.bottomsId,
           log.combo.shoesId,
+          log.combo.capId,
           ...log.combo.accessoryIds,
         ].filter(Boolean) as string[];
         const outfitItems = ids.map(id => itemMap.get(id)).filter(Boolean) as WardrobeItem[];

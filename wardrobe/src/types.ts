@@ -1,6 +1,14 @@
-export type ItemCategory = 'vest' | 'tee' | 'shirt' | 'shorts' | 'trousers' | 'shoes' | 'outerwear' | 'accessory' | 'other';
+export type ItemCategory = 'vest' | 'tee' | 'shirt' | 'shorts' | 'trousers' | 'shoes' | 'outerwear' | 'cap' | 'accessory' | 'other';
 export type ItemStatus = 'active' | 'retired' | 'reserve' | 'dirty';
 export type ItemPattern = 'plain' | 'graphic' | 'pattern' | 'stripe' | 'check';
+export type AgeBracket = '30s' | '40s' | '50s' | '60plus';
+
+export const AGE_BRACKETS: { value: AgeBracket; label: string }[] = [
+  { value: '30s', label: '30s' },
+  { value: '40s', label: '40s' },
+  { value: '50s', label: '50s' },
+  { value: '60plus', label: '60+' },
+];
 
 export interface WardrobeItem {
   id: string;
@@ -22,6 +30,7 @@ export interface OutfitCombo {
   outerwearId?: string;
   bottomsId: string;
   shoesId?: string;
+  capId?: string;
   accessoryIds: string[];
 }
 

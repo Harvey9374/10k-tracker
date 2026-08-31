@@ -31,7 +31,8 @@ function guessCategory(filename: string): ItemCategory {
   if (lower.includes('trouser') || lower.includes('pant') || lower.includes('jean')) return 'trousers';
   if (lower.includes('shoe') || lower.includes('boot') || lower.includes('trainer') || lower.includes('sneak')) return 'shoes';
   if (lower.includes('jacket') || lower.includes('coat') || lower.includes('hoodie') || lower.includes('outer')) return 'outerwear';
-  if (lower.includes('accessory') || lower.includes('belt') || lower.includes('hat') || lower.includes('watch')) return 'accessory';
+  if (lower.includes('cap') || lower.includes('hat') || lower.includes('beanie')) return 'cap';
+  if (lower.includes('accessory') || lower.includes('belt') || lower.includes('watch') || lower.includes('sunglasses')) return 'accessory';
   return 'other';
 }
 
@@ -324,7 +325,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
                   }}
                   style={{ width: '100%', marginTop: 4, padding: '4px 6px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', fontSize: 11 }}
                 >
-                  {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'] as ItemCategory[]).map(c => (
+                  {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'] as ItemCategory[]).map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
@@ -373,7 +374,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         </select>
         <select value={filterCategory} onChange={e => setFilterCategory(e.target.value as ItemCategory | 'all')} style={filterSelectStyle}>
           <option value="all">All Categories</option>
-          {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'] as ItemCategory[]).map(c => (
+          {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'] as ItemCategory[]).map(c => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>

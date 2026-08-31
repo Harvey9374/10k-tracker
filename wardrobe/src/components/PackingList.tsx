@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { WardrobeItem, OutfitLog, WeatherData, OutfitCombo } from '../types';
+import { WardrobeItem, OutfitLog, WeatherData, OutfitCombo, AgeBracket } from '../types';
 import { generateOutfits } from '../outfitEngine';
 
 interface Props {
   items: WardrobeItem[];
   logs: OutfitLog[];
   weather: WeatherData | null;
+  ageBracket: AgeBracket;
 }
 
 interface DayPlan {
@@ -13,7 +14,7 @@ interface DayPlan {
   combo: OutfitCombo;
 }
 
-export function PackingList({ items, logs, weather }: Props) {
+export function PackingList({ items, logs, weather, ageBracket }: Props) {
   const [tripName, setTripName] = useState('');
   const [days, setDays] = useState(3);
   const [activity, setActivity] = useState('errands');
@@ -36,7 +37,7 @@ export function PackingList({ items, logs, weather }: Props) {
         favourite: false,
       }));
 
-      const outfits = generateOutfits(items, [...logs, ...fakeLogs], weather, activity, 5);
+      const outfits = generateOutfits(items, [...logs, ...fakeLogs], weather, activity, 5, ageBracket);
       const unique = outfits.find(o => {
         const key = [o.baseLayerId, o.topId, o.outerwearId, o.bottomsId, o.shoesId].join('|');
         return !usedKeys.has(key);
@@ -56,7 +57,7 @@ export function PackingList({ items, logs, weather }: Props) {
     const lines: string[] = [`Packing List: ${tripName || 'Trip'} (${days} days)`, ''];
     for (const dp of plan) {
       lines.push(`Day ${dp.day}:`);
-      const ids = [dp.combo.baseLayerId, dp.combo.topId, dp.combo.outerwearId, dp.combo.bottomsId, dp.combo.shoesId, ...dp.combo.accessoryIds].filter(Boolean) as string[];
+      const ids = [dp.combo.baseLayerId, dp.combo.topId, dp.combo.outerwearId, dp.combo.bottomsId, dp.combo.shoesId, dp.combo.capId, ...dp.combo.accessoryIds].filter(Boolean) as string[];
       for (const id of ids) {
         const item = itemMap.get(id);
         if (item) lines.push(`  - ${item.description || item.filename} (${item.category})`);
@@ -67,7 +68,7 @@ export function PackingList({ items, logs, weather }: Props) {
     // Unique items needed
     const allIds = new Set(plan.flatMap(dp => [
       dp.combo.baseLayerId, dp.combo.topId, dp.combo.outerwearId,
-      dp.combo.bottomsId, dp.combo.shoesId, ...dp.combo.accessoryIds
+      dp.combo.bottomsId, dp.combo.shoesId, dp.combo.capId, ...dp.combo.accessoryIds
     ].filter(Boolean) as string[]));
 
     lines.push('--- Packing List ---');
@@ -133,7 +134,7 @@ export function PackingList({ items, logs, weather }: Props) {
           </div>
 
           {plan.map(dp => {
-            const ids = [dp.combo.baseLayerId, dp.combo.topId, dp.combo.outerwearId, dp.combo.bottomsId, dp.combo.shoesId, ...dp.combo.accessoryIds].filter(Boolean) as string[];
+            const ids = [dp.combo.baseLayerId, dp.combo.topId, dp.combo.outerwearId, dp.combo.bottomsId, dp.combo.shoesId, dp.combo.capId, ...dp.combo.accessoryIds].filter(Boolean) as string[];
             const outfitItems = ids.map(id => itemMap.get(id)).filter(Boolean) as WardrobeItem[];
             return (
               <div key={dp.day} style={{ background: 'var(--surface)', borderRadius: 10, padding: 14, marginBottom: 10, border: '1px solid var(--border)' }}>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { WardrobeItem, ItemCategory, ItemStatus, ItemPattern } from '../types';
 
-const CATEGORIES: ItemCategory[] = ['vest', 'tee', 'shirt', 'shorts', 'trousers', 'shoes', 'outerwear', 'accessory', 'other'];
+const CATEGORIES: ItemCategory[] = ['vest', 'tee', 'shirt', 'shorts', 'trousers', 'shoes', 'outerwear', 'cap', 'accessory', 'other'];
 const STATUSES: ItemStatus[] = ['active', 'retired', 'reserve', 'dirty'];
 const PATTERNS: { value: ItemPattern; label: string }[] = [
   { value: 'plain',   label: 'Plain' },
