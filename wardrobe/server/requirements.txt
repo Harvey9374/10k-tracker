@@ -1,4 +1,0 @@
-rembg[cpu]
-Pillow
-flask
-flask-cors
