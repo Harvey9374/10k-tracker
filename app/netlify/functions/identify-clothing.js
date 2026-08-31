@@ -55,7 +55,7 @@ export const handler = async (event) => {
             type: 'text',
             text: `Identify this clothing item. Reply with ONLY a JSON object, no other text:
 {
-  "category": one of: vest, tee, shirt, shorts, trousers, shoes, outerwear, accessory, other,
+  "category": one of: vest, tee, shirt, shorts, trousers, shoes, outerwear, cap, accessory, other,
   "primaryColour": colour name in lowercase (e.g. "navy", "white", "grey", "olive"),
   "pattern": one of: plain, stripe, check, graphic, pattern
 }
@@ -65,7 +65,8 @@ Rules:
 - shirt = button-up or collared shirt
 - vest = sleeveless top
 - outerwear = jacket, coat, hoodie, jumper, sweatshirt
-- accessory = hat, cap, belt, watch, bag, jewellery
+- cap = cap, hat, beanie, or other headwear
+- accessory = belt, watch, bag, sunglasses, jewellery
 - graphic = has text, logo, or graphic print
 - pattern = floral, abstract, or non-geometric print
 - check = checked, plaid, or tartan
@@ -79,7 +80,7 @@ Rules:
     const result = JSON.parse(text);
 
     // Validate fields
-    const validCategories = ['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'];
+    const validCategories = ['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'];
     const validPatterns = ['plain','stripe','check','graphic','pattern'];
     if (!validCategories.includes(result.category)) result.category = 'other';
     if (!validPatterns.includes(result.pattern)) result.pattern = 'plain';

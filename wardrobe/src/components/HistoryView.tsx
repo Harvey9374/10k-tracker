@@ -18,6 +18,7 @@ export function HistoryView({ logs, items, onToggleFavourite, onConfirm }: Props
       log.combo.outerwearId,
       log.combo.bottomsId,
       log.combo.shoesId,
+      log.combo.capId,
       ...log.combo.accessoryIds,
     ].filter(Boolean) as string[];
     return ids.map(id => itemMap.get(id)).filter(Boolean) as WardrobeItem[];

@@ -14,6 +14,7 @@ npm run build
 cd ..
 
 echo "=== Merging builds ==="
+rm -rf app/dist/wardrobe
 mkdir -p app/dist/wardrobe
 cp -r wardrobe/dist/. app/dist/wardrobe/
 

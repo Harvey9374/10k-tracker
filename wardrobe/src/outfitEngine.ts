@@ -1,4 +1,43 @@
-import { WardrobeItem, OutfitCombo, OutfitLog, WeatherData } from './types';
+import { WardrobeItem, OutfitCombo, OutfitLog, WeatherData, AgeBracket } from './types';
+
+// ── Age-appropriate style bias ─────────────────────────────────────────────────
+// Lightweight heuristic, not a substitute for real styling advice: as the
+// bracket goes up we lean harder away from loud graphic prints and toward
+// classic, well-fitted neutrals — general "dress well for your age" guidance,
+// not rules pulled from any specific wardrobe plan.
+
+const GRAPHIC_PENALTY: Record<AgeBracket, number> = {
+  '30s': 5,
+  '40s': 15,
+  '50s': 25,
+  '60plus': 35,
+};
+
+const BUSY_PATTERN_PENALTY: Record<AgeBracket, number> = {
+  '30s': 0,
+  '40s': 4,
+  '50s': 8,
+  '60plus': 10,
+};
+
+function ageAppropriatenessScore(
+  combo: OutfitCombo,
+  itemMap: Map<string, WardrobeItem>,
+  ageBracket: AgeBracket
+): number {
+  const ids = [combo.baseLayerId, combo.topId, combo.outerwearId, combo.bottomsId]
+    .filter(Boolean) as string[];
+  let penalty = 0;
+  for (const id of ids) {
+    const item = itemMap.get(id);
+    if (!item) continue;
+    if (item.pattern === 'graphic') penalty += GRAPHIC_PENALTY[ageBracket];
+    else if (item.pattern === 'pattern' || item.pattern === 'check' || item.pattern === 'stripe') {
+      penalty += BUSY_PATTERN_PENALTY[ageBracket];
+    }
+  }
+  return -penalty;
+}
 
 export function uuid(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -118,7 +157,8 @@ function comboKey(combo: OutfitCombo): string {
     combo.topId ?? '',
     combo.outerwearId ?? '',
     combo.bottomsId,
-    combo.shoesId,
+    combo.shoesId ?? '',
+    combo.capId ?? '',
   ].join('|');
 }
 
@@ -154,6 +194,40 @@ function pick<T>(arr: T[]): T | undefined {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+/**
+ * Explains why the generator can't build an outfit from these items, or
+ * returns null if it should be able to. The generator needs at least one
+ * top (tee/shirt/vest) and one bottom (shorts/trousers) with the right
+ * category set — items filed under "Other" (the default when auto-tagging
+ * fails, e.g. a generic camera filename with no AI identification) are
+ * invisible to it even if the wardrobe has plenty of photos.
+ */
+export function diagnoseWardrobe(items: WardrobeItem[]): string | null {
+  const usable = getUsableItems(items);
+  if (usable.length === 0) {
+    return items.length === 0
+      ? 'Your wardrobe is empty — add some clothes first.'
+      : `You have ${items.length} item${items.length === 1 ? '' : 's'}, but none are marked "Active" or "Reserve". Open an item and check its status.`;
+  }
+
+  const topsCount = usable.filter(i => i.category === 'tee' || i.category === 'shirt' || i.category === 'vest').length;
+  const bottomsCount = usable.filter(i => i.category === 'shorts' || i.category === 'trousers').length;
+  const otherCount = usable.filter(i => i.category === 'other').length;
+
+  if (topsCount > 0 && bottomsCount > 0) return null;
+
+  const missing: string[] = [];
+  if (topsCount === 0) missing.push('a top (tee, shirt or vest)');
+  if (bottomsCount === 0) missing.push('bottoms (shorts or trousers)');
+
+  let msg = `You need at least ${missing.join(' and ')} with the right category set.`;
+  if (otherCount > 0) {
+    msg += ` ${otherCount} item${otherCount === 1 ? ' is' : 's are'} filed under "Other" — that's usually why: auto-tagging couldn't identify them. `
+      + `Go to the Wardrobe tab, filter by "Other", and use "Select" to bulk-set their category.`;
+  }
+  return msg;
+}
+
 // ── Main generator ────────────────────────────────────────────────────────────
 
 export function generateOutfits(
@@ -161,7 +235,8 @@ export function generateOutfits(
   logs: OutfitLog[],
   weather: WeatherData | null,
   activity: string,
-  count: number
+  count: number,
+  ageBracket: AgeBracket = '40s'
 ): OutfitCombo[] {
   const temp = weather?.temperature ?? 18;
   const band = temperatureBand(temp);
@@ -181,6 +256,7 @@ export function generateOutfits(
   const trousers   = byCategory('trousers');
   const shoes      = byCategory('shoes');
   const outerwear  = byCategory('outerwear');
+  const caps       = byCategory('cap');
   const accessories = byCategory('accessory');
 
   const usedKeys = new Set<string>();
@@ -256,6 +332,13 @@ export function generateOutfits(
       if (!outer) continue;
     }
 
+    // ── Cap (sunny / hot / high UV) ──
+    let cap: WardrobeItem | undefined;
+    const wantsCap = band === 'hot' || (weather?.uvIndex ?? 0) >= 5;
+    if (caps.length > 0 && wantsCap && formality !== 'smart-casual' && Math.random() > 0.35) {
+      cap = pick(caps);
+    }
+
     // ── Accessories (optional) ──
     const accIds: string[] = [];
     if (accessories.length > 0 && Math.random() > 0.6) {
@@ -270,6 +353,8 @@ export function generateOutfits(
       topId: top?.id,
       outerwearId: outer?.id,
       bottomsId: bottoms.id,
+      shoesId: pick(shoes)?.id,
+      capId: cap?.id,
       accessoryIds: accIds,
     };
 
@@ -279,6 +364,7 @@ export function generateOutfits(
 
     // ── Score ──
     let score = outfitColourScore(combo, itemMap);
+    score += ageAppropriatenessScore(combo, itemMap, ageBracket);
     if (recentKeys.has(key)) score -= 40;
 
     // Penalise pattern clashes between visible layers
@@ -301,7 +387,7 @@ export function generateOutfits(
     const bottom = pick([...trousers, ...shorts]);
     const base   = pick([...tees, ...vests]);
     if (!bottom) break;
-    results.push({ baseLayerId: base?.id, bottomsId: bottom.id, accessoryIds: [] });
+    results.push({ baseLayerId: base?.id, bottomsId: bottom.id, shoesId: pick(shoes)?.id, accessoryIds: [] });
   }
 
   return results;
@@ -312,8 +398,9 @@ export function surpriseOutfit(items: WardrobeItem[]): OutfitCombo | null {
   const p = <T>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
   const bottoms = p(usable.filter(i => i.category === 'shorts' || i.category === 'trousers'));
   const base    = p(usable.filter(i => i.category === 'tee' || i.category === 'vest'));
+  const shoe    = p(usable.filter(i => i.category === 'shoes'));
   if (!bottoms) return null;
-  return { baseLayerId: base?.id, bottomsId: bottoms.id, accessoryIds: [] };
+  return { baseLayerId: base?.id, bottomsId: bottoms.id, shoesId: shoe?.id, accessoryIds: [] };
 }
 
 export function getAlternatives(

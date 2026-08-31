@@ -113,9 +113,19 @@ export default function App() {
         <h1>{TITLES[view]}</h1>
         {view === 'today' && <span className="header-badge">🎯 Sub-45</span>}
         {view === 'strava' && <span className="header-badge" style={{ background: 'rgba(252,76,2,0.15)', color: '#fc4c02' }}>🏃 Strava</span>}
-        <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
-          {theme === 'dark' ? '☀️' : '🌙'}
-        </button>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <a
+            href="/wardrobe/"
+            aria-label="Open Wardrobe Stylist"
+            title="Wardrobe Stylist"
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, fontSize: 16, textDecoration: 'none' }}
+          >
+            👔
+          </a>
+          <button className="theme-toggle" style={{ marginLeft: 0 }} onClick={toggleTheme} aria-label="Toggle theme">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
+        </div>
       </header>
 
       <div key={view} className={`view-anim slide-${slideDir}`}>

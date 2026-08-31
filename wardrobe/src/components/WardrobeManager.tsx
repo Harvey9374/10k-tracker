@@ -31,7 +31,8 @@ function guessCategory(filename: string): ItemCategory {
   if (lower.includes('trouser') || lower.includes('pant') || lower.includes('jean')) return 'trousers';
   if (lower.includes('shoe') || lower.includes('boot') || lower.includes('trainer') || lower.includes('sneak')) return 'shoes';
   if (lower.includes('jacket') || lower.includes('coat') || lower.includes('hoodie') || lower.includes('outer')) return 'outerwear';
-  if (lower.includes('accessory') || lower.includes('belt') || lower.includes('hat') || lower.includes('watch')) return 'accessory';
+  if (lower.includes('cap') || lower.includes('hat') || lower.includes('beanie')) return 'cap';
+  if (lower.includes('accessory') || lower.includes('belt') || lower.includes('watch') || lower.includes('sunglasses')) return 'accessory';
   return 'other';
 }
 
@@ -158,6 +159,10 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
   const [filterCategory, setFilterCategory] = useState<ItemCategory | 'all'>('all');
   const [isDragOver, setIsDragOver] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkCategory, setBulkCategory] = useState<ItemCategory>('tee');
+  const [applyingBulk, setApplyingBulk] = useState(false);
 
   const processFiles = async (files: FileList | File[]) => {
     const arr = Array.from(files).filter(f => f.type.startsWith('image/'));
@@ -248,6 +253,37 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
     active: '#2a7a2a', reserve: '#7a6a2a', dirty: '#7a3a2a', retired: '#4a4a4a',
   };
 
+  const topsCount = items.filter(i => i.category === 'tee' || i.category === 'shirt' || i.category === 'vest').length;
+  const bottomsCount = items.filter(i => i.category === 'shorts' || i.category === 'trousers').length;
+  const shoesCount = items.filter(i => i.category === 'shoes').length;
+  const otherCount = items.filter(i => i.category === 'other').length;
+
+  const toggleSelectMode = () => {
+    setSelectMode(m => !m);
+    setSelectedIds(new Set());
+  };
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const selectAllFiltered = () => setSelectedIds(new Set(filtered.map(i => i.id)));
+
+  const applyBulkCategory = async () => {
+    setApplyingBulk(true);
+    for (const id of selectedIds) {
+      const item = items.find(i => i.id === id);
+      if (item && item.category !== bulkCategory) await onUpdate({ ...item, category: bulkCategory });
+    }
+    setApplyingBulk(false);
+    setSelectedIds(new Set());
+    setSelectMode(false);
+  };
+
   return (
     <div>
       {/* Upload zone */}
@@ -324,7 +360,7 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
                   }}
                   style={{ width: '100%', marginTop: 4, padding: '4px 6px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 4, color: 'var(--text)', fontSize: 11 }}
                 >
-                  {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'] as ItemCategory[]).map(c => (
+                  {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'] as ItemCategory[]).map(c => (
                     <option key={c} value={c}>{c}</option>
                   ))}
                 </select>
@@ -362,6 +398,21 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         </div>
       )}
 
+      {/* Category summary — surfaces the "everything landed in Other" problem at a glance */}
+      {items.length > 0 && (topsCount === 0 || bottomsCount === 0 || otherCount > 0) && (
+        <div style={{
+          display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12, padding: '10px 12px',
+          background: 'rgba(201,169,110,0.08)', border: '1px solid var(--accent)', borderRadius: 10, fontSize: 12,
+        }}>
+          <span style={{ color: 'var(--muted)' }}>Tops: <strong style={{ color: topsCount === 0 ? '#d97a4a' : 'var(--text)' }}>{topsCount}</strong></span>
+          <span style={{ color: 'var(--muted)' }}>Bottoms: <strong style={{ color: bottomsCount === 0 ? '#d97a4a' : 'var(--text)' }}>{bottomsCount}</strong></span>
+          <span style={{ color: 'var(--muted)' }}>Shoes: <strong style={{ color: 'var(--text)' }}>{shoesCount}</strong></span>
+          {otherCount > 0 && (
+            <span style={{ color: '#d97a4a' }}>{otherCount} item{otherCount === 1 ? '' : 's'} filed under "Other" — these are invisible to outfit generation until categorised.</span>
+          )}
+        </div>
+      )}
+
       {/* Filters */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16, overflowX: 'auto', paddingBottom: 4 }}>
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value as ItemStatus | 'all')} style={filterSelectStyle}>
@@ -373,12 +424,49 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         </select>
         <select value={filterCategory} onChange={e => setFilterCategory(e.target.value as ItemCategory | 'all')} style={filterSelectStyle}>
           <option value="all">All Categories</option>
-          {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','accessory','other'] as ItemCategory[]).map(c => (
+          {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'] as ItemCategory[]).map(c => (
             <option key={c} value={c}>{c}</option>
           ))}
         </select>
         <span style={{ color: 'var(--muted)', fontSize: 12, alignSelf: 'center', whiteSpace: 'nowrap' }}>{filtered.length} items</span>
+        <button
+          onClick={toggleSelectMode}
+          style={{
+            ...filterSelectStyle,
+            marginLeft: 'auto',
+            background: selectMode ? 'var(--accent)' : 'var(--surface)',
+            color: selectMode ? '#000' : 'var(--text)',
+            fontWeight: 600,
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {selectMode ? 'Done' : 'Select'}
+        </button>
       </div>
+
+      {/* Bulk category bar */}
+      {selectMode && (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 16, padding: 12, background: 'var(--surface)', border: '1px solid var(--accent)', borderRadius: 10 }}>
+          <button onClick={selectAllFiltered} style={{ ...filterSelectStyle, fontSize: 11 }}>Select all {filtered.length}</button>
+          <span style={{ fontSize: 12, color: 'var(--muted)' }}>{selectedIds.size} selected</span>
+          <select value={bulkCategory} onChange={e => setBulkCategory(e.target.value as ItemCategory)} style={filterSelectStyle}>
+            {(['vest','tee','shirt','shorts','trousers','shoes','outerwear','cap','accessory','other'] as ItemCategory[]).map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <button
+            onClick={applyBulkCategory}
+            disabled={selectedIds.size === 0 || applyingBulk}
+            style={{
+              padding: '6px 14px', background: selectedIds.size === 0 || applyingBulk ? 'var(--bg)' : 'var(--accent)',
+              border: 'none', borderRadius: 8, cursor: selectedIds.size === 0 || applyingBulk ? 'default' : 'pointer',
+              fontSize: 12, fontWeight: 700, color: selectedIds.size === 0 || applyingBulk ? 'var(--muted)' : '#000',
+            }}
+          >
+            {applyingBulk ? 'Applying…' : `Set category on ${selectedIds.size}`}
+          </button>
+        </div>
+      )}
 
       {/* Grid */}
       {filtered.length === 0 ? (
@@ -387,23 +475,41 @@ export function WardrobeManager({ items, onAdd, onUpdate, onDelete }: Props) {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          {filtered.map(item => (
-            <button
-              key={item.id}
-              onClick={() => setEditItem(item)}
-              style={{ background: 'none', border: '2px solid var(--border)', borderRadius: 10, cursor: 'pointer', padding: 0, overflow: 'hidden', position: 'relative' }}
-            >
-              <img
-                src={item.imageData}
-                alt={item.description || item.filename}
-                style={{ width: '100%', aspectRatio: '1', objectFit: 'contain', display: 'block', background: 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 0 0 / 10px 10px' }}
-              />
-              <div style={{ position: 'absolute', top: 4, right: 4, width: 10, height: 10, borderRadius: '50%', background: statusColors[item.status], border: '1px solid rgba(255,255,255,0.3)' }} />
-              <div style={{ padding: '4px 6px', background: 'var(--surface)', fontSize: 10, color: 'var(--muted)', textAlign: 'left' }}>
-                {item.description || item.category}
-              </div>
-            </button>
-          ))}
+          {filtered.map(item => {
+            const isSelected = selectedIds.has(item.id);
+            return (
+              <button
+                key={item.id}
+                onClick={() => selectMode ? toggleSelected(item.id) : setEditItem(item)}
+                style={{
+                  background: 'none',
+                  border: `2px solid ${selectMode && isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                  borderRadius: 10, cursor: 'pointer', padding: 0, overflow: 'hidden', position: 'relative',
+                }}
+              >
+                <img
+                  src={item.imageData}
+                  alt={item.description || item.filename}
+                  style={{ width: '100%', aspectRatio: '1', objectFit: 'contain', display: 'block', background: 'repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 0 0 / 10px 10px', opacity: selectMode && !isSelected ? 0.5 : 1 }}
+                />
+                {selectMode ? (
+                  <div style={{
+                    position: 'absolute', top: 4, right: 4, width: 20, height: 20, borderRadius: '50%',
+                    background: isSelected ? 'var(--accent)' : 'rgba(0,0,0,0.5)',
+                    border: '1px solid rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 12, color: isSelected ? '#000' : '#fff',
+                  }}>
+                    {isSelected ? '✓' : ''}
+                  </div>
+                ) : (
+                  <div style={{ position: 'absolute', top: 4, right: 4, width: 10, height: 10, borderRadius: '50%', background: statusColors[item.status], border: '1px solid rgba(255,255,255,0.3)' }} />
+                )}
+                <div style={{ padding: '4px 6px', background: 'var(--surface)', fontSize: 10, color: 'var(--muted)', textAlign: 'left' }}>
+                  {item.description || item.category}
+                </div>
+              </button>
+            );
+          })}
         </div>
       )}
 
