@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useWorkoutLogs, useTimeTrials, useCalibratedZones, useInjuryMode } from './hooks/useStore'
+import { useWorkoutLogs, useTimeTrials, useCalibratedZones, useInjuryMode, usePlanControl } from './hooks/useStore'
 import { calcCalibratedZones, calcAdjustedTime } from './data/plan'
 import Today from './views/Today'
 import Log from './views/Log'
@@ -65,6 +65,7 @@ export default function App() {
   const { trials, addTrial: addTrialBase, deleteTrial } = useTimeTrials()
   const { zones: calibratedZones, saveZones, clearZones } = useCalibratedZones()
   const { injuryMode, toggleInjuryMode } = useInjuryMode()
+  const { weekOffset, pausedAt, isPaused, pause, resume, adjustWeeks } = usePlanControl()
 
   function addTrial(trial: Parameters<typeof addTrialBase>[0]) {
     addTrialBase(trial)
@@ -118,7 +119,7 @@ export default function App() {
       </header>
 
       <div key={view} className={`view-anim slide-${slideDir}`}>
-        {view === 'today' && <Today logs={logs} onGoLog={goToLog} calibratedZones={calibratedZones} injuryMode={injuryMode} onToggleInjuryMode={toggleInjuryMode} />}
+        {view === 'today' && <Today logs={logs} onGoLog={goToLog} calibratedZones={calibratedZones} injuryMode={injuryMode} onToggleInjuryMode={toggleInjuryMode} weekOffset={weekOffset} pausedAt={pausedAt} isPaused={isPaused} onPause={pause} onResume={resume} onAdjustWeeks={adjustWeeks} />}
         {view === 'log' && <Log logs={logs} onAdd={addLog} onDelete={deleteLog} />}
         {view === 'progress' && <Progress logs={logs} trials={trials} onAddTrial={addTrial} onDeleteTrial={deleteTrial} calibratedZones={calibratedZones} onClearZones={clearZones} />}
         {view === 'strava' && <StravaView calibratedZones={calibratedZones} logs={logs} onAddLog={addLog} onAddTrial={addTrial} />}
