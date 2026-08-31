@@ -63,7 +63,7 @@ function ExerciseCard({ line, accentColor }: { line: string; accentColor: string
   return (
     <div style={{ margin: '4px 0', border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
       <div
-        onClick={() => setOpen(o => !o)}
+        onClick={e => { e.stopPropagation(); setOpen(o => !o) }}
         style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 10px', cursor: 'pointer', background: open ? 'var(--surface)' : 'transparent' }}
       >
         <span style={{ flex: 1, fontSize: 13, color: 'var(--text)' }}>{line.trim()}</span>
