@@ -70,23 +70,32 @@ function ExerciseCard({ line, accentColor }: { line: string; accentColor: string
         <span style={{ fontSize: 10, color: accentColor, fontWeight: 700 }}>{open ? '▲' : '▼ how'}</span>
       </div>
       {open && (
-        <div style={{ padding: '10px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-            <svg viewBox="0 0 100 100" width="80" height="80" style={{ flexShrink: 0, color: accentColor }}>
-              <g dangerouslySetInnerHTML={{ __html: ex.svg }} />
-            </svg>
-            <div style={{ flex: 1 }}>
-              {ex.cues.map((cue, i) => (
-                <div key={i} style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 6, marginBottom: 5 }}>
-                  <span style={{ color: accentColor, fontWeight: 700, flexShrink: 0 }}>✓</span>
-                  <span>{cue}</span>
-                </div>
-              ))}
-              <div style={{ fontSize: 11, color: '#f97316', display: 'flex', gap: 6, marginTop: 6, paddingTop: 6, borderTop: '1px solid var(--border)' }}>
-                <span style={{ fontWeight: 700, flexShrink: 0 }}>⚠</span>
-                <span>{ex.mistake}</span>
+        <div style={{ padding: '10px 12px 12px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{ex.name}</span>
+            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: accentColor + '22', color: accentColor }}>{ex.position}</span>
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: accentColor, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>How to do it</div>
+            {ex.steps.map((step, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 6, fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                <span style={{ flexShrink: 0, width: 18, height: 18, borderRadius: '50%', background: accentColor, color: '#fff', fontSize: 10, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>{i + 1}</span>
+                <span>{step}</span>
               </div>
-            </div>
+            ))}
+          </div>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: 8, marginBottom: 6 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 5 }}>Key cues</div>
+            {ex.cues.map((cue, i) => (
+              <div key={i} style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', gap: 6, marginBottom: 4, lineHeight: 1.4 }}>
+                <span style={{ color: 'var(--accent)', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                <span>{cue}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: '#f97316', display: 'flex', gap: 6, paddingTop: 6, borderTop: '1px solid var(--border)', lineHeight: 1.4 }}>
+            <span style={{ fontWeight: 800, flexShrink: 0 }}>⚠</span>
+            <span><strong>Common mistake:</strong> {ex.mistake}</span>
           </div>
         </div>
       )}
