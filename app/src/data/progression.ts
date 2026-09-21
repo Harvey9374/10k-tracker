@@ -120,6 +120,38 @@ const PHASE1_CIRCUITS: CircuitVariation[] = [
     ],
     rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
   },
+  {
+    label: 'D',
+    focus: 'Hip & posterior chain',
+    lower: [
+      { name: 'Hip thrust',                  reps: 15, unit: 'reps',          weight: 'bodyweight',  note: '3-sec squeeze at top' },
+      { name: 'Reverse lunge',               reps: 10, unit: 'reps each leg', weight: '15kg' },
+      { name: 'Single-leg Romanian deadlift', reps: 10, unit: 'reps each leg', weight: '15kg' },
+      { name: 'Single-leg calf raise',       reps: 15, unit: 'reps each leg', weight: 'bodyweight',  note: 'full range' },
+    ],
+    upper: [
+      { name: 'Dumbbell floor press', reps: 12, unit: 'reps',          weight: '15kg each' },
+      { name: 'Arnold press',         reps: 8,  unit: 'reps',          weight: '15kg each' },
+      { name: 'Bird dog',             reps: 10, unit: 'reps each side', weight: 'bodyweight', note: '3-sec hold' },
+    ],
+    rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
+  },
+  {
+    label: 'E',
+    focus: 'Lateral + core',
+    lower: [
+      { name: 'Curtsy lunge',          reps: 10, unit: 'reps each leg',  weight: 'bodyweight' },
+      { name: 'Explosive step-up',     reps: 10, unit: 'reps each leg',  weight: 'bodyweight', note: 'drive hard' },
+      { name: 'Single-leg glute bridge', reps: 12, unit: 'reps each leg', weight: 'bodyweight', note: '2-sec hold at top' },
+      { name: 'Single-leg calf raise', reps: 15, unit: 'reps each leg',  weight: 'bodyweight', note: 'slow eccentric' },
+    ],
+    upper: [
+      { name: 'Renegade row', reps: 6,  unit: 'reps each side', weight: '15kg' },
+      { name: 'Side plank',   reps: 35, unit: 'sec each side' },
+      { name: 'Superman hold', reps: 10, unit: 'reps',          weight: 'bodyweight', note: '3-sec hold each rep' },
+    ],
+    rounds: '1–2 rounds post-run · Rest 60–90 sec between rounds',
+  },
 ]
 
 // ─── PHASE 2 CIRCUITS ─────────────────────────────────────────────────────────
@@ -163,13 +195,45 @@ const PHASE2_CIRCUITS: CircuitVariation[] = [
     lower: [
       { name: 'Walking lunge',              reps: 12, unit: 'reps each leg',  weight: '15kg' },
       { name: 'Single-leg glute bridge',    reps: 10, unit: 'reps each leg',  weight: 'bodyweight', note: '3-sec hold' },
-      { name: 'Single-leg RDL',             reps: 10, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Single-leg Romanian deadlift', reps: 10, unit: 'reps each leg', weight: '15kg' },
       { name: 'Single-leg calf raise on step', reps: 20, unit: 'reps each leg', weight: '15kg' },
     ],
     upper: [
       { name: 'Bent-over row',  reps: 12, unit: 'reps',          weight: '15kg each hand' },
       { name: 'Side plank',     reps: 45, unit: 'sec each side' },
       { name: 'Overhead press', reps: 10, unit: 'reps',          weight: '15kg each' },
+    ],
+    rounds: '3–4 rounds · Rest 60–90 sec between rounds',
+  },
+  {
+    label: 'D',
+    focus: 'Hip & posterior chain',
+    lower: [
+      { name: 'Hip thrust',                  reps: 20, unit: 'reps',          weight: 'bodyweight',    note: '3-sec squeeze at top' },
+      { name: 'Reverse lunge',               reps: 12, unit: 'reps each leg', weight: '15kg' },
+      { name: 'Single-leg Romanian deadlift', reps: 10, unit: 'reps each leg', weight: '15kg each hand' },
+      { name: 'Single-leg calf raise on step', reps: 20, unit: 'reps each leg', weight: '15kg' },
+    ],
+    upper: [
+      { name: 'Dumbbell floor press', reps: 12, unit: 'reps',          weight: '15kg each' },
+      { name: 'Arnold press',         reps: 10, unit: 'reps',          weight: '15kg each' },
+      { name: 'Bird dog',             reps: 12, unit: 'reps each side', weight: 'bodyweight', note: '3-sec hold' },
+    ],
+    rounds: '3–4 rounds · Rest 60–90 sec between rounds',
+  },
+  {
+    label: 'E',
+    focus: 'Lateral + core',
+    lower: [
+      { name: 'Curtsy lunge',            reps: 12, unit: 'reps each leg',  weight: '15kg' },
+      { name: 'Copenhagen plank',        reps: 30, unit: 'sec each side' },
+      { name: 'Single-leg glute bridge', reps: 15, unit: 'reps each leg',  weight: 'bodyweight', note: '3-sec hold' },
+      { name: 'Lateral lunge',           reps: 12, unit: 'reps each direction', weight: 'bodyweight' },
+    ],
+    upper: [
+      { name: 'Renegade row',  reps: 8,  unit: 'reps each side', weight: '15kg' },
+      { name: 'Side plank',    reps: 45, unit: 'sec each side' },
+      { name: 'Superman hold', reps: 12, unit: 'reps',           weight: 'bodyweight', note: '3-sec hold each rep' },
     ],
     rounds: '3–4 rounds · Rest 60–90 sec between rounds',
   },
@@ -245,7 +309,8 @@ export function isStrengthLog(sessionType: string) { return /strength/i.test(ses
 export function isSkipLog(sessionType: string) { return /skip|mobility/i.test(sessionType) }
 
 export function getCircuitVariation(strengthSessionCount: number, phaseNum: number): CircuitVariation {
-  return getPhaseCircuits(phaseNum)[strengthSessionCount % 3]
+  const circuits = getPhaseCircuits(phaseNum)
+  return circuits[strengthSessionCount % circuits.length]
 }
 
 export function getSkipVariation(skipSessionCount: number, phaseNum: number): SkipVariation {
