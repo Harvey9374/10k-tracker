@@ -211,13 +211,203 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     ],
     mistake: 'Toes turning outward on the lunge leg — this reduces the lateral hip benefit; keep them pointing straight ahead',
   },
+  {
+    key: 'walking-lunge',
+    name: 'Walking Lunge',
+    position: 'Standing',
+    steps: [
+      'Stand tall with dumbbells at your sides.',
+      'Step forward with one leg and lower the back knee toward the floor.',
+      'Push off the back foot and bring it forward to step into the next lunge.',
+      'Continue walking forward for the prescribed reps on each leg.',
+    ],
+    cues: [
+      'Front knee stays above the ankle — not caving in',
+      'Torso upright throughout — resist the urge to lean forward',
+      'Smooth, controlled movement — not a hop or a rush',
+    ],
+    mistake: 'Taking too short a step so the front knee shoots past the toes — lengthen your stride so the front shin stays near-vertical',
+  },
+  {
+    key: 'reverse-lunge',
+    name: 'Reverse Lunge',
+    position: 'Standing',
+    steps: [
+      'Stand tall with dumbbells at your sides, feet hip-width.',
+      'Step one foot back and lower that knee toward the floor.',
+      'Front shin stays vertical — knee stays above the ankle.',
+      'Push through the front heel to return to standing.',
+    ],
+    cues: [
+      'Power comes from the front leg — the back leg just guides the movement',
+      'Keep torso upright — don\'t lean forward over the front knee',
+      'Controlled descent — 2–3 seconds down',
+    ],
+    mistake: 'Letting the front knee drift forward past the toes — step back further so the front shin stays vertical',
+  },
+  {
+    key: 'curtsy-lunge',
+    name: 'Curtsy Lunge',
+    position: 'Standing',
+    steps: [
+      'Stand tall, feet hip-width. Hold a dumbbell at chest height or by your sides.',
+      'Step one foot diagonally behind and across your body, as if curtsying.',
+      'Lower the back knee toward the floor, keeping hips facing forward.',
+      'Push through the front foot to return to standing.',
+    ],
+    cues: [
+      'Hips stay square and facing forward throughout — don\'t twist',
+      'Front knee tracks over the toes — don\'t let it cave inward',
+      'Feel the side of the front glute loading — that\'s the target muscle',
+    ],
+    mistake: 'Rotating the hips toward the stepping leg — keep them square to the front throughout the whole movement',
+  },
+  {
+    key: 'hip-thrust',
+    name: 'Hip Thrust',
+    position: 'Lying/elevated',
+    steps: [
+      'Sit with your upper back against a sofa or bench, knees bent, feet flat on the floor hip-width apart.',
+      'Drive through both heels to push your hips up off the floor.',
+      'Squeeze your glutes hard at the top — hold 2–3 seconds.',
+      'Lower under control — hips don\'t need to touch the floor between reps.',
+    ],
+    cues: [
+      'Full extension at the top — hips, knees, and shoulders in a straight line',
+      'Drive through heels, not toes — you should be able to wiggle toes at the top',
+      'Squeeze the glutes, not the lower back',
+    ],
+    mistake: 'Overextending the lower back to get the hips higher — the movement ends when your glutes are fully squeezed, not when your back arches',
+  },
+  {
+    key: 'dumbbell-floor-press',
+    name: 'Dumbbell Floor Press',
+    position: 'Lying',
+    steps: [
+      'Lie on your back with knees bent. Hold dumbbells at chest height, elbows at 45° to the body.',
+      'Press the dumbbells straight up until arms are fully extended.',
+      'Lower slowly until elbows lightly touch the floor.',
+      'Pause briefly at the bottom — no bounce — then press again.',
+    ],
+    cues: [
+      'Elbows at 45° — not flared straight out to the sides',
+      'Keep the back flat on the floor throughout',
+      'Controlled lowering — take 2–3 seconds on the way down',
+    ],
+    mistake: 'Bouncing the elbows off the floor to get momentum — pause at the bottom and press from a dead stop each rep',
+  },
+  {
+    key: 'arnold-press',
+    name: 'Arnold Press',
+    position: 'Standing',
+    steps: [
+      'Hold dumbbells at shoulder height with palms facing toward you, elbows close together in front of your face.',
+      'As you press upward, rotate your palms outward so they face forward at the top.',
+      'At full extension, arms are straight overhead with palms facing forward.',
+      'Reverse the rotation as you lower back to the start position.',
+    ],
+    cues: [
+      'Brace your core throughout — don\'t let the ribs flare',
+      'The rotation should be smooth and continuous — not two separate movements',
+      'Control the lowering phase fully — 2 seconds down',
+    ],
+    mistake: 'Rushing the rotation and losing shoulder position — keep it slow and deliberate through the full range of motion',
+  },
+  {
+    key: 'bird-dog',
+    name: 'Bird Dog',
+    position: 'On all fours',
+    steps: [
+      'Start on hands and knees — wrists under shoulders, knees under hips. Back flat.',
+      'Slowly extend your right arm forward and left leg back simultaneously.',
+      'Hold for 2–3 seconds — both limbs parallel to the floor.',
+      'Return to start without letting the back round. Repeat on the other side.',
+    ],
+    cues: [
+      'Back stays absolutely flat throughout — imagine a glass of water on your lower back',
+      'Don\'t let the hip of the raised leg rotate up toward the ceiling',
+      'Move slowly — this is a stability exercise, not a speed exercise',
+    ],
+    mistake: 'Arching the lower back or rotating the hip to get the leg higher — only go as high as you can with a perfectly flat back',
+  },
+  {
+    key: 'renegade-row',
+    name: 'Renegade Row',
+    position: 'Press-up position',
+    steps: [
+      'Start in a high press-up position with a dumbbell in each hand, feet wide apart.',
+      'Keeping hips square and level, pull one dumbbell up to hip height by driving the elbow back.',
+      'Hold 1 second at the top, then lower under full control.',
+      'Repeat on the other side. That\'s one rep.',
+    ],
+    cues: [
+      'Wide feet give a much better base — use them, don\'t go narrow',
+      'Hips must stay level — don\'t let them rotate toward the rowing side',
+      'The pulling arm does all the work — the rest of the body stays rigid',
+    ],
+    mistake: 'Rotating the hips to help the weight up — if this is happening, the dumbbells are too heavy; drop the weight',
+  },
+  {
+    key: 'side-plank',
+    name: 'Side Plank',
+    position: 'Side-lying',
+    steps: [
+      'Lie on your side with your forearm on the floor, elbow directly under your shoulder.',
+      'Stack your feet on top of each other or stagger them slightly.',
+      'Lift your hips off the floor so your body forms a straight line from head to feet.',
+      'Hold for the prescribed time, then lower under control and switch sides.',
+    ],
+    cues: [
+      'Don\'t let the hips sag toward the floor — actively push them up throughout',
+      'Top arm stays on your hip or extended straight up — don\'t let it drop forward',
+      'Neck in line with spine — look straight ahead, not down at the floor',
+    ],
+    mistake: 'Hips sagging down during the hold — if you can\'t maintain position, drop to your knees and keep the torso rigid from knee to shoulder',
+  },
+  {
+    key: 'copenhagen-plank',
+    name: 'Copenhagen Plank',
+    position: 'Side-lying',
+    steps: [
+      'Lie on your side. Place the top foot on a bench or step, laces up.',
+      'Push through the top foot and your side forearm to lift your hips off the floor.',
+      'Bottom leg is free-hanging — do not rest it on the floor.',
+      'Hold for the prescribed time. Lower under control and switch sides.',
+    ],
+    cues: [
+      'Don\'t let the hips sag or pike — body in a straight line',
+      'Feel the inner thigh of the top leg working — that\'s the target',
+      'Breathe steadily and don\'t hold your breath',
+    ],
+    mistake: 'Letting the free-hanging leg touch the floor for support — it must stay free throughout; if too hard, bend the bottom knee rather than rest it',
+  },
+  {
+    key: 'superman-hold',
+    name: 'Superman Hold',
+    position: 'Face down',
+    steps: [
+      'Lie face down with arms extended overhead and legs straight — full length.',
+      'Simultaneously lift your arms, chest, and legs off the floor.',
+      'Hold the raised position for 2–3 seconds — squeeze glutes and back muscles hard.',
+      'Lower slowly back to the floor. That\'s one rep.',
+    ],
+    cues: [
+      'Squeeze the glutes as you lift — this protects the lower back',
+      'Look at the floor, not forward — keep the neck in line with the spine',
+      'Quality over height — lift only as high as you can control with good form',
+    ],
+    mistake: 'Jerking up quickly and immediately lowering — the hold is the whole point; perform it slowly and deliberately with a full squeeze at the top',
+  },
 ]
 
 export function findExercise(line: string): ExerciseDef | null {
-  const lower = line.toLowerCase()
+  const lower = line.toLowerCase().replace(/-/g, ' ')
   return EXERCISE_LIBRARY.find(ex => {
-    if (lower.includes(ex.key.replace(/-/g, ' '))) return true
-    const words = ex.name.toLowerCase().split(' ').filter(w => w.length > 4)
+    const keyNorm = ex.key.replace(/-/g, ' ')
+    if (lower.includes(keyNorm)) return true
+    const nameNorm = ex.name.toLowerCase().replace(/-/g, ' ')
+    if (lower.includes(nameNorm)) return true
+    const words = ex.name.toLowerCase().replace(/-/g, ' ').split(' ').filter(w => w.length > 4)
     return words.filter(w => lower.includes(w)).length >= 2
   }) ?? null
 }
