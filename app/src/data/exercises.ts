@@ -178,23 +178,6 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     mistake: 'Using the back foot to push off the floor — cover the back foot with a towel to feel if you\'re cheating',
   },
   {
-    key: 'plank',
-    name: 'Plank',
-    position: 'Face down',
-    steps: [
-      'Forearms on the floor, elbows directly under shoulders. Up on toes.',
-      'Body in a straight line from head to heels — no sagging, no piking.',
-      'Squeeze everything: glutes, quads, core all actively engaged.',
-      'Breathe steadily. Hold for the prescribed time.',
-    ],
-    cues: [
-      'Imagine someone pressing down on your hips — actively resist it',
-      'Neck in line with spine — look at the floor, not forward',
-      'If form breaks, stop and rest rather than holding a bad plank',
-    ],
-    mistake: 'Hips either sagging down or piking up — film yourself from the side once to check your position',
-  },
-  {
     key: 'lateral-lunge',
     name: 'Lateral Lunge',
     position: 'Standing',
@@ -397,6 +380,23 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
       'Quality over height — lift only as high as you can control with good form',
     ],
     mistake: 'Jerking up quickly and immediately lowering — the hold is the whole point; perform it slowly and deliberately with a full squeeze at the top',
+  },
+  {
+    key: 'plank',
+    name: 'Plank',
+    position: 'Face down',
+    steps: [
+      'Forearms on the floor, elbows directly under shoulders. Up on toes.',
+      'Body in a straight line from head to heels — no sagging, no piking.',
+      'Squeeze everything: glutes, quads, core all actively engaged.',
+      'Breathe steadily. Hold for the prescribed time.',
+    ],
+    cues: [
+      'Imagine someone pressing down on your hips — actively resist it',
+      'Neck in line with spine — look at the floor, not forward',
+      'If form breaks, stop and rest rather than holding a bad plank',
+    ],
+    mistake: 'Hips either sagging down or piking up — film yourself from the side once to check your position',
   },
 ]
 
