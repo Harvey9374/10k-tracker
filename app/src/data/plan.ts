@@ -186,10 +186,14 @@ export const PHASES: Phase[] = [
       ],
     },
     wednesday: {
-      title: 'Skip Intervals (home)',
+      title: 'Skip Intervals + Calf & Glute (home)',
       items: [
         'Skip intervals: 20 mins (3 × 3-min moderate, 2 × 1-min hard)',
-        'Single-leg calf raises and glute work: 15 mins',
+        'Calf & glute circuit — 3 rounds, 45 sec rest between:',
+        '  • Single-leg calf raise on step: 20 each leg (bodyweight; hold 15kg once easy)',
+        '  • Glute bridge: 15 reps, 2-sec hold at top (bodyweight)',
+        '  • Single-leg glute bridge: 12 each leg, 2-sec hold (bodyweight)',
+        '  • Hip thrust (back against sofa): 15 reps, 3-sec squeeze at top (bodyweight)',
       ],
     },
     thursday: {
@@ -287,14 +291,17 @@ export const PHASES: Phase[] = [
       title: 'Skip Intervals + Stability (home)',
       items: [
         'Skip intervals: 25 mins including 6 × 1-min hard efforts',
-        'Lower body stability work: 15 mins',
+        'Lower body stability circuit — 3 rounds, 45 sec rest:',
+        '  • Single-leg calf raise on step: 20 each leg × 15kg',
+        '  • Copenhagen plank: 25 sec each side (bodyweight)',
+        '  • Single-leg glute bridge: 12 each leg, 3-sec hold (bodyweight)',
+        '  • Bird dog: 12 each side, 3-sec hold (bodyweight)',
       ],
     },
     thursday: {
       title: 'Mobility (home)',
       items: [
         'Mobility and soft tissue work: 20–25 mins',
-        'Focus: calves, hip flexors, hamstrings',
       ],
     },
     friday: {
