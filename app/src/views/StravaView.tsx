@@ -69,9 +69,6 @@ function getZone(paceSecPerKm: number, phaseNum: number, calibrated?: Calibrated
   return { label: 'Recovery', color: 'var(--text-muted)', bg: 'rgba(107,125,160,0.12)' }
 }
 
-type RunInsight = { icon: string; text: string; positive: boolean }
-type RunAssessment = { verdict: string; verdictColor: string; insights: RunInsight[]; tip: string }
-
 function inferSessionType(activity: StravaActivity, phaseNum: number, calibrated?: CalibratedZones | null): string {
   if (activity.workout_type === 1) return 'Time Trial'
   const pace = speedToPace(activity.average_speed)
@@ -83,115 +80,298 @@ function inferSessionType(activity: StravaActivity, phaseNum: number, calibrated
   return 'Easy Run'
 }
 
-function assessRun(splits: StravaSplit[], phaseNum: number, calibrated?: CalibratedZones | null): RunAssessment {
+type CoachSectionType = 'positive' | 'warning' | 'info' | 'tip'
+
+interface CoachSection {
+  title: string
+  icon: string
+  lines: string[]
+  type: CoachSectionType
+}
+
+interface CoachReport {
+  headline: string
+  grade: string
+  gradeBg: string
+  gradeColor: string
+  sections: CoachSection[]
+}
+
+function generateCoachReport(
+  activity: StravaActivity,
+  splits: StravaSplit[],
+  phaseNum: number,
+  calibrated: CalibratedZones | null | undefined,
+  historicalRuns: StravaActivity[]
+): CoachReport {
   const paces = splits.map(s => speedToPace(s.average_speed))
   const elevs = splits.map(s => s.elevation_difference ?? 0)
+  const hrs = splits.map(s => s.average_heartrate).filter((h): h is number => h != null)
+  const avgPace = speedToPace(activity.average_speed)
+  const distKm = activity.distance / 1000
   const totalClimb = elevs.filter(e => e > 0).reduce((a, b) => a + b, 0)
-  const avgPace = paces.reduce((a, b) => a + b, 0) / paces.length
-  const firstPace = paces[0]
-  const lastPace = paces[paces.length - 1]
-  const insights: RunInsight[] = []
 
-  // 1. Pacing strategy
-  const splitDiffPct = ((lastPace - firstPace) / firstPace) * 100
-  if (splitDiffPct > 10) {
-    let fadeKm = -1
-    let fadeElev = 0
-    for (let i = 1; i < paces.length; i++) {
-      if ((paces[i] - paces[i - 1]) / paces[i - 1] > 0.07) { fadeKm = i + 1; fadeElev = elevs[i] ?? 0; break }
+  const midPt = Math.ceil(paces.length / 2)
+  const firstHalfAvg = paces.slice(0, midPt).reduce((a, b) => a + b, 0) / midPt
+  const secondHalfAvg = paces.slice(midPt).reduce((a, b) => a + b, 0) / (paces.length - midPt || 1)
+  const splitDiff = secondHalfAvg - firstHalfAvg
+  const isNegSplit = splitDiff < -5 && paces.length >= 4
+  const isPosSplit = splitDiff > 8 && paces.length >= 4
+  const firstKmFast = paces.length >= 3 && paces[0] < avgPace * 0.93 && (elevs[0] ?? 0) < 8
+
+  let fadeKm = -1
+  for (let i = 1; i < paces.length; i++) {
+    if ((paces[i] - paces[i - 1]) / paces[i - 1] > 0.07 && (elevs[i] ?? 0) < 15) {
+      fadeKm = splits[i].split; break
     }
-    if (fadeKm > 0 && fadeElev > 15) {
-      insights.push({ icon: '↗', text: `Pace dropped at km ${fadeKm} (+${Math.round(fadeElev)}m climb) — elevation explains this split, not a fitness issue.`, positive: true })
-    } else if (fadeKm > 0) {
-      insights.push({ icon: '⚠', text: `Pace dropped sharply at km ${fadeKm} — you went out ${Math.round((paces[0] - avgPace) / avgPace * 100)}% faster than your average. Start slower next time.`, positive: false })
-    } else {
-      insights.push({ icon: '⚠', text: `Positive split: finished ${Math.round(splitDiffPct)}% slower than you started — energy ran out before the end.`, positive: false })
-    }
-  } else if (splitDiffPct < -8) {
-    insights.push({ icon: '✓', text: `Negative split — finished ${Math.round(-splitDiffPct)}% faster than you started. Excellent pacing discipline.`, positive: true })
-  } else {
-    insights.push({ icon: '✓', text: `Even pacing throughout — consistent effort, good control.`, positive: true })
   }
 
-  // 2. First km relative to average (ignore if km 1 was a significant downhill)
-  if (firstPace < avgPace * 0.93 && (elevs[0] ?? 0) < 10) {
-    insights.push({ icon: '⚡', text: `Km 1 (${fmtPace(firstPace)}) was ${Math.round((avgPace - firstPace) / avgPace * 100)}% faster than your run average — classic fast start, dial it back.`, positive: false })
-  }
-
-  // 3. Consistency (elevation-aware)
   const variance = paces.reduce((sum, p) => sum + Math.pow(p - avgPace, 2), 0) / paces.length
   const cv = Math.sqrt(variance) / avgPace * 100
-  if (cv < 3) {
-    insights.push({ icon: '✓', text: `Excellent consistency — splits varied by only ±${cv.toFixed(1)}%.`, positive: true })
-  } else if (cv > 9) {
-    if (totalClimb > 40) {
-      insights.push({ icon: '↗', text: `Pace varied ±${Math.round(cv)}% — the ${Math.round(totalClimb)}m of elevation on this route explains the spread.`, positive: true })
-    } else {
-      insights.push({ icon: '⚠', text: `Erratic pacing — splits varied by ±${Math.round(cv)}%. Aim for a steadier effort.`, positive: false })
-    }
-  }
+  const elevExplainsPace = totalClimb > 35
 
-  // 4. Strong finish
-  if (paces.length >= 3) {
-    const last3 = paces.slice(-Math.min(3, paces.length))
-    const last3Avg = last3.reduce((a, b) => a + b, 0) / last3.length
-    if (last3Avg < avgPace * 0.95 && splitDiffPct >= -4) {
-      insights.push({ icon: '✓', text: `Finished strong — last ${Math.min(3, paces.length)} km averaged ${fmtPace(last3Avg)}, ${Math.round((avgPace - last3Avg) / avgPace * 100)}% faster than your overall pace.`, positive: true })
-    }
-  }
+  const sortedPaces = [...paces].sort((a, b) => a - b)
+  const bestSplitPace = sortedPaces[0]
+  const worstSplitPace = sortedPaces[sortedPaces.length - 1]
+  const bestSplitKm = splits[paces.indexOf(bestSplitPace)].split
+  const worstSplitKm = splits[paces.indexOf(worstSplitPace)].split
 
-  // 5. Zone compliance
-  const zones = PHASE_ZONES[phaseNum] ?? PHASE_ZONES[1]
-  const easyRange = calibrated
-    ? { min: calibrated.easy.min - 20, max: calibrated.easy.max + 30 }
-    : (() => { const r = parsePaceRange(zones.easy); return r ? { min: r.min - 20, max: r.max + 30 } : null })()
-  if (easyRange) {
-    const tooFast = paces.filter(p => p < easyRange!.min).length
-    if (tooFast > paces.length * 0.4) {
-      insights.push({ icon: '⚠', text: `${tooFast}/${paces.length} km splits above easy zone — accumulating unnecessary fatigue. Slow down on easy days.`, positive: false })
-    }
-  }
+  const last3 = paces.slice(-Math.min(3, paces.length))
+  const last3Avg = last3.reduce((a, b) => a + b, 0) / last3.length
+  const strongFinish = last3Avg < avgPace * 0.97 && !isNegSplit && paces.length >= 4
 
-  // 6. Elevation summary
-  if (totalClimb > 30) {
-    insights.push({ icon: '↗', text: `Route included ${Math.round(totalClimb)}m of climbing — factor this in when comparing to flat run paces.`, positive: true })
-  }
+  const splitZones = splits.map(s => getZone(speedToPace(s.average_speed), phaseNum, calibrated))
+  const easyCount = splitZones.filter(z => z.label.startsWith('Easy')).length
+  const tempoCount = splitZones.filter(z => z.label === 'Tempo').length
+  const tooFastCount = splitZones.filter(z => z.label === 'Too fast').length
+  const recoveryCount = splitZones.filter(z => z.label === 'Recovery').length
+  const sessionType = inferSessionType(activity, phaseNum, calibrated)
+  const isEasyDay = sessionType === 'Easy Run' || sessionType === 'Long Run'
+  const isTempoDay = sessionType === 'Tempo Run'
 
-  // 7. Cardiac drift (HR climbing at steady pace = dehydration / fatigue)
-  const hrs = splits.map(s => s.average_heartrate).filter((h): h is number => h != null)
+  const historicalSimilar = historicalRuns
+    .filter(r => (r.type === 'Run' || r.sport_type === 'Run') && r.id !== activity.id)
+    .filter(r => Math.abs(r.distance - activity.distance) / activity.distance < 0.25)
+    .sort((a, b) => b.start_date_local.localeCompare(a.start_date_local))
+    .slice(0, 6)
+
+  const last30Days = historicalRuns.filter(r => {
+    const diff = (new Date(activity.start_date_local).getTime() - new Date(r.start_date_local).getTime()) / 86400000
+    return diff > 0 && diff <= 30 && (r.type === 'Run' || r.sport_type === 'Run')
+  })
+
+  const recentPaces = historicalSimilar.map(r => speedToPace(r.average_speed))
+  const fastestRecentPace = recentPaces.length > 0 ? Math.min(...recentPaces) : null
+  const lastRunPace = recentPaces.length > 0 ? recentPaces[0] : null
+  const avgRecentPace = recentPaces.length > 0 ? recentPaces.reduce((a, b) => a + b, 0) / recentPaces.length : null
+  const isPB = fastestRecentPace !== null && avgPace < fastestRecentPace - 5
+
+  let hrDrift = 0, earlyHr = 0, lateHr = 0, avgHr = 0
   if (hrs.length >= 4) {
     const third = Math.max(1, Math.floor(hrs.length / 3))
-    const earlyHr = hrs.slice(0, third).reduce((a, b) => a + b, 0) / third
-    const lateHr = hrs.slice(-third).reduce((a, b) => a + b, 0) / third
-    const drift = lateHr - earlyHr
-    const avgHr = hrs.reduce((a, b) => a + b, 0) / hrs.length
-    if (drift > 12 && cv < 8) {
-      insights.push({ icon: '💧', text: `Cardiac drift: HR climbed ${Math.round(drift)} bpm (${Math.round(earlyHr)}→${Math.round(lateHr)} bpm) at steady pace — usually means dehydration or accumulated fatigue.`, positive: false })
-    } else if (drift < -8 && cv < 8) {
-      insights.push({ icon: '✓', text: `HR settled ${Math.round(-drift)} bpm over the run at steady pace — good cardiac response and aerobic efficiency.`, positive: true })
-    }
-    if (avgHr > 0) {
-      insights.push({ icon: '❤', text: `Avg HR ${Math.round(avgHr)} bpm · Max ${Math.round(Math.max(...hrs))} bpm`, positive: true })
-    }
+    earlyHr = hrs.slice(0, third).reduce((a, b) => a + b, 0) / third
+    lateHr = hrs.slice(-third).reduce((a, b) => a + b, 0) / third
+    hrDrift = lateHr - earlyHr
+    avgHr = hrs.reduce((a, b) => a + b, 0) / hrs.length
   }
 
-  const pos = insights.filter(i => i.positive).length
-  const neg = insights.filter(i => !i.positive).length
-  let verdict: string, verdictColor: string, tip: string
-  if (neg === 0) {
-    verdict = 'Excellent run'; verdictColor = 'var(--accent)'
-    tip = 'Well-paced and consistent — exactly the kind of run that builds fitness.'
-  } else if (splitDiffPct > 10 && neg > pos) {
-    verdict = 'Started too fast'; verdictColor = 'var(--warn)'
-    tip = `Next run: start ${Math.round(splitDiffPct / 2)}% slower in km 1. Your fade suggests you had more in the tank — save it for a negative split.`
-  } else if (pos >= neg) {
-    verdict = 'Solid effort'; verdictColor = 'var(--accent)'
-    tip = 'Good run overall. Small pacing tweaks will unlock consistent improvement.'
-  } else {
-    verdict = 'Room to improve'; verdictColor = 'var(--warn)'
-    tip = 'Focus on km 1 discipline — start conversationally easy. The first km sets the tone for everything after.'
+  const sections: CoachSection[] = []
+  let issueCount = 0
+  let positiveCount = 0
+
+  // ── SECTION 1: PACING & STRATEGY ──────────────────────────────────────────
+  {
+    const lines: string[] = []
+    let type: CoachSectionType = 'positive'
+
+    if (isNegSplit) {
+      lines.push(`Negative split — first half at ${fmtPace(firstHalfAvg)}, second half at ${fmtPace(secondHalfAvg)}, ${Math.round(-splitDiff)}s/km faster in the back end. That's controlled running. Most people blow up or drift to even splits by accident. You saved something and used it.`)
+      positiveCount++
+    } else if (isPosSplit) {
+      type = 'warning'; issueCount++
+      if (fadeKm > 0) {
+        lines.push(`The run came undone at km ${fadeKm} (${fmtPace(paces[fadeKm - 1])}). First half averaged ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)} — a ${Math.round(splitDiff)}s/km fade.${firstKmFast ? ` You opened km 1 at ${fmtPace(paces[0])}, which is ${Math.round((avgPace - paces[0]) / avgPace * 100)}% quicker than your overall average. That's where the race was lost.` : ''}`)
+      } else {
+        lines.push(`Positive split of ${Math.round(splitDiff)}s/km — the back half cost you. First half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. The energy ran out before the route did.`)
+      }
+    } else {
+      lines.push(`Even pacing — first half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. Clean execution. Harder to do than it sounds.`)
+      positiveCount++
+    }
+
+    if (firstKmFast && !isPosSplit) {
+      lines.push(`Km 1 at ${fmtPace(paces[0])} was ${Math.round((avgPace - paces[0]) / avgPace * 100)}% faster than your overall average. Classic adrenaline start. You got away with it this time, but on a harder session that opener will cost you in the final km.`)
+      if (type !== 'warning') { type = 'warning'; issueCount++ }
+    }
+
+    if (paces.length >= 4 && worstSplitPace - bestSplitPace > 40) {
+      lines.push(elevExplainsPace
+        ? `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)}. The ${Math.round(worstSplitPace - bestSplitPace)}s/km spread is large but the ${Math.round(totalClimb)}m of climbing on this route accounts for most of it.`
+        : `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)} — ${Math.round(worstSplitPace - bestSplitPace)}s/km between best and worst.`)
+    }
+
+    if (strongFinish) {
+      lines.push(`Finished well — last ${last3.length} km at ${fmtPace(last3Avg)}, which is ${Math.round(avgPace - last3Avg)}s/km quicker than your run average. You had something left. The next step is finding that gear 2 km earlier.`)
+      positiveCount++
+    }
+
+    if (cv < 3.5 && !isPosSplit && paces.length >= 4) {
+      lines.push(`Pacing variance: ±${cv.toFixed(1)}% across all km splits — very consistent effort regulation.`)
+      positiveCount++
+    }
+
+    sections.push({ title: 'Pacing & Strategy', icon: '📊', lines, type })
   }
-  return { verdict, verdictColor, insights, tip }
+
+  // ── SECTION 2: EFFORT & SESSION FIT ───────────────────────────────────────
+  {
+    const lines: string[] = []
+    let type: CoachSectionType = 'info'
+
+    if (isEasyDay) {
+      if (tooFastCount > paces.length * 0.35) {
+        lines.push(`${tooFastCount} of ${paces.length} km splits were above easy zone. On easy days the goal is aerobic base building, not proving fitness. The adaptation comes from the recovery, not the effort. If it feels almost embarrassingly slow, you're probably in the right zone.`)
+        type = 'warning'; issueCount++
+      } else if (easyCount >= paces.length * 0.6) {
+        lines.push(`${easyCount}/${paces.length} km splits in the easy zone — exactly what an easy run should look like. These sessions quietly build the aerobic base your tempo and interval work relies on. Don't underestimate them.`)
+        type = 'positive'; positiveCount++
+      } else if (recoveryCount >= paces.length * 0.5) {
+        lines.push(`This ran at genuine recovery pace — slower than the easy zone. Fine if the body needed it, but on easy run days you want to be in the easy zone, not below it.`)
+      }
+    } else if (isTempoDay) {
+      if (tempoCount >= paces.length * 0.5) {
+        lines.push(`${tempoCount}/${paces.length} km splits in the tempo zone. Sustained tempo effort is where lactate threshold improves — the harder thing is to hold it, not to hit it once.`)
+        type = 'positive'; positiveCount++
+      } else if (easyCount > paces.length * 0.4) {
+        lines.push(`Only ${tempoCount}/${paces.length} splits at tempo effort — this ran more like an easy session. Tempo pace should feel comfortably uncomfortable: words are possible, full sentences are not. Find that threshold and hold it for blocks of 10–15 minutes.`)
+        type = 'warning'; issueCount++
+      }
+    }
+
+    if (distKm >= 9) {
+      lines.push(`${distKm.toFixed(1)} km — proper long run territory. At this stage, time on feet at easy effort is your most valuable training currency. The aerobic engine you're building here is what everything else runs on.`)
+    } else if (distKm < 4 && paces.length <= 4) {
+      lines.push(`At ${distKm.toFixed(1)} km this was a short run. Volume matters at this stage — look to extend duration gradually alongside the quality sessions.`)
+    }
+
+    if (totalClimb > 25) {
+      const gradeAdj = Math.max(avgPace - 50, avgPace - (totalClimb / distKm) * 0.5)
+      lines.push(`${Math.round(totalClimb)}m of climbing on this route. Flat-equivalent pace is roughly ${fmtPace(gradeAdj)} — use that number for zone comparison, not the raw splits.`)
+    }
+
+    if (lines.length > 0) sections.push({ title: 'Effort & Session Type', icon: '🎯', lines, type })
+  }
+
+  // ── SECTION 3: CARDIAC RESPONSE ───────────────────────────────────────────
+  if (hrs.length >= 4) {
+    const lines: string[] = []
+    let type: CoachSectionType = 'info'
+
+    lines.push(`Average HR ${Math.round(avgHr)} bpm · Max ${Math.round(Math.max(...hrs))} bpm.`)
+
+    if (hrDrift > 12 && cv < 9) {
+      lines.push(`Cardiac drift of ${Math.round(hrDrift)} bpm at steady pace (${Math.round(earlyHr)} → ${Math.round(lateHr)} bpm). When HR climbs at constant effort it usually signals dehydration, heat load, or fatigue carried from earlier sessions. On runs over 40 minutes, drink before you feel thirsty.`)
+      type = 'warning'; issueCount++
+    } else if (hrDrift < -8 && cv < 9) {
+      lines.push(`HR settled ${Math.round(-hrDrift)} bpm across the run at consistent effort (${Math.round(earlyHr)} → ${Math.round(lateHr)} bpm). That's aerobic efficiency — your heart working less to sustain the same output. A sign of fitness improving.`)
+      type = 'positive'; positiveCount++
+    } else {
+      lines.push(`HR was stable throughout — good effort regulation, no signs of dehydration or heat stress.`)
+      type = 'positive'; positiveCount++
+    }
+
+    sections.push({ title: 'Cardiac Response', icon: '❤️', lines, type })
+  }
+
+  // ── SECTION 4: HOW THIS COMPARES ──────────────────────────────────────────
+  if (historicalSimilar.length >= 1) {
+    const lines: string[] = []
+    let type: CoachSectionType = 'info'
+
+    if (lastRunPace !== null) {
+      const lastRun = historicalSimilar[0]
+      const diff = lastRunPace - avgPace
+      if (Math.abs(diff) < 6) {
+        lines.push(`Within 5s/km of your ${fmtDate(lastRun.start_date_local)} run (${fmtDist(lastRun.distance)} at ${fmtPace(lastRunPace)}) — consistent form across sessions.`)
+      } else if (diff > 5) {
+        lines.push(`${Math.round(diff)}s/km quicker than your ${fmtDate(lastRun.start_date_local)} run of ${fmtDist(lastRun.distance)}. That's meaningful progress — fitness is moving in the right direction.`)
+        type = 'positive'; positiveCount++
+      } else {
+        lines.push(`${Math.round(-diff)}s/km slower than your ${fmtDate(lastRun.start_date_local)} run (${fmtDist(lastRun.distance)} at ${fmtPace(lastRunPace)}). One slower session isn't a trend — could be fatigue, conditions, or just a hard day. Watch the next 2–3 runs.`)
+      }
+    }
+
+    if (isPB) {
+      lines.push(`This looks like a personal best for this distance in your recent activity. File it as a fitness marker.`)
+      type = 'positive'; positiveCount++
+    } else if (avgRecentPace !== null && Math.abs(avgRecentPace - avgPace) > 8) {
+      const vs = avgRecentPace - avgPace
+      lines.push(`${Math.round(Math.abs(vs))}s/km ${vs > 0 ? 'faster' : 'slower'} than your recent average for this distance (${fmtPace(avgRecentPace)} over ${historicalSimilar.length} similar runs). ${vs > 0 ? 'The trend is up.' : 'Worth monitoring if it continues.'}`)
+    }
+
+    const sessCount = last30Days.length
+    lines.push(`${sessCount} run${sessCount !== 1 ? 's' : ''} in the last 30 days. ${sessCount < 3 ? 'Frequency is the biggest lever you have right now — three sessions a week consistently will outperform two harder ones.' : sessCount >= 6 ? 'Strong regularity this month — that consistency is where adaptation comes from.' : 'Decent frequency — each session compounds on the last.'}`)
+
+    sections.push({ title: 'How This Compares', icon: '📈', lines, type })
+  }
+
+  // ── SECTION 5: COACH'S NOTES ──────────────────────────────────────────────
+  {
+    const lines: string[] = []
+
+    if (isPosSplit && firstKmFast) {
+      lines.push(`The fix is simple and hard: restrain km 1. Target ${fmtPace(Math.round(avgPace * 1.04))} for the opening km — it will feel slow. That's the point. Pace for the final km, not the first.`)
+    } else if (isPosSplit) {
+      lines.push(`The fade suggests the overall effort was slightly above where your current fitness sits. Nudge back 5–8 seconds per km and you'll hold form all the way through — and recover faster for the next session.`)
+    } else if (isNegSplit) {
+      lines.push(`You ran the negative split — a skill most runners take years to develop. If that came from genuine pacing control rather than a conservative start, you're building real race-day execution. Repeat it next session and it becomes a habit.`)
+    } else if (isEasyDay && tooFastCount > paces.length * 0.3) {
+      const easyTarget = calibrated ? fmtPace(calibrated.easy.max + 10) : 'easy zone target'
+      lines.push(`Next easy run: set a pace alert at ${easyTarget} and stay behind it for the first 20 minutes. It's not about going slow — it's about directing the stimulus to the aerobic system, not the anaerobic one.`)
+    }
+
+    if (totalClimb > 50) {
+      lines.push(`${Math.round(totalClimb)}m of climbing is significant. For a clean pace benchmark, repeat this session on a flat route and you'll get a truer read on where your fitness is.`)
+    }
+
+    if (activity.moving_time > 40 * 60 && last30Days.length < 4) {
+      lines.push(`You're running, which is what matters most. But to hit the 10K target, the Wednesday and Thursday sessions need to be in the mix — the strength and skip work directly supports the running and protects against the hamstring issues.`)
+    }
+
+    if (lines.length === 0) {
+      lines.push(`Solid session. Nothing glaring to fix. The compounding effect of runs like this, repeated consistently, is exactly how fitness builds. Keep stacking them.`)
+    }
+
+    sections.push({ title: "Coach's Notes", icon: '📝', lines, type: 'tip' })
+  }
+
+  // ── GRADE & HEADLINE ──────────────────────────────────────────────────────
+  let grade: string, gradeBg: string, gradeColor: string, headline: string
+
+  if (isNegSplit && tooFastCount === 0) {
+    grade = 'A'; gradeBg = 'rgba(34,197,94,0.12)'; gradeColor = 'var(--accent)'
+    headline = 'Excellent execution — negative split with clean zone compliance'
+  } else if (isPosSplit && firstKmFast && issueCount >= 2) {
+    grade = 'C'; gradeBg = 'rgba(245,158,11,0.12)'; gradeColor = '#f59e0b'
+    headline = fadeKm > 0 ? `Fast start, run unravelled at km ${fadeKm} — classic pacing trap` : 'Fast start, slow finish — pacing needs work'
+  } else if (isEasyDay && tooFastCount > paces.length * 0.4) {
+    grade = 'C'; gradeBg = 'rgba(245,158,11,0.12)'; gradeColor = '#f59e0b'
+    headline = 'Too hard for an easy day — aerobic base builds at lower effort than this'
+  } else if (isPB) {
+    grade = 'A'; gradeBg = 'rgba(34,197,94,0.12)'; gradeColor = 'var(--accent)'
+    headline = 'Personal best for this distance — fitness trending in the right direction'
+  } else if (positiveCount > issueCount) {
+    grade = 'B+'; gradeBg = 'rgba(34,197,94,0.08)'; gradeColor = 'var(--accent)'
+    headline = strongFinish ? 'Solid run — good finish, right way to train' : 'Solid run — consistent effort, minor things to sharpen'
+  } else if (issueCount <= 1) {
+    grade = 'B'; gradeBg = 'rgba(107,125,160,0.08)'; gradeColor = 'var(--text-muted)'
+    headline = 'Decent session — a few areas to tighten, noted below'
+  } else {
+    grade = 'C+'; gradeBg = 'rgba(245,158,11,0.08)'; gradeColor = '#f59e0b'
+    headline = 'Run completed — focus on the execution points below for next time'
+  }
+
+  return { headline, grade, gradeBg, gradeColor, sections }
 }
 
 function fmtDist(m: number) { return (m / 1000).toFixed(2) + ' km' }
@@ -237,7 +417,7 @@ function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNu
   )
 }
 
-function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged, onAddTrial }: {
+function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged, onAddTrial, allActivities }: {
   activity: StravaActivity
   phaseNum: number
   onExpand: () => Promise<StravaActivity | null>
@@ -245,6 +425,7 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   onAddLog?: (log: Omit<WorkoutLog, 'id'>) => void
   isLogged?: boolean
   onAddTrial?: (t: Omit<TimeTrial, 'id'>) => void
+  allActivities?: StravaActivity[]
 }) {
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState<StravaActivity | null>(null)
@@ -508,22 +689,41 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
             <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>No split data available for this activity.</div>
           )}
           {detail?.splits_metric && detail.splits_metric.length >= 2 && (() => {
-            const a = assessRun(detail.splits_metric, phaseNum, calibrated)
+            const report = generateCoachReport(detail, detail.splits_metric, phaseNum, calibrated, allActivities ?? [])
+            const sectionBorder = (t: CoachSectionType) =>
+              t === 'positive' ? 'var(--accent)' : t === 'warning' ? '#f59e0b' : t === 'tip' ? '#a78bfa' : 'var(--border)'
             return (
-              <div style={{ marginTop: 12, background: 'var(--surface)', borderRadius: 8, padding: '10px 12px', border: '1px solid var(--border)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                  <div style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)' }}>Run Assessment</div>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: a.verdictColor, marginLeft: 'auto' }}>{a.verdict}</span>
+              <div style={{ marginTop: 14, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                <div style={{ background: report.gradeBg, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    background: report.gradeColor, color: '#fff', fontWeight: 900, fontSize: 15,
+                    width: 38, height: 38, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0, letterSpacing: '-0.5px',
+                  }}>
+                    {report.grade}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', color: report.gradeColor, opacity: 0.85 }}>Coach's Analysis</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.35, marginTop: 2 }}>{report.headline}</div>
+                  </div>
                 </div>
-                {a.insights.map((ins, i) => (
-                  <div key={i} style={{ fontSize: 12, color: ins.positive ? 'var(--text-muted)' : '#fca5a5', padding: '4px 0', borderBottom: '1px solid var(--border)', display: 'flex', gap: 6 }}>
-                    <span style={{ color: ins.positive ? 'var(--accent)' : 'var(--warn)', flexShrink: 0 }}>{ins.icon}</span>
-                    <span>{ins.text}</span>
+                {report.sections.map((sec, si) => (
+                  <div key={si} style={{
+                    borderLeft: `3px solid ${sectionBorder(sec.type)}`,
+                    background: si % 2 === 0 ? 'var(--surface)' : 'var(--card)',
+                    padding: '10px 14px',
+                    borderTop: si === 0 ? 'none' : '1px solid var(--border)',
+                  }}>
+                    <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: sectionBorder(sec.type), marginBottom: 7 }}>
+                      {sec.icon} {sec.title}
+                    </div>
+                    {sec.lines.map((line, li) => (
+                      <div key={li} style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6, marginBottom: li < sec.lines.length - 1 ? 8 : 0 }}>
+                        {line}
+                      </div>
+                    ))}
                   </div>
                 ))}
-                <div style={{ fontSize: 12, fontStyle: 'italic', color: 'var(--text-muted)', marginTop: 8, paddingTop: 4 }}>
-                  💡 {a.tip}
-                </div>
               </div>
             )
           })()}
@@ -742,6 +942,7 @@ export default function StravaView({ calibratedZones, logs, onAddLog, onAddTrial
               onAddLog={onAddLog}
               isLogged={logs?.some(l => l.stravaId === a.id)}
               onAddTrial={onAddTrial}
+              allActivities={activities}
             />
           ))
         )}
