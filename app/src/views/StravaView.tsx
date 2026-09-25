@@ -102,7 +102,8 @@ function generateCoachReport(
   splits: StravaSplit[],
   phaseNum: number,
   calibrated: CalibratedZones | null | undefined,
-  historicalRuns: StravaActivity[]
+  historicalRuns: StravaActivity[],
+  feedback: Record<string, string> = {}
 ): CoachReport {
   const paces = splits.map(s => speedToPace(s.average_speed))
   const elevs = splits.map(s => s.elevation_difference ?? 0)
@@ -175,6 +176,11 @@ function generateCoachReport(
     avgHr = hrs.reduce((a, b) => a + b, 0) / hrs.length
   }
 
+  const effort = feedback.effort ?? ''
+  const legs = feedback.legs ?? ''
+  const weather = feedback.weather ?? ''
+  const sleep = feedback.sleep ?? ''
+
   const sections: CoachSection[] = []
   let issueCount = 0
   let positiveCount = 0
@@ -220,6 +226,18 @@ function generateCoachReport(
       positiveCount++
     }
 
+    // Feedback cross-checks
+    if (effort === 'effortless' && isPosSplit) {
+      lines.push(`You said this felt effortless — yet the second half faded. That's the most common disguise for going out too hard: feeling great early while unknowingly burning through your glycogen. The effort catches up, usually around km ${fadeKm > 0 ? fadeKm : Math.ceil(paces.length * 0.6)}.`)
+    }
+    if (effort === 'brutal' && isNegSplit) {
+      lines.push(`You called this brutal — and yet you ran a negative split. Finishing faster than you started when it's hurting is exactly the kind of mental toughness that translates to race day. Remember this one.`)
+      positiveCount++
+    }
+    if ((effort === 'hard' || effort === 'brutal') && (legs === 'tired' || legs === 'dead') && isPosSplit) {
+      lines.push(`Hard effort on tired legs almost always leads to a positive split — the body compensates early and then gives out. This is a scheduling flag, not a fitness one.`)
+    }
+
     sections.push({ title: 'Pacing & Strategy', icon: '📊', lines, type })
   }
 
@@ -259,6 +277,20 @@ function generateCoachReport(
       lines.push(`${Math.round(totalClimb)}m of climbing on this route. Flat-equivalent pace is roughly ${fmtPace(gradeAdj)} — use that number for zone comparison, not the raw splits.`)
     }
 
+    // Feedback-driven context
+    if (weather === 'hot') {
+      lines.push(`You flagged hot/humid conditions — in this environment add 15–20s/km to your zone targets. The cardiovascular system is doing double duty managing heat, so a pace that looks slow is genuinely harder effort. Don't compare this run to cool-day sessions.`)
+      if (type !== 'warning') type = 'info'
+    }
+    if (effort === 'hard' && isEasyDay) {
+      lines.push(`You rated this as hard for what should be an easy-day run. That's a signal: either the effort crept up without you noticing, or you were already carrying load before you started. Both are worth paying attention to.`)
+      if (type !== 'warning') { type = 'warning'; issueCount++ }
+    }
+    if ((effort === 'effortless' || effort === 'easy') && isTempoDay && tempoCount >= paces.length * 0.4) {
+      lines.push(`Tempo felt ${effort} today — if that's an accurate read, your threshold is moving up. Consider nudging the target pace 5s/km faster on the next tempo session and see how long you can hold it.`)
+      if (type !== 'warning') { type = 'positive'; positiveCount++ }
+    }
+
     if (lines.length > 0) sections.push({ title: 'Effort & Session Type', icon: '🎯', lines, type })
   }
 
@@ -278,6 +310,11 @@ function generateCoachReport(
     } else {
       lines.push(`HR was stable throughout — good effort regulation, no signs of dehydration or heat stress.`)
       type = 'positive'; positiveCount++
+    }
+
+    if (sleep === 'poor') {
+      lines.push(`You noted poor sleep the night before — that directly explains any HR elevation. Sleep deprivation raises running HR by 5–10 bpm and makes the same pace feel considerably harder. This run may understate your actual fitness level.`)
+      if (type === 'positive') type = 'info'
     }
 
     sections.push({ title: 'Cardiac Response', icon: '❤️', lines, type })
@@ -336,6 +373,23 @@ function generateCoachReport(
 
     if (activity.moving_time > 40 * 60 && last30Days.length < 4) {
       lines.push(`You're running, which is what matters most. But to hit the 10K target, the Wednesday and Thursday sessions need to be in the mix — the strength and skip work directly supports the running and protects against the hamstring issues.`)
+    }
+
+    // Feedback synthesis
+    if ((legs === 'tired' || legs === 'dead') && isPosSplit) {
+      lines.push(`Going in with ${legs === 'dead' ? 'heavy/dead' : 'tired'} legs and getting a positive split is a scheduling issue as much as a running one. Try to protect the key sessions — give yourself at least one easy or rest day beforehand.`)
+    }
+    if (sleep === 'poor' && hrs.length < 4) {
+      lines.push(`Sort the sleep. It is the most powerful free recovery tool you have. Poor sleep blunts the adaptation from the training you just did — the session was done but the gains are diluted.`)
+    }
+    if (legs === 'fresh' && positiveCount > issueCount && !isPosSplit) {
+      lines.push(`Fresh legs and solid execution — note what you did before this run (rest, sleep, nutrition) and try to replicate those conditions before the next quality session.`)
+    }
+    if (weather === 'hot' && isPosSplit) {
+      lines.push(`Running in the heat and fading is not a fitness failure — it's a thermodynamics problem. In future hot-weather sessions, start 20s/km slower than you think you need to and let the body settle. Your cool-weather equivalent would be noticeably quicker.`)
+    }
+    if (effort === 'effortless' && !isPosSplit && positiveCount > 0) {
+      lines.push(`This felt effortless and the data backs it up. You're building fitness — that's the whole point. Now push the next quality session a touch harder and see what the ceiling is.`)
     }
 
     if (lines.length === 0) {
@@ -417,6 +471,29 @@ function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNu
   )
 }
 
+const FEEDBACK_QUESTIONS = [
+  {
+    key: 'effort',
+    label: 'How did it feel overall?',
+    options: ['Effortless', 'Easy', 'Moderate', 'Hard', 'Brutal'],
+  },
+  {
+    key: 'legs',
+    label: 'How were your legs?',
+    options: ['Fresh', 'Normal', 'Tired', 'Heavy/Dead'],
+  },
+  {
+    key: 'weather',
+    label: 'Conditions?',
+    options: ['Perfect', 'Warm', 'Hot/Humid', 'Cold', 'Wet/Windy'],
+  },
+  {
+    key: 'sleep',
+    label: 'Sleep the night before?',
+    options: ['Great', 'Decent', 'Poor'],
+  },
+]
+
 function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLogged, onAddTrial, allActivities }: {
   activity: StravaActivity
   phaseNum: number
@@ -437,6 +514,8 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   const [pendingTrial, setPendingTrial] = useState<Omit<TimeTrial, 'id'> | null>(null)
   const [tempInput, setTempInput] = useState('')
   const [rpe, setRpe] = useState(5)
+  const [feedbackAnswers, setFeedbackAnswers] = useState<Record<string, string>>({})
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
 
   const trialDist = nearestTrialDist(activity.distance / 1000)
 
@@ -688,45 +767,110 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
           ) : (
             <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>No split data available for this activity.</div>
           )}
-          {detail?.splits_metric && detail.splits_metric.length >= 2 && (() => {
-            const report = generateCoachReport(detail, detail.splits_metric, phaseNum, calibrated, allActivities ?? [])
-            const sectionBorder = (t: CoachSectionType) =>
-              t === 'positive' ? 'var(--accent)' : t === 'warning' ? '#f59e0b' : t === 'tip' ? '#a78bfa' : 'var(--border)'
-            return (
-              <div style={{ marginTop: 14, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
-                <div style={{ background: report.gradeBg, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{
-                    background: report.gradeColor, color: '#fff', fontWeight: 900, fontSize: 15,
-                    width: 38, height: 38, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    flexShrink: 0, letterSpacing: '-0.5px',
-                  }}>
-                    {report.grade}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', color: report.gradeColor, opacity: 0.85 }}>Coach's Analysis</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.35, marginTop: 2 }}>{report.headline}</div>
-                  </div>
+          {!loading && detail?.splits_metric && detail.splits_metric.length >= 2 && (
+            !feedbackSubmitted ? (
+              <div style={{ marginTop: 14, background: 'var(--surface)', borderRadius: 10, border: '1px solid var(--border)', padding: '14px 14px 12px' }}>
+                <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', color: 'var(--text-muted)', marginBottom: 14 }}>
+                  📋 Quick check-in — helps the coach read this run
                 </div>
-                {report.sections.map((sec, si) => (
-                  <div key={si} style={{
-                    borderLeft: `3px solid ${sectionBorder(sec.type)}`,
-                    background: si % 2 === 0 ? 'var(--surface)' : 'var(--card)',
-                    padding: '10px 14px',
-                    borderTop: si === 0 ? 'none' : '1px solid var(--border)',
-                  }}>
-                    <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: sectionBorder(sec.type), marginBottom: 7 }}>
-                      {sec.icon} {sec.title}
+                {FEEDBACK_QUESTIONS.map(q => (
+                  <div key={q.key} style={{ marginBottom: 12 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 7 }}>{q.label}</div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {q.options.map(opt => {
+                        const val = opt.toLowerCase().replace('/', '-').replace(' ', '-')
+                        const sel = feedbackAnswers[q.key] === val
+                        return (
+                          <button
+                            key={opt}
+                            onClick={() => setFeedbackAnswers(prev => ({ ...prev, [q.key]: val }))}
+                            style={{
+                              padding: '6px 13px', borderRadius: 20,
+                              border: `1.5px solid ${sel ? 'var(--accent)' : 'var(--border)'}`,
+                              background: sel ? 'var(--accent-dim)' : 'transparent',
+                              color: sel ? 'var(--accent)' : 'var(--text-muted)',
+                              fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                              transition: 'all 0.15s',
+                            }}
+                          >
+                            {opt}
+                          </button>
+                        )
+                      })}
                     </div>
-                    {sec.lines.map((line, li) => (
-                      <div key={li} style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6, marginBottom: li < sec.lines.length - 1 ? 8 : 0 }}>
-                        {line}
-                      </div>
-                    ))}
                   </div>
                 ))}
+                <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+                  <button
+                    onClick={() => setFeedbackSubmitted(true)}
+                    style={{ flex: 1, padding: '11px', borderRadius: 8, border: 'none', background: 'var(--accent)', color: '#fff', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    See Analysis →
+                  </button>
+                  <button
+                    onClick={() => setFeedbackSubmitted(true)}
+                    style={{ padding: '11px 16px', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: 13, cursor: 'pointer' }}
+                  >
+                    Skip
+                  </button>
+                </div>
               </div>
-            )
-          })()}
+            ) : (() => {
+              const report = generateCoachReport(detail, detail.splits_metric!, phaseNum, calibrated, allActivities ?? [], feedbackAnswers)
+              const sectionBorder = (t: CoachSectionType) =>
+                t === 'positive' ? 'var(--accent)' : t === 'warning' ? '#f59e0b' : t === 'tip' ? '#a78bfa' : 'var(--border)'
+              return (
+                <div style={{ marginTop: 14, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  <div style={{ background: report.gradeBg, padding: '12px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{
+                      background: report.gradeColor, color: '#fff', fontWeight: 900, fontSize: 15,
+                      width: 38, height: 38, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      flexShrink: 0, letterSpacing: '-0.5px',
+                    }}>
+                      {report.grade}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.6px', color: report.gradeColor, opacity: 0.85 }}>Coach's Analysis</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.35, marginTop: 2 }}>{report.headline}</div>
+                    </div>
+                    <button
+                      onClick={() => { setFeedbackSubmitted(false); setFeedbackAnswers({}) }}
+                      style={{ flexShrink: 0, background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: 11, cursor: 'pointer', padding: '4px 6px' }}
+                      title="Re-answer questions"
+                    >
+                      ↩
+                    </button>
+                  </div>
+                  {Object.keys(feedbackAnswers).length > 0 && (
+                    <div style={{ background: 'var(--surface)', padding: '6px 14px', borderTop: '1px solid var(--border)', display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                      {FEEDBACK_QUESTIONS.filter(q => feedbackAnswers[q.key]).map(q => (
+                        <span key={q.key} style={{ fontSize: 11, padding: '2px 9px', borderRadius: 20, background: 'var(--accent-dim)', color: 'var(--accent)', fontWeight: 600 }}>
+                          {feedbackAnswers[q.key].replace(/-/g, ' ')}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {report.sections.map((sec, si) => (
+                    <div key={si} style={{
+                      borderLeft: `3px solid ${sectionBorder(sec.type)}`,
+                      background: si % 2 === 0 ? 'var(--surface)' : 'var(--card)',
+                      padding: '10px 14px',
+                      borderTop: '1px solid var(--border)',
+                    }}>
+                      <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: sectionBorder(sec.type), marginBottom: 7 }}>
+                        {sec.icon} {sec.title}
+                      </div>
+                      {sec.lines.map((line, li) => (
+                        <div key={li} style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.6, marginBottom: li < sec.lines.length - 1 ? 8 : 0 }}>
+                          {line}
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              )
+            })()
+          )}
         </div>
       )}
     </div>
