@@ -103,7 +103,8 @@ function generateCoachReport(
   phaseNum: number,
   calibrated: CalibratedZones | null | undefined,
   historicalRuns: StravaActivity[],
-  feedback: Record<string, string> = {}
+  feedback: Record<string, string> = {},
+  manualSplits?: ManualIntervalSplits | null
 ): CoachReport {
   const paces = splits.map(s => speedToPace(s.average_speed))
   const elevs = splits.map(s => s.elevation_difference ?? 0)
@@ -185,60 +186,118 @@ function generateCoachReport(
   let issueCount = 0
   let positiveCount = 0
 
-  // ── SECTION 1: PACING & STRATEGY ──────────────────────────────────────────
+  // ── SECTION 1: PACING & STRATEGY (or INTERVAL ANALYSIS) ──────────────────
   {
     const lines: string[] = []
     let type: CoachSectionType = 'positive'
 
-    if (isNegSplit) {
-      lines.push(`Negative split — first half at ${fmtPace(firstHalfAvg)}, second half at ${fmtPace(secondHalfAvg)}, ${Math.round(-splitDiff)}s/km faster in the back end. That's controlled running. Most people blow up or drift to even splits by accident. You saved something and used it.`)
-      positiveCount++
-    } else if (isPosSplit) {
-      type = 'warning'; issueCount++
-      if (fadeKm > 0) {
-        lines.push(`The run came undone at km ${fadeKm} (${fmtPace(paces[fadeKm - 1])}). First half averaged ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)} — a ${Math.round(splitDiff)}s/km fade.${firstKmFast ? ` You opened km 1 at ${fmtPace(paces[0])}, which is ${Math.round((avgPace - paces[0]) / avgPace * 100)}% quicker than your overall average. That's where the race was lost.` : ''}`)
+    if (manualSplits && manualSplits.reps.length >= 2) {
+      // ── Interval session: use manual rep data ──────────────────────────────
+      const repPaces = manualSplits.reps.map(t => t / (manualSplits.distanceM / 1000))
+      const avgRepPace = repPaces.reduce((a, b) => a + b, 0) / repPaces.length
+      const bestRepPace = Math.min(...repPaces)
+      const worstRepPace = Math.max(...repPaces)
+      const bestRepNum = repPaces.indexOf(bestRepPace) + 1
+      const worstRepNum = repPaces.indexOf(worstRepPace) + 1
+      const midR = Math.ceil(repPaces.length / 2)
+      const firstHalfR = repPaces.slice(0, midR).reduce((a, b) => a + b, 0) / midR
+      const secondHalfR = repPaces.slice(midR).reduce((a, b) => a + b, 0) / (repPaces.length - midR || 1)
+      const repDiff = secondHalfR - firstHalfR
+      const repNeg = repDiff < -4
+      const repPos = repDiff > 10
+      const repVar = Math.sqrt(repPaces.reduce((s, p) => s + Math.pow(p - avgRepPace, 2), 0) / repPaces.length) / avgRepPace * 100
+      const distLabel = INTERVAL_DISTANCES.find(d => d.value === manualSplits.distanceM)?.label ?? `${manualSplits.distanceM}m`
+      const zoneHit = calibrated
+        ? repPaces.filter(p => p <= calibrated.interval.max + 15 && p >= calibrated.interval.min - 15).length
+        : 0
+
+      lines.push(`${manualSplits.reps.length} × ${distLabel} averaging ${fmtPace(avgRepPace)}. Rep ${bestRepNum} was your quickest at ${fmtPace(bestRepPace)}, Rep ${worstRepNum} the slowest at ${fmtPace(worstRepPace)} — a ${Math.round(worstRepPace - bestRepPace)}s/km spread across the session.`)
+
+      if (repNeg) {
+        lines.push(`Negative split across the session — reps got quicker as you went (first half avg ${fmtPace(firstHalfR)}, second half ${fmtPace(secondHalfR)}). That's excellent pacing: you found rhythm as the session progressed rather than blowing up early.`)
+        type = 'positive'; positiveCount++
+      } else if (repPos) {
+        lines.push(`Positive split across the session — reps slowed in the second half (${fmtPace(firstHalfR)} → ${fmtPace(secondHalfR)}). The first few reps set a pace you couldn't sustain. Start the session 5–8 seconds per km slower and you'll hold form all the way through.`)
+        type = 'warning'; issueCount++
       } else {
-        lines.push(`Positive split of ${Math.round(splitDiff)}s/km — the back half cost you. First half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. The energy ran out before the route did.`)
+        lines.push(`Consistent pacing across the reps — first half averaged ${fmtPace(firstHalfR)}, second half ${fmtPace(secondHalfR)}. That's controlled interval work.`)
+        positiveCount++
       }
+
+      if (repVar < 3.5) {
+        lines.push(`Pace variance: ±${repVar.toFixed(1)}% across all reps — very repeatable effort. That's the mark of someone who knows their pace well.`)
+        positiveCount++
+      } else if (repVar > 8) {
+        lines.push(`Pace varied ±${repVar.toFixed(0)}% between reps — wider than ideal for interval training. The goal is to hit the same effort each rep, not go all-out on the first few. Think of each rep as being equally hard, not progressively harder.`)
+        type = type !== 'positive' ? 'warning' : type; issueCount++
+      }
+
+      if (calibrated && zoneHit > 0) {
+        lines.push(`${zoneHit}/${manualSplits.reps.length} reps hit the interval zone target (${fmtPace(calibrated.interval.min)}–${fmtPace(calibrated.interval.max)}).${zoneHit === manualSplits.reps.length ? ' Every rep on target — good session.' : zoneHit > manualSplits.reps.length / 2 ? ' Most reps on target.' : ' Consider adjusting target pace to be achievable for the full set.'}`)
+      }
+
+      // Feedback cross-checks for intervals
+      if (effort === 'brutal' && !repPos) {
+        lines.push(`You said this felt brutal, and the reps held together — that's the purpose of interval training. Discomfort at this level is exactly where the adaptation happens.`)
+        positiveCount++
+      }
+      if (effort === 'effortless' && repPaces.every(p => p > (calibrated?.interval.min ?? 0) + 20)) {
+        lines.push(`This felt effortless — which suggests the rep pace was comfortably below your interval ceiling. Next session, find the pace where reps 4–6 start to feel hard. That's where the threshold work lives.`)
+      }
+
+      sections.push({ title: 'Interval Analysis', icon: '⚡', lines, type })
     } else {
-      lines.push(`Even pacing — first half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. Clean execution. Harder to do than it sounds.`)
-      positiveCount++
-    }
+      // ── Continuous run: use Strava km splits ──────────────────────────────
+      if (isNegSplit) {
+        lines.push(`Negative split — first half at ${fmtPace(firstHalfAvg)}, second half at ${fmtPace(secondHalfAvg)}, ${Math.round(-splitDiff)}s/km faster in the back end. That's controlled running. Most people blow up or drift to even splits by accident. You saved something and used it.`)
+        positiveCount++
+      } else if (isPosSplit) {
+        type = 'warning'; issueCount++
+        if (fadeKm > 0) {
+          lines.push(`The run came undone at km ${fadeKm} (${fmtPace(paces[fadeKm - 1])}). First half averaged ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)} — a ${Math.round(splitDiff)}s/km fade.${firstKmFast ? ` You opened km 1 at ${fmtPace(paces[0])}, which is ${Math.round((avgPace - paces[0]) / avgPace * 100)}% quicker than your overall average. That's where the race was lost.` : ''}`)
+        } else {
+          lines.push(`Positive split of ${Math.round(splitDiff)}s/km — the back half cost you. First half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. The energy ran out before the route did.`)
+        }
+      } else {
+        lines.push(`Even pacing — first half ${fmtPace(firstHalfAvg)}, second half ${fmtPace(secondHalfAvg)}. Clean execution. Harder to do than it sounds.`)
+        positiveCount++
+      }
 
-    if (firstKmFast && !isPosSplit) {
-      lines.push(`Km 1 at ${fmtPace(paces[0])} was ${Math.round((avgPace - paces[0]) / avgPace * 100)}% faster than your overall average. Classic adrenaline start. You got away with it this time, but on a harder session that opener will cost you in the final km.`)
-      if (type !== 'warning') { type = 'warning'; issueCount++ }
-    }
+      if (firstKmFast && !isPosSplit) {
+        lines.push(`Km 1 at ${fmtPace(paces[0])} was ${Math.round((avgPace - paces[0]) / avgPace * 100)}% faster than your overall average. Classic adrenaline start. You got away with it this time, but on a harder session that opener will cost you in the final km.`)
+        if (type !== 'warning') { type = 'warning'; issueCount++ }
+      }
 
-    if (paces.length >= 4 && worstSplitPace - bestSplitPace > 40) {
-      lines.push(elevExplainsPace
-        ? `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)}. The ${Math.round(worstSplitPace - bestSplitPace)}s/km spread is large but the ${Math.round(totalClimb)}m of climbing on this route accounts for most of it.`
-        : `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)} — ${Math.round(worstSplitPace - bestSplitPace)}s/km between best and worst.`)
-    }
+      if (paces.length >= 4 && worstSplitPace - bestSplitPace > 40) {
+        lines.push(elevExplainsPace
+          ? `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)}. The ${Math.round(worstSplitPace - bestSplitPace)}s/km spread is large but the ${Math.round(totalClimb)}m of climbing on this route accounts for most of it.`
+          : `Km ${bestSplitKm} was your quickest at ${fmtPace(bestSplitPace)}, km ${worstSplitKm} the slowest at ${fmtPace(worstSplitPace)} — ${Math.round(worstSplitPace - bestSplitPace)}s/km between best and worst.`)
+      }
 
-    if (strongFinish) {
-      lines.push(`Finished well — last ${last3.length} km at ${fmtPace(last3Avg)}, which is ${Math.round(avgPace - last3Avg)}s/km quicker than your run average. You had something left. The next step is finding that gear 2 km earlier.`)
-      positiveCount++
-    }
+      if (strongFinish) {
+        lines.push(`Finished well — last ${last3.length} km at ${fmtPace(last3Avg)}, which is ${Math.round(avgPace - last3Avg)}s/km quicker than your run average. You had something left. The next step is finding that gear 2 km earlier.`)
+        positiveCount++
+      }
 
-    if (cv < 3.5 && !isPosSplit && paces.length >= 4) {
-      lines.push(`Pacing variance: ±${cv.toFixed(1)}% across all km splits — very consistent effort regulation.`)
-      positiveCount++
-    }
+      if (cv < 3.5 && !isPosSplit && paces.length >= 4) {
+        lines.push(`Pacing variance: ±${cv.toFixed(1)}% across all km splits — very consistent effort regulation.`)
+        positiveCount++
+      }
 
-    // Feedback cross-checks
-    if (effort === 'effortless' && isPosSplit) {
-      lines.push(`You said this felt effortless — yet the second half faded. That's the most common disguise for going out too hard: feeling great early while unknowingly burning through your glycogen. The effort catches up, usually around km ${fadeKm > 0 ? fadeKm : Math.ceil(paces.length * 0.6)}.`)
-    }
-    if (effort === 'brutal' && isNegSplit) {
-      lines.push(`You called this brutal — and yet you ran a negative split. Finishing faster than you started when it's hurting is exactly the kind of mental toughness that translates to race day. Remember this one.`)
-      positiveCount++
-    }
-    if ((effort === 'hard' || effort === 'brutal') && (legs === 'tired' || legs === 'dead') && isPosSplit) {
-      lines.push(`Hard effort on tired legs almost always leads to a positive split — the body compensates early and then gives out. This is a scheduling flag, not a fitness one.`)
-    }
+      // Feedback cross-checks
+      if (effort === 'effortless' && isPosSplit) {
+        lines.push(`You said this felt effortless — yet the second half faded. That's the most common disguise for going out too hard: feeling great early while unknowingly burning through your glycogen. The effort catches up, usually around km ${fadeKm > 0 ? fadeKm : Math.ceil(paces.length * 0.6)}.`)
+      }
+      if (effort === 'brutal' && isNegSplit) {
+        lines.push(`You called this brutal — and yet you ran a negative split. Finishing faster than you started when it's hurting is exactly the kind of mental toughness that translates to race day. Remember this one.`)
+        positiveCount++
+      }
+      if ((effort === 'hard' || effort === 'brutal') && (legs === 'tired' || legs === 'dead') && isPosSplit) {
+        lines.push(`Hard effort on tired legs almost always leads to a positive split — the body compensates early and then gives out. This is a scheduling flag, not a fitness one.`)
+      }
 
-    sections.push({ title: 'Pacing & Strategy', icon: '📊', lines, type })
+      sections.push({ title: 'Pacing & Strategy', icon: '📊', lines, type })
+    } // end else (continuous run)
   }
 
   // ── SECTION 2: EFFORT & SESSION FIT ───────────────────────────────────────
@@ -450,6 +509,169 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
 }
 
+// ── Manual interval splits ────────────────────────────────────────────────────
+interface ManualIntervalSplits {
+  distanceM: number
+  reps: number[] // seconds per rep
+}
+
+function loadManualSplits(): Record<string, ManualIntervalSplits> {
+  try { return JSON.parse(localStorage.getItem('manualSplits') ?? '{}') } catch { return {} }
+}
+function saveManualSplitsStore(all: Record<string, ManualIntervalSplits>) {
+  try { localStorage.setItem('manualSplits', JSON.stringify(all)) } catch { /* quota */ }
+}
+
+function fmtRepTime(secs: number) {
+  const m = Math.floor(secs / 60)
+  const s = secs % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+const INTERVAL_DISTANCES = [
+  { label: '200m', value: 200 },
+  { label: '400m', value: 400 },
+  { label: '800m', value: 800 },
+  { label: '1 km', value: 1000 },
+  { label: '1 mile', value: 1609 },
+]
+
+function ManualSplitsTable({ splits, phaseNum, calibrated }: {
+  splits: ManualIntervalSplits
+  phaseNum: number
+  calibrated?: CalibratedZones | null
+}) {
+  const repPaces = splits.reps.map(t => t / (splits.distanceM / 1000))
+  const avgPace = repPaces.reduce((a, b) => a + b, 0) / repPaces.length
+  const bestPace = Math.min(...repPaces)
+  const worstPace = Math.max(...repPaces)
+  const distLabel = INTERVAL_DISTANCES.find(d => d.value === splits.distanceM)?.label ?? `${splits.distanceM}m`
+  return (
+    <div style={{ marginBottom: 10 }}>
+      <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 4 }}>
+        Intervals — {splits.reps.length} × {distLabel} · avg {fmtPace(avgPace)}
+      </div>
+      {splits.reps.map((t, i) => {
+        const pace = repPaces[i]
+        const zone = getZone(pace, phaseNum, calibrated)
+        const isBest = pace === bestPace
+        const isWorst = pace === worstPace && splits.reps.length > 1
+        return (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--border)', gap: 8 }}>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 42 }}>Rep {i + 1}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, flex: 1 }}>{fmtRepTime(t)}</span>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fmtPace(pace)}</span>
+            {isBest && <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 700 }}>best</span>}
+            {isWorst && !isBest && <span style={{ fontSize: 10, color: 'var(--warn)', fontWeight: 700 }}>slowest</span>}
+            <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 9px', borderRadius: 20, background: zone.bg, color: zone.color }}>{zone.label}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+function IntervalModal({ onSave, onClose, existing }: {
+  onSave: (s: ManualIntervalSplits) => void
+  onClose: () => void
+  existing?: ManualIntervalSplits | null
+}) {
+  const [distM, setDistM] = useState(existing?.distanceM ?? 800)
+  const [repCount, setRepCount] = useState(existing?.reps.length ?? 6)
+  const [repTimes, setRepTimes] = useState<number[]>(
+    existing?.reps ?? Array(6).fill(0)
+  )
+
+  function syncRepCount(n: number) {
+    setRepCount(n)
+    setRepTimes(prev => {
+      if (prev.length === n) return prev
+      if (prev.length < n) return [...prev, ...Array(n - prev.length).fill(0)]
+      return prev.slice(0, n)
+    })
+  }
+
+  function setMins(i: number, v: number) {
+    setRepTimes(prev => { const a = [...prev]; a[i] = Math.max(0, v) * 60 + (a[i] % 60); return a })
+  }
+  function setSecs(i: number, v: number) {
+    setRepTimes(prev => { const a = [...prev]; a[i] = Math.floor(a[i] / 60) * 60 + Math.max(0, Math.min(59, v)); return a })
+  }
+
+  const canSave = repTimes.some(t => t > 0)
+
+  return (
+    <div
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 200, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
+      onClick={onClose}
+    >
+      <div
+        style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '16px 16px 0 0', padding: '20px 18px 32px', width: '100%', maxWidth: 480, maxHeight: '90vh', overflowY: 'auto' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 18 }}>Log Interval Reps</div>
+
+        {/* Distance chips */}
+        <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>Rep distance</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 18 }}>
+          {INTERVAL_DISTANCES.map(d => (
+            <button key={d.value} onClick={() => setDistM(d.value)} style={{
+              padding: '6px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, cursor: 'pointer',
+              border: `1.5px solid ${distM === d.value ? 'var(--accent)' : 'var(--border)'}`,
+              background: distM === d.value ? 'var(--accent-dim)' : 'transparent',
+              color: distM === d.value ? 'var(--accent)' : 'var(--text-muted)',
+            }}>{d.label}</button>
+          ))}
+        </div>
+
+        {/* Rep count stepper */}
+        <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 8, color: 'var(--text)' }}>Number of reps</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 18 }}>
+          <button onClick={() => syncRepCount(Math.max(1, repCount - 1))} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', fontSize: 20, cursor: 'pointer', color: 'var(--text)' }}>−</button>
+          <span style={{ fontSize: 22, fontWeight: 800, minWidth: 28, textAlign: 'center' }}>{repCount}</span>
+          <button onClick={() => syncRepCount(Math.min(20, repCount + 1))} style={{ width: 36, height: 36, borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', fontSize: 20, cursor: 'pointer', color: 'var(--text)' }}>+</button>
+        </div>
+
+        {/* Per-rep MM:SS inputs */}
+        <div style={{ fontSize: 12, fontWeight: 700, marginBottom: 10, color: 'var(--text)' }}>Rep times (mm : ss)</div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 22 }}>
+          {repTimes.map((t, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 10px' }}>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)', minWidth: 36 }}>Rep {i + 1}</span>
+              <input
+                type="number" min="0" max="59"
+                value={Math.floor(t / 60) || ''}
+                placeholder="0"
+                onChange={e => setMins(i, parseInt(e.target.value) || 0)}
+                style={{ width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700, border: 'none', background: 'transparent', color: 'var(--text)', outline: 'none' }}
+              />
+              <span style={{ color: 'var(--text-muted)', fontWeight: 700 }}>:</span>
+              <input
+                type="number" min="0" max="59"
+                value={t % 60 || ''}
+                placeholder="00"
+                onChange={e => setSecs(i, parseInt(e.target.value) || 0)}
+                style={{ width: 32, textAlign: 'center', fontSize: 15, fontWeight: 700, border: 'none', background: 'transparent', color: 'var(--text)', outline: 'none' }}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button onClick={onClose} style={{ flex: 1, padding: '13px', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-muted)', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+          <button
+            onClick={() => canSave && onSave({ distanceM: distM, reps: repTimes })}
+            disabled={!canSave}
+            style={{ flex: 2, padding: '13px', borderRadius: 8, border: 'none', background: canSave ? 'var(--accent)' : 'var(--border)', color: canSave ? '#fff' : 'var(--text-muted)', fontSize: 14, fontWeight: 700, cursor: canSave ? 'pointer' : 'default' }}
+          >
+            Save Reps
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SplitRow({ split, phaseNum, calibrated }: { split: StravaSplit; phaseNum: number; calibrated?: CalibratedZones | null }) {
   const pace = speedToPace(split.average_speed)
   const zone = getZone(pace, phaseNum, calibrated)
@@ -516,6 +738,25 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
   const [rpe, setRpe] = useState(5)
   const [feedbackAnswers, setFeedbackAnswers] = useState<Record<string, string>>({})
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
+  const [manualSplits, setManualSplits] = useState<ManualIntervalSplits | null>(() => {
+    const all = loadManualSplits()
+    return all[String(activity.id)] ?? null
+  })
+  const [showIntervalModal, setShowIntervalModal] = useState(false)
+
+  function handleSaveIntervals(splits: ManualIntervalSplits) {
+    const all = loadManualSplits()
+    all[String(activity.id)] = splits
+    saveManualSplitsStore(all)
+    setManualSplits(splits)
+    setShowIntervalModal(false)
+  }
+  function handleDeleteIntervals() {
+    const all = loadManualSplits()
+    delete all[String(activity.id)]
+    saveManualSplitsStore(all)
+    setManualSplits(null)
+  }
 
   const trialDist = nearestTrialDist(activity.distance / 1000)
 
@@ -598,6 +839,13 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
 
   return (
     <div style={{ borderBottom: '1px solid var(--border)', padding: '12px 0' }}>
+      {showIntervalModal && (
+        <IntervalModal
+          onSave={handleSaveIntervals}
+          onClose={() => setShowIntervalModal(false)}
+          existing={manualSplits}
+        />
+      )}
       {/* Temperature modal for trial logging */}
       {showTempModal && (
         <div
@@ -714,6 +962,23 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
             </div>
           )}
         </div>
+        <button
+          onClick={e => { e.stopPropagation(); setShowIntervalModal(true) }}
+          style={{
+            flexShrink: 0,
+            background: manualSplits ? 'rgba(139,92,246,0.15)' : 'var(--surface)',
+            border: `1px solid ${manualSplits ? '#a78bfa' : 'var(--border)'}`,
+            borderRadius: 6,
+            color: manualSplits ? '#a78bfa' : 'var(--text-muted)',
+            fontSize: 11,
+            fontWeight: 700,
+            padding: '5px 9px',
+            cursor: 'pointer',
+            lineHeight: 1,
+          }}
+        >
+          {manualSplits ? `⚡ ${manualSplits.reps.length}×` : '⚡ Reps'}
+        </button>
         {onAddTrial && trialDist && (
           <button
             onClick={handleLogTrial}
@@ -757,11 +1022,26 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
 
       {open && (
         <div style={{ marginTop: 10, paddingTop: 4 }}>
+          {manualSplits && (
+            <ManualSplitsTable splits={manualSplits} phaseNum={phaseNum} calibrated={calibrated} />
+          )}
+          {manualSplits && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+              <button
+                onClick={handleDeleteIntervals}
+                style={{ fontSize: 11, color: 'var(--text-muted)', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
+              >
+                Remove manual reps
+              </button>
+            </div>
+          )}
           {loading ? (
             <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>Loading splits...</div>
           ) : detail?.splits_metric && detail.splits_metric.length > 0 ? (
             <>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 4 }}>Km Splits</div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-muted)', marginBottom: 4 }}>
+                {manualSplits ? 'Strava km splits (includes recovery)' : 'Km Splits'}
+              </div>
               {detail.splits_metric.map(s => <SplitRow key={s.split} split={s} phaseNum={phaseNum} calibrated={calibrated} />)}
             </>
           ) : (
@@ -816,7 +1096,7 @@ function ActivityCard({ activity, phaseNum, onExpand, calibrated, onAddLog, isLo
                 </div>
               </div>
             ) : (() => {
-              const report = generateCoachReport(detail, detail.splits_metric!, phaseNum, calibrated, allActivities ?? [], feedbackAnswers)
+              const report = generateCoachReport(detail, detail.splits_metric!, phaseNum, calibrated, allActivities ?? [], feedbackAnswers, manualSplits)
               const sectionBorder = (t: CoachSectionType) =>
                 t === 'positive' ? 'var(--accent)' : t === 'warning' ? '#f59e0b' : t === 'tip' ? '#a78bfa' : 'var(--border)'
               return (
