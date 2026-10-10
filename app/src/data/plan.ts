@@ -61,10 +61,13 @@ export const PHASES: Phase[] = [
     monday: {
       title: 'Key Run + Strength (90 mins)',
       items: [
-        'Warm-up: 5 min walk + 5 min dynamic movement',
-        'Easy run: 40–50 mins (Weeks 1–6) / 50–60 mins (Weeks 7–12)',
+        'Warm-up: 5 min walk + 5 min dynamic movement — no pace target yet',
+        'First 5 mins running: even slower than easy zone — just shuffle, let the body wake up',
+        'Main run at easy zone 6:30–7:00/km — hold a full conversation the whole time',
+        '  Weeks 1–6: 40–50 mins total · Weeks 7–12: 50–60 mins total',
+        'Final 5 mins: slow to a walk — heart rate should drop back quickly',
         'Strength circuit — 1–2 rounds post-run: 15–20 mins',
-        'Cool-down: 5 min walk + calf stretch',
+        'Cool-down: 5 min calf + hamstring stretch',
       ],
     },
     tuesday: {
@@ -95,15 +98,21 @@ export const PHASES: Phase[] = [
     friday: {
       title: 'Easy Run (60 mins)',
       items: [
-        'Warm-up: 5 mins',
-        'Easy run: 30–40 mins',
-        'Cool-down: 5 mins',
+        'First 5 mins: walk then very easy jog — even slower than easy zone, no rush',
+        'Mins 5–15: settle into easy zone 6:30–7:00/km — conversational, full sentences',
+        'Mins 15–35: maintain easy zone 6:30–7:00/km — stay here, don\'t drift faster',
+        'Final 5 mins: slow back to walk pace',
+        'This is a low-key session — do not turn it into a test run',
       ],
     },
     weekend: {
       title: 'Bonus Long Run (alternate weeks)',
       items: [
-        'Easy run: 40–50 mins at genuinely easy effort',
+        'First 5 mins: walk + gentle easy jog — no pace target, just get moving',
+        'Main body at easy zone 6:30–7:00/km — time on feet is the goal, not pace',
+        'If you feel strong at 35 mins, resist the urge to accelerate — fitness builds from restraint',
+        'Final 5 mins: walk, let heart rate settle before stopping',
+        '40–50 mins total',
       ],
     },
     strengthCircuit: [
@@ -169,12 +178,15 @@ export const PHASES: Phase[] = [
     monday: {
       title: 'Tempo Run (90 mins)',
       items: [
-        'Warm-up: 10 mins easy jog',
-        'Tempo run: 20–30 mins at 5:05–5:20/km',
-        'Cool-down jog: 10 mins easy',
+        'Warm-up: 10 mins easy jog at easy zone 5:50–6:20/km — slow start, settle the breathing',
+        'Build 3–5 mins: lift pace steadily from easy toward tempo — no abrupt jump into hard effort',
+        'Tempo block: 20–30 mins at 5:05–5:20/km — comfortably hard, short sentences only',
+        '  First 2 weeks: aim for slower end (5:20/km). Build toward 5:05/km across Phase 2.',
+        '  If you can\'t hold the pace, back off 10s/km and sustain that for the full block',
+        'Cool-down: 10 mins easy jog at easy zone 5:50–6:20/km — this is part of the session, don\'t skip it',
         'Optional: strength accessory work 1–2 rounds post-run (15 mins)',
         '⚡ From Week 18: replace with intervals twice/month',
-        '   6 × 800m at 4:45–5:00/km, 90-sec easy jog recovery',
+        '   6 × 800m at 4:45–5:00/km, 90-sec easy jog recovery between each rep',
         '   Progress to 8 × 800m by end of Phase 2',
       ],
     },
@@ -205,15 +217,22 @@ export const PHASES: Phase[] = [
     friday: {
       title: 'Easy to Steady Run (60 mins)',
       items: [
-        'Warm-up: 5 mins',
-        'Easy to steady run: 40–45 mins',
-        'Cool-down: 5 mins',
+        'First 5 mins: walk then easy jog — start slower than feels necessary',
+        'Mins 1–15: easy zone 5:50–6:20/km — fully conversational, controlled effort',
+        'Mins 15–30: stay in easy zone 5:50–6:20/km — let pace drift toward the faster end naturally',
+        'Mins 30–40: build to steady effort — approaching tempo zone 5:05–5:20/km, short sentences only',
+        'Final 5 mins: slow back to easy or walk — full cool-down',
+        'The last 10 mins should feel like a genuine push — if it doesn\'t, you\'re not building the zone',
       ],
     },
     weekend: {
       title: 'Long Run (alternate weeks)',
       items: [
-        'Long run: 55–70 mins at easy pace',
+        'First 5 mins: walk + very easy jog — no pace target',
+        'Main body at easy zone 5:50–6:20/km — time on feet, never push',
+        'If you feel good after 45 mins, keep the pace the same — the fitness is the run, not the speed',
+        'Final 5 mins: slow to walk',
+        '55–70 mins total',
       ],
     },
     strengthCircuit: [
@@ -272,19 +291,22 @@ export const PHASES: Phase[] = [
     monday: {
       title: 'Interval Session (90 mins)',
       items: [
-        'Warm-up: 10 mins easy jog',
-        'Rotate weekly (pick one):',
-        '  • 8 × 1km at 4:25–4:35/km, 90-sec recovery',
-        '  • 5 × 1.5km at 4:35–4:40/km, 2-min recovery',
-        '  • 12 × 400m at 4:15–4:25/km, 60-sec recovery',
-        'Cool-down: 10 mins easy jog',
+        'Warm-up: 10 mins easy jog at easy zone 5:30–6:00/km',
+        'Build 5 mins: lift pace toward interval effort — body knows what\'s coming',
+        'Work reps — rotate weekly (pick one):',
+        '  • 8 × 1km interval at 4:25–4:35/km — hit the target from 200m in, not a build-in',
+        '  • 5 × 1.5km interval effort at 4:35–4:40/km — steady power, rep to rep consistency',
+        '  • 12 × 400m at 4:15–4:25/km — short and sharp, controlled sprint',
+        'Recovery between reps: 90-sec easy jog — keep moving, don\'t stop dead',
+        'Cool-down: 10 mins easy jog at easy zone 5:30–6:00/km',
       ],
     },
     tuesday: {
       title: 'Strength + Easy Run (90 mins)',
       items: [
         'Strength — 3 rounds (maintain, do not increase load): 45 mins',
-        'Easy run: 20–25 mins after strength',
+        'Easy run: 20–25 mins at easy zone 5:30–6:00/km — on tired legs intentionally, this builds specific conditioning',
+        '  Start slow — you won\'t feel sharp. Just keep moving at easy zone pace.',
       ],
     },
     wednesday: {
@@ -307,17 +329,23 @@ export const PHASES: Phase[] = [
     friday: {
       title: 'Steady Run (60 mins)',
       items: [
-        'Warm-up: 5 mins',
-        'Weeks 25–28: 35 mins at 5:00–5:10/km',
-        'Weeks 29–32: 35 mins at 4:50–5:00/km',
-        'Weeks 33–36: 40 mins at 4:40–4:50/km',
-        'Cool-down: 5 mins',
+        'Warm-up: 5 mins easy jog — start slow, don\'t rush into the target pace',
+        'Build 5 mins: lift pace from easy toward steady — 2–3 mins to settle in',
+        'Weeks 25–28: steady block at 5:00–5:10/km for 35 mins — comfortably hard, sustainable',
+        'Weeks 29–32: steady block at 4:50–5:00/km for 35 mins — this should challenge you now',
+        'Weeks 33–36: steady block at 4:40–4:50/km for 40 mins — benchmark pace approaching race effort',
+        'Cool-down: 5 mins walk or easy jog',
+        'These runs are your fitness yardstick — controlled at 4:50/km means sub-45 is on track',
       ],
     },
     weekend: {
       title: 'Long Run (alternate weeks)',
       items: [
-        'Long run: 65–75 mins at easy pace',
+        'First 5 mins: walk + very easy jog — genuinely slow start',
+        'Main body at easy zone 5:30–6:00/km — time on feet builds base, never push',
+        'If legs feel heavy from Monday\'s intervals, keep toward the slower end of easy',
+        'Final 5 mins: walk',
+        '65–75 mins total',
       ],
     },
     strengthCircuit: [
@@ -367,18 +395,21 @@ export const PHASES: Phase[] = [
     monday: {
       title: 'Race Pace Session (90 mins)',
       items: [
-        'Warm-up: 10 mins',
-        'Main set (alternate):',
-        '  • 3 × 3km at 4:30–4:35/km, 3-min recovery',
-        '  • 2 × 4km at 4:30/km, 4-min recovery',
-        'Cool-down: 10 mins',
+        'Warm-up: 10 mins — start easy, build to top of easy zone by the last 2 mins',
+        'Build-in: 2 mins at 5:00/km — prime the engine before snapping to race effort',
+        'Main set — alternate each week:',
+        '  • 3 × 3km at race pace 4:30–4:35/km — the exact pace you need on race day, 3-min easy jog recovery',
+        '  • 2 × 4km at race pace 4:30/km — full race-specific effort, 4-min easy jog recovery',
+        'Hold even splits rep to rep — a faster last rep means you went out too easy',
+        'Cool-down: 10 mins easy jog — non-negotiable after race pace work',
       ],
     },
     tuesday: {
       title: 'Reduced Strength + Easy Run (90 mins)',
       items: [
         'Strength — 2 rounds, reduced load: 35 mins',
-        'Easy run: 30 mins',
+        'Easy run: 30 mins at easy zone 5:30–6:00/km — genuinely easy, this is recovery not fitness work',
+        '  Keep heart rate low — if you feel flat after strength, that\'s normal and expected',
       ],
     },
     wednesday: {
@@ -397,15 +428,22 @@ export const PHASES: Phase[] = [
     friday: {
       title: 'Steady Run (60 mins)',
       items: [
-        'Warm-up: 5 mins',
-        'Steady run: 40 mins at 4:45–5:00/km',
-        'Cool-down: 5 mins',
+        'Warm-up: 5 mins easy jog',
+        'Build 3 mins: lift from easy toward steady — settle before you commit to pace',
+        'Steady block: 40 mins at 4:45–5:00/km — aim for the middle (4:52/km) and hold it evenly',
+        '  No building at the end — even effort is the goal',
+        '  If this feels controlled, your race pacing is where it needs to be',
+        'Cool-down: 5 mins walk',
       ],
     },
     weekend: {
       title: 'Easy Long Run (alternate weeks)',
       items: [
-        'Easy long run: 60 mins',
+        'First 5 mins: walk + easy jog — deliberately slow start',
+        'Main body at easy zone 5:30–6:00/km — recovery volume, not fitness testing',
+        'If you feel flat from the week\'s work, honour that — stay at the slower end of easy',
+        'Final 5 mins: walk',
+        '60 mins total',
       ],
     },
     mobilityCircuit: [
