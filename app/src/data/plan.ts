@@ -176,7 +176,7 @@ export const PHASES: Phase[] = [
       { label: 'Intervals',  pace: '4:45–5:00/km' },
     ],
     monday: {
-      title: 'Tempo Run (90 mins)',
+      title: 'Tempo Run (55–70 mins)',
       items: [
         'Warm-up: 10 mins easy jog at easy zone 5:50–6:20/km — slow start, settle the breathing',
         'Build 3–5 mins: lift pace steadily from easy toward tempo — no abrupt jump into hard effort',
@@ -184,7 +184,7 @@ export const PHASES: Phase[] = [
         '  First 2 weeks: aim for slower end (5:20/km). Build toward 5:05/km across Phase 2.',
         '  If you can\'t hold the pace, back off 10s/km and sustain that for the full block',
         'Cool-down: 10 mins easy jog at easy zone 5:50–6:20/km — this is part of the session, don\'t skip it',
-        'Optional: strength accessory work 1–2 rounds post-run (15 mins)',
+        'Total running: ~55 mins · Optional strength 1–2 rounds adds 15 mins',
         '⚡ From Week 18: replace with intervals twice/month',
         '   6 × 800m at 4:45–5:00/km, 90-sec easy jog recovery between each rep',
         '   Progress to 8 × 800m by end of Phase 2',
