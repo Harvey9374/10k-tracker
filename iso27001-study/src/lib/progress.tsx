@@ -24,10 +24,11 @@ export interface Progress {
   mocks: MockResult[]
   days: string[]
   checklist: Record<string, boolean>
+  lessons: Record<string, string> // lesson id -> date completed
 }
 
 const KEY = 'iso27001-li-progress-v1'
-const empty: Progress = { cards: {}, domains: {}, mocks: [], days: [], checklist: {} }
+const empty: Progress = { cards: {}, domains: {}, mocks: [], days: [], checklist: {}, lessons: {} }
 
 function load(): Progress {
   try {
@@ -44,6 +45,7 @@ interface Ctx {
   recordAnswer: (domain: string, correct: boolean) => void
   recordMock: (r: MockResult) => void
   toggleCheck: (key: string) => void
+  completeLesson: (id: string) => void
   reset: () => void
 }
 
@@ -95,10 +97,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress((p) => ({ ...p, checklist: { ...p.checklist, [key]: !p.checklist[key] } }))
   }, [])
 
+  const completeLesson = useCallback((id: string) => {
+    setProgress((p) => ({ ...p, lessons: { ...p.lessons, [id]: today() }, days: markDay(p.days) }))
+  }, [])
+
   const reset = useCallback(() => setProgress(empty), [])
 
   return (
-    <ProgressContext.Provider value={{ progress, reviewCard, recordAnswer, recordMock, toggleCheck, reset }}>
+    <ProgressContext.Provider value={{ progress, reviewCard, recordAnswer, recordMock, toggleCheck, completeLesson, reset }}>
       {children}
     </ProgressContext.Provider>
   )

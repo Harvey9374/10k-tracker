@@ -53,6 +53,19 @@ export interface Flashcard {
   back: string
 }
 
+export interface Lesson {
+  id: string
+  domain: string
+  title: string
+  minutes?: number
+  intro: string
+  sections: { heading: string; body?: string[]; points?: string[] }[]
+  example?: { title: string; text: string }
+  exam_tips?: string[]
+  related?: { clauses?: string[]; controls?: string[] }
+  check_questions?: string[]
+}
+
 export interface StudyPack {
   meta: {
     title: string
@@ -73,6 +86,8 @@ export interface StudyPack {
     attributes_iso27002?: Record<string, InfoValue>
     themes: Theme[]
   }
+  lessons?: Lesson[]
+  lessons_note?: string
   key_concepts: { term: string; definition: string }[]
   flashcards: Flashcard[]
   questions: Question[]

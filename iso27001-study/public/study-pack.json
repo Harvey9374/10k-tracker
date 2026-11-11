@@ -1090,6 +1090,1238 @@
       "definition": "Annex A went from 114 controls in 14 domains to 93 controls in 4 themes. 11 controls are new. Clause 6.3 Planning of changes was added. The transition period for certified organisations ended on 31 October 2025."
     }
   ],
+  "lessons_note": "Lesson text is paraphrased study material written from Claude training data and checked against this pack. It is not the wording of ISO/IEC 27001 or 27002. Verify against the standard.",
+  "lessons": [
+    {
+      "id": "L1",
+      "domain": "D1",
+      "title": "What information security protects",
+      "minutes": 6,
+      "intro": "Information security protects information from harm. This lesson covers the three properties every exam question builds on, and the basic language of risk.",
+      "sections": [
+        {
+          "heading": "Information is an asset",
+          "body": [
+            "An asset is anything of value to the organisation. Information is an asset in any form: a database, a paper file, an email, or what an engineer knows about a system.",
+            "Information also depends on supporting assets, such as laptops, servers, networks, buildings, suppliers and people. ISO 27001:2022 calls these 'information and other associated assets'. If a supporting asset fails, the information it holds is at risk."
+          ]
+        },
+        {
+          "heading": "Confidentiality, integrity and availability",
+          "body": [
+            "ISO/IEC 27000 describes information security as preserving three properties. Learn them so you can name the right one from a short scenario."
+          ],
+          "points": [
+            "Confidentiality: only authorised people, entities or processes can see the information. A leaked customer list is a confidentiality failure.",
+            "Integrity: the information is accurate and complete. An unauthorised change to payroll figures is an integrity failure.",
+            "Availability: authorised users can access and use the information when they need it. A server outage or ransomware that locks files is an availability failure."
+          ]
+        },
+        {
+          "heading": "Other properties",
+          "body": [
+            "ISO/IEC 27000 notes that other properties can also be involved, such as authenticity, accountability, non-repudiation and reliability. Exam options often include these as distractors. When a question asks which of the three core properties is affected, pick from confidentiality, integrity and availability."
+          ]
+        },
+        {
+          "heading": "Threat, vulnerability and risk",
+          "body": [
+            "A threat is a possible cause of an unwanted incident, such as a phishing campaign or a flood. A vulnerability is a weakness a threat can exploit, such as an unpatched server or staff who have never had phishing training.",
+            "Risk arises when a threat can exploit a vulnerability and affect an asset. ISO defines risk as the effect of uncertainty on objectives. In practice you express it as a combination of the likelihood of an event and its consequence."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Which property?",
+        "text": "A hospital's patient system goes down for six hours. No data is lost or copied. Clinicians cannot see records. Only availability is affected. If an attacker had also downloaded the records, confidentiality would be affected too. If they had changed medication doses, integrity would be affected."
+      },
+      "exam_tips": [
+        "Read scenario questions for the effect, not the cause. Ransomware is usually an availability question unless the scenario says data was stolen.",
+        "Unauthorised change means integrity. Unauthorised disclosure means confidentiality."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "Q1",
+        "Q2"
+      ]
+    },
+    {
+      "id": "L2",
+      "domain": "D1",
+      "title": "What an ISMS is and the ISO 27000 family",
+      "minutes": 7,
+      "intro": "An ISMS is how an organisation manages information security as a system rather than as a set of separate tools. This lesson explains the idea and the standards around it.",
+      "sections": [
+        {
+          "heading": "The ISMS idea",
+          "body": [
+            "ISO/IEC 27000 describes an ISMS as policies, procedures, guidelines, and the related resources and activities, managed together to protect information assets.",
+            "The key word is managed. An ISMS sets direction from top management, assesses risk, chooses controls to match that risk, checks they work, and improves over time. A firewall on its own is a control. An ISMS is the system that decides you need the firewall, owns it and checks it."
+          ],
+          "points": [
+            "It is risk based: controls follow from assessed risk.",
+            "It is led from the top: top management sets policy and provides resources.",
+            "It improves: results are measured, reviewed and acted on."
+          ]
+        },
+        {
+          "heading": "Requirements versus guidance",
+          "body": [
+            "ISO/IEC 27001 is the requirements standard. Its requirements use the word 'shall'. It is the only standard in the family that an organisation can be certified against.",
+            "Most of the rest of the family is guidance. Guidance helps you meet the requirements but you are not audited against it."
+          ]
+        },
+        {
+          "heading": "The standards you need to know",
+          "body": [],
+          "points": [
+            "ISO/IEC 27000: overview and vocabulary. The source of definitions.",
+            "ISO/IEC 27001: ISMS requirements, including Annex A.",
+            "ISO/IEC 27002: guidance on each Annex A control.",
+            "ISO/IEC 27003: guidance on clauses 4 to 10.",
+            "ISO/IEC 27004: guidance on monitoring and measurement.",
+            "ISO/IEC 27005: guidance on information security risk management.",
+            "ISO/IEC 27006-1: requirements for certification bodies.",
+            "ISO/IEC 27007: guidance on auditing an ISMS, building on ISO 19011.",
+            "ISO/IEC 27017 and 27018: cloud security and protection of personal data in public cloud.",
+            "ISO/IEC 27701: privacy information management."
+          ]
+        },
+        {
+          "heading": "The harmonized structure",
+          "body": [
+            "ISO management system standards share a common clause structure, formerly called Annex SL. ISO 9001, ISO 14001, ISO 27001 and ISO 42001 all use clauses 4 to 10 in the same order with similar core text. This makes it easier to run one integrated management system."
+          ]
+        },
+        {
+          "heading": "Laws, regulations and best practice",
+          "body": [
+            "An ISMS sits alongside the law. Data protection law, such as the UK GDPR, sector regulation and contracts all create requirements. ISO 27001 expects you to identify these as interested party requirements (clause 4.2) and to meet them (control 5.31). Certification does not prove legal compliance on its own."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Picking the right standard",
+        "text": "A consultant asks where to find the definition of 'residual risk'. The answer is ISO/IEC 27000. A client asks how to implement control 8.24 Use of cryptography. The answer is ISO/IEC 27002. A certification body asks what rules it must follow to certify an ISMS. The answer is ISO/IEC 27006-1."
+      },
+      "exam_tips": [
+        "If an option says you can be certified to 27002, it is wrong.",
+        "27006 is for certification bodies. 27007 is guidance for auditors. Exams test this pair often."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "Q3",
+        "Q4",
+        "Q5",
+        "Q6"
+      ]
+    },
+    {
+      "id": "L3",
+      "domain": "D2",
+      "title": "How ISO 27001:2022 is structured",
+      "minutes": 6,
+      "intro": "Before you study each clause, learn the shape of the standard. Most clause-number questions become easy once you know the map.",
+      "sections": [
+        {
+          "heading": "Clauses 0 to 3",
+          "body": [
+            "Clause 0 is the introduction. Clause 1 is scope, clause 2 is normative references and clause 3 is terms and definitions, which points to ISO/IEC 27000. These clauses contain no requirements you are audited against."
+          ]
+        },
+        {
+          "heading": "Clauses 4 to 10: the requirements",
+          "body": [],
+          "points": [
+            "4 Context of the organization: issues, interested parties, scope.",
+            "5 Leadership: commitment, policy, roles.",
+            "6 Planning: risk assessment, risk treatment, objectives, planning of changes.",
+            "7 Support: resources, competence, awareness, communication, documented information.",
+            "8 Operation: run the processes, repeat risk assessment, carry out risk treatment.",
+            "9 Performance evaluation: monitoring, internal audit, management review.",
+            "10 Improvement: continual improvement, nonconformity and corrective action."
+          ]
+        },
+        {
+          "heading": "PDCA as a memory aid",
+          "body": [
+            "ISO 27001:2022 does not require or mention Plan-Do-Check-Act. Training courses still use it as a memory aid. Clauses 4 to 6 map to Plan, 7 and 8 to Do, 9 to Check and 10 to Act."
+          ]
+        },
+        {
+          "heading": "Annex A",
+          "body": [
+            "Annex A lists 93 controls in four themes: organizational (37), people (8), physical (14) and technological (34). It is a reference list. You compare your chosen controls against it so nothing necessary is missed."
+          ]
+        },
+        {
+          "heading": "What changed in 2022",
+          "body": [],
+          "points": [
+            "Annex A went from 114 controls in 14 domains to 93 controls in 4 themes. 11 controls are new.",
+            "Clause 6.3 Planning of changes was added.",
+            "Clause 10 was reordered: 10.1 is now continual improvement and 10.2 nonconformity and corrective action.",
+            "Amendment 1 in 2024 added climate change as a possible relevant issue in 4.1 and an interested party requirement in 4.2.",
+            "The transition period for certified organisations ended on 31 October 2025."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Using the map",
+        "text": "A question asks which clause covers deciding who receives ISMS reports. Communication sits in Support, so look in clause 7. It is 7.4."
+      },
+      "exam_tips": [
+        "Learn the seven clause titles in order. Many questions only test which clause a topic sits in.",
+        "PDCA questions are about convention, not a requirement of the standard."
+      ],
+      "related": {
+        "clauses": [
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q10",
+        "Q17",
+        "Q49"
+      ]
+    },
+    {
+      "id": "L4",
+      "domain": "D2",
+      "title": "Clause 4: context and scope",
+      "minutes": 7,
+      "intro": "Clause 4 is where every ISMS starts. You understand the organisation and its environment, then draw the boundary of the ISMS.",
+      "sections": [
+        {
+          "heading": "4.1 Internal and external issues",
+          "body": [
+            "Identify issues that affect the ISMS's ability to achieve its intended outcomes. External issues include laws, the threat environment, market and technology change. Internal issues include culture, structure, capabilities and existing systems.",
+            "Since Amendment 1 (2024) you must also decide whether climate change is a relevant issue. Common tools here are PESTLE and SWOT analysis, but the standard does not require a specific tool."
+          ]
+        },
+        {
+          "heading": "4.2 Interested parties",
+          "body": [
+            "Identify the interested parties relevant to the ISMS, their relevant requirements, and which of those requirements the ISMS will address. The 2022 edition added that last step.",
+            "Interested parties include customers, regulators, staff, shareholders, suppliers and insurers. Their requirements can be legal, contractual or simply expectations."
+          ]
+        },
+        {
+          "heading": "4.3 Scope",
+          "body": [
+            "Define the boundaries and applicability of the ISMS. Consider the issues from 4.1, the requirements from 4.2, and the interfaces and dependencies between your activities and those of other organisations.",
+            "The scope must be available as documented information. A good scope statement names the organisation units, locations, services and key technology covered, and explains any boundary that might look odd to an auditor."
+          ]
+        },
+        {
+          "heading": "4.4 The ISMS",
+          "body": [
+            "Establish, implement, maintain and continually improve the ISMS, including the processes it needs and how they interact."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A scope statement",
+        "text": "A software company with offices in Leeds and Manchester sets its scope as: 'The design, development, hosting and support of the payroll SaaS platform, delivered from the Leeds office and the cloud environment, including supporting HR and IT functions.' The Manchester sales office is excluded. The scope explains the interface: sales staff never access customer payroll data."
+      },
+      "exam_tips": [
+        "Scope inputs are 4.1, 4.2, and interfaces and dependencies. Expect a question on this.",
+        "Scope is mandatory documented information."
+      ],
+      "related": {
+        "clauses": [
+          "4"
+        ],
+        "controls": [
+          "5.31"
+        ]
+      },
+      "check_questions": [
+        "Q13",
+        "Q19"
+      ]
+    },
+    {
+      "id": "L5",
+      "domain": "D2",
+      "title": "Clause 5: leadership",
+      "minutes": 6,
+      "intro": "Clause 5 makes top management responsible for the ISMS. It cannot be handed off entirely to the IT department.",
+      "sections": [
+        {
+          "heading": "5.1 Leadership and commitment",
+          "body": [
+            "Top management must show leadership. Examples in the standard include making sure the policy and objectives fit the organisation's strategy, building ISMS requirements into business processes, providing resources, communicating why security matters, making sure the ISMS achieves its outcomes, and supporting other managers in their roles.",
+            "Top management means the person or group who directs and controls the organisation at the highest level, such as the board or executive team."
+          ]
+        },
+        {
+          "heading": "5.2 Policy",
+          "body": [
+            "Top management sets the information security policy. It must suit the organisation's purpose, include objectives or a framework for setting them, commit to meeting applicable requirements, and commit to continual improvement.",
+            "The policy must be documented, communicated within the organisation and available to interested parties as appropriate. Topic-specific policies, such as access control or backup, sit under it and relate to control 5.1."
+          ]
+        },
+        {
+          "heading": "5.3 Roles, responsibilities and authorities",
+          "body": [
+            "Top management makes sure security roles are assigned and communicated. It must assign two things specifically: responsibility for making sure the ISMS conforms to ISO 27001, and responsibility for reporting ISMS performance to top management.",
+            "Top management can assign the work. It keeps the accountability."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Evidence of commitment",
+        "text": "An auditor asks the CEO how they support the ISMS. Good evidence includes signed policy, a budget line for security, minutes of management reviews the CEO chaired, and objectives that appear in business plans. A CEO who says 'IT handles that' is a warning sign."
+      },
+      "exam_tips": [
+        "The policy is set by top management, not the CISO alone.",
+        "Look for 'assign responsibility and authority' as the 5.3 answer."
+      ],
+      "related": {
+        "clauses": [
+          "5"
+        ],
+        "controls": [
+          "5.1",
+          "5.2",
+          "5.4"
+        ]
+      },
+      "check_questions": [
+        "Q9",
+        "Q20"
+      ]
+    },
+    {
+      "id": "L6",
+      "domain": "D2",
+      "title": "Clause 6: planning and risk",
+      "minutes": 10,
+      "intro": "Clause 6 is the heart of ISO 27001. It requires a repeatable risk assessment, a risk treatment process, a Statement of Applicability, objectives and planned changes.",
+      "sections": [
+        {
+          "heading": "6.1.1 Risks and opportunities",
+          "body": [
+            "When planning the ISMS, consider the issues from 4.1 and requirements from 4.2. Then plan actions for the risks and opportunities that could stop the ISMS achieving its outcomes. This is about risks to the ISMS itself, such as losing the project sponsor."
+          ]
+        },
+        {
+          "heading": "6.1.2 Risk assessment",
+          "body": [
+            "Define and apply a risk assessment process. It must:"
+          ],
+          "points": [
+            "Set risk criteria, including risk acceptance criteria and criteria for performing assessments.",
+            "Produce consistent, valid and comparable results when repeated.",
+            "Identify risks to confidentiality, integrity and availability within the scope.",
+            "Identify a risk owner for each risk.",
+            "Analyse the potential consequences and the realistic likelihood, and set risk levels.",
+            "Evaluate risks against the criteria and prioritise them for treatment."
+          ]
+        },
+        {
+          "heading": "6.1.3 Risk treatment",
+          "body": [
+            "Choose treatment options, determine all the controls needed, and compare them with Annex A to check nothing necessary is missed. Then produce a Statement of Applicability, write a risk treatment plan, and get risk owners to approve the plan and accept the residual risk.",
+            "Controls can come from any source. Annex A is a cross-check, not a mandatory menu."
+          ]
+        },
+        {
+          "heading": "6.2 Objectives",
+          "body": [
+            "Set information security objectives at relevant functions and levels. They must be consistent with the policy, measurable where practicable, take account of requirements and risk results, be monitored, communicated and updated. Plan what will be done, with what resources, by whom, by when, and how results will be evaluated."
+          ]
+        },
+        {
+          "heading": "6.3 Planning of changes",
+          "body": [
+            "New in 2022. When the ISMS needs to change, carry out the change in a planned way."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A measurable objective",
+        "text": "Weak: 'Improve security awareness.' Strong: '95% of staff complete phishing awareness training by 31 March, and the click rate in quarterly phishing tests falls below 5% by year end.' The strong version says what, how much and by when, so it can be monitored."
+      },
+      "exam_tips": [
+        "Consistent, valid and comparable is a favourite exam phrase.",
+        "Risk owners approve the treatment plan and accept residual risk.",
+        "The two criteria in 6.1.2 are risk acceptance criteria and criteria for performing assessments."
+      ],
+      "related": {
+        "clauses": [
+          "6"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q21",
+        "Q22",
+        "Q24",
+        "Q10"
+      ]
+    },
+    {
+      "id": "L7",
+      "domain": "D2",
+      "title": "Clause 7: support",
+      "minutes": 8,
+      "intro": "Clause 7 covers what the ISMS needs to run: people, skills, awareness, communication and controlled documents.",
+      "sections": [
+        {
+          "heading": "7.1 Resources and 7.2 Competence",
+          "body": [
+            "Provide the resources the ISMS needs. For competence, decide what competence each role affecting security needs, make sure people have it through education, training or experience, act to close gaps, and check those actions worked.",
+            "Keep documented evidence of competence, such as training records, certificates or CVs."
+          ]
+        },
+        {
+          "heading": "7.3 Awareness",
+          "body": [
+            "Everyone working under the organisation's control must be aware of three things:"
+          ],
+          "points": [
+            "The information security policy.",
+            "Their contribution to the ISMS, including the benefits of better security performance.",
+            "What happens if they do not conform to ISMS requirements."
+          ]
+        },
+        {
+          "heading": "7.4 Communication",
+          "body": [
+            "Decide what to communicate, when, with whom and how. Internal examples include policy updates and incident alerts. External examples include customer notifications and reports to regulators. A communication matrix is a common way to record this."
+          ]
+        },
+        {
+          "heading": "7.5 Documented information",
+          "body": [
+            "Documented information means information you must control and maintain, and the medium it is held on. It replaced the older terms 'documents' and 'records'.",
+            "You need the documented information ISO 27001 requires plus whatever you decide is necessary. When you create or update it, make sure it is identified, in a suitable format and reviewed and approved. Then control distribution, access, storage, version control, retention and disposal. This includes documents from outside, such as supplier contracts."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Competence versus awareness",
+        "text": "A new firewall administrator needs competence: training on the firewall product and change process, with records kept. Every member of staff needs awareness: they know the policy exists, why it matters to them, and what happens if they ignore it."
+      },
+      "exam_tips": [
+        "Awareness has three points. Learn them as a set.",
+        "Version control, retention and disposal all sit under 7.5."
+      ],
+      "related": {
+        "clauses": [
+          "7"
+        ],
+        "controls": [
+          "6.3",
+          "5.37"
+        ]
+      },
+      "check_questions": [
+        "Q31",
+        "Q36"
+      ]
+    },
+    {
+      "id": "L8",
+      "domain": "D2",
+      "title": "Clause 8: operation",
+      "minutes": 5,
+      "intro": "Clause 8 is where plans become routine. You run the processes, repeat risk assessments and carry out the treatment plan.",
+      "sections": [
+        {
+          "heading": "8.1 Operational planning and control",
+          "body": [
+            "Plan, implement and control the processes needed to meet requirements and carry out the actions from clause 6. Set criteria for those processes and run them to those criteria.",
+            "Keep documented information to show processes ran as planned. Control planned changes and review the consequences of unintended changes. Control externally provided processes, products or services that are relevant to the ISMS, such as outsourced IT."
+          ]
+        },
+        {
+          "heading": "8.2 Risk assessment in operation",
+          "body": [
+            "Perform risk assessments at planned intervals and when significant changes are proposed or occur. Keep the results."
+          ]
+        },
+        {
+          "heading": "8.3 Risk treatment in operation",
+          "body": [
+            "Implement the risk treatment plan. Keep the results."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Triggers for a new risk assessment",
+        "text": "Your annual risk assessment is in January. In June the company moves its email to a new cloud provider. That is a significant change, so you assess the risk then, not next January."
+      },
+      "exam_tips": [
+        "Two triggers for risk assessment: planned intervals and significant change.",
+        "Clause 6 plans the risk work. Clause 8 does it and keeps the results."
+      ],
+      "related": {
+        "clauses": [
+          "8"
+        ],
+        "controls": [
+          "8.32",
+          "5.19"
+        ]
+      },
+      "check_questions": [
+        "Q32"
+      ]
+    },
+    {
+      "id": "L9",
+      "domain": "D2",
+      "title": "Annex A and ISO/IEC 27002",
+      "minutes": 9,
+      "intro": "Annex A is the control list you cross-check against. ISO/IEC 27002 explains each control. This lesson shows how they fit together.",
+      "sections": [
+        {
+          "heading": "The four themes",
+          "body": [],
+          "points": [
+            "5 Organizational controls (37): policies, roles, assets, access, suppliers, incidents, continuity, compliance.",
+            "6 People controls (8): screening, employment terms, training, discipline, remote working, event reporting.",
+            "7 Physical controls (14): perimeters, entry, monitoring, equipment, media, utilities, disposal.",
+            "8 Technological controls (34): endpoints, access, malware, vulnerabilities, logging, networks, cryptography, development."
+          ]
+        },
+        {
+          "heading": "Annex A is not a mandatory checklist",
+          "body": [
+            "You do not have to implement all 93 controls. You decide which controls your risks need, then compare with Annex A to check you have not missed any. Every Annex A control must appear in the Statement of Applicability with a decision: included and why, or excluded and why."
+          ]
+        },
+        {
+          "heading": "What ISO/IEC 27002 adds",
+          "body": [
+            "For each control, 27002 gives a purpose and implementation guidance. It also tags each control with five attributes so you can filter and report on them:"
+          ],
+          "points": [
+            "Control type: preventive, detective, corrective.",
+            "Information security properties: confidentiality, integrity, availability.",
+            "Cybersecurity concepts: identify, protect, detect, respond, recover.",
+            "Operational capabilities: for example governance, asset management, identity and access management.",
+            "Security domains: governance and ecosystem, protection, defence, resilience."
+          ]
+        },
+        {
+          "heading": "The 11 new controls",
+          "body": [
+            "5.7 Threat intelligence, 5.23 Cloud services, 5.30 ICT readiness for business continuity, 7.4 Physical security monitoring, 8.9 Configuration management, 8.10 Information deletion, 8.11 Data masking, 8.12 Data leakage prevention, 8.16 Monitoring activities, 8.23 Web filtering, 8.28 Secure coding.",
+            "Use the Annex A screen and the flashcards to learn these."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Matching a control to a risk",
+        "text": "Risk: developers copy live customer data into the test system. Relevant controls: 8.31 separation of development, test and production, 8.33 test information, and 8.11 data masking."
+      },
+      "exam_tips": [
+        "114 controls was the 2013 figure. 93 is the 2022 figure.",
+        "The five cybersecurity concepts match the NIST Cybersecurity Framework functions."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "5.7",
+          "5.23",
+          "5.30",
+          "7.4",
+          "8.9",
+          "8.10",
+          "8.11",
+          "8.12",
+          "8.16",
+          "8.23",
+          "8.28"
+        ]
+      },
+      "check_questions": [
+        "Q7",
+        "Q8",
+        "Q11",
+        "Q12",
+        "Q15",
+        "Q16"
+      ]
+    },
+    {
+      "id": "L10",
+      "domain": "D2",
+      "title": "Mandatory documented information",
+      "minutes": 5,
+      "intro": "Auditors start with documents. Know which ones ISO 27001 explicitly requires and which clause asks for each.",
+      "sections": [
+        {
+          "heading": "Documents that define the ISMS",
+          "body": [],
+          "points": [
+            "ISMS scope (4.3).",
+            "Information security policy (5.2).",
+            "Risk assessment process (6.1.2).",
+            "Risk treatment process (6.1.3).",
+            "Statement of Applicability (6.1.3 d).",
+            "Information security objectives (6.2)."
+          ]
+        },
+        {
+          "heading": "Records that prove it works",
+          "body": [],
+          "points": [
+            "Evidence of competence (7.2).",
+            "Evidence that processes ran as planned (8.1).",
+            "Risk assessment results (8.2).",
+            "Risk treatment results (8.3).",
+            "Monitoring and measurement results (9.1).",
+            "Audit programme and audit results (9.2).",
+            "Management review results (9.3).",
+            "Nonconformities, actions taken and results of corrective action (10.2)."
+          ]
+        },
+        {
+          "heading": "The risk treatment plan",
+          "body": [
+            "Most certification bodies treat the risk treatment plan as mandatory. The standard requires documented information about the risk treatment process (6.1.3) and its results (8.3)."
+          ]
+        },
+        {
+          "heading": "Everything else",
+          "body": [
+            "Clause 7.5.1 b lets you add any documented information you decide is necessary. Many Annex A controls also expect documents, such as documented operating procedures (5.37). Those are needed when the control is in your SoA."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Spot the extra",
+        "text": "Which is not explicitly required by clauses 4 to 10: the ISMS scope, the security objectives, a network diagram, or management review results? The network diagram. It is useful, but no clause requires it."
+      },
+      "exam_tips": [
+        "Use the Documents checklist in Learn to test yourself on item and clause together."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "Q14"
+      ]
+    },
+    {
+      "id": "L11",
+      "domain": "D3",
+      "title": "Starting the ISMS project",
+      "minutes": 8,
+      "intro": "This lesson begins the implementation journey. Before any risk work starts, a Lead Implementer sets up the project properly.",
+      "sections": [
+        {
+          "heading": "Project charter",
+          "body": [
+            "The charter authorises the ISMS project. It usually states objectives, scope, sponsor, roles, resources, budget, milestones and how progress will be reported. It gives the project manager formal authority."
+          ]
+        },
+        {
+          "heading": "Management commitment",
+          "body": [
+            "Secure commitment early. Top management needs to understand the business case, such as customer demand for certification, regulatory pressure or reduced incident cost. Without commitment you will not get resources or decisions."
+          ]
+        },
+        {
+          "heading": "Interested parties",
+          "body": [
+            "Start identifying interested parties and their requirements. This feeds the scope and later clause 4.2 work."
+          ]
+        },
+        {
+          "heading": "Gap analysis",
+          "body": [
+            "Compare current practice with the requirements of ISO 27001 and, often, with Annex A. The output shows what exists, what is partial and what is missing. It shapes the project plan, budget and timeline.",
+            "A gap analysis does not certify anything and does not replace the risk assessment."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Gap analysis output",
+        "text": "A gap analysis finds a security policy exists but has not been reviewed in three years, there is no risk assessment method, and access reviews happen informally. The plan schedules a policy review, a risk methodology workshop and a formal access review process."
+      },
+      "exam_tips": [
+        "The main purpose of a gap analysis is comparing current state with the standard.",
+        "TRECCERT's implementation outline starts with charter, commitment, interested parties, gap analysis."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "Q18",
+        "Q25",
+        "Q23"
+      ]
+    },
+    {
+      "id": "L12",
+      "domain": "D3",
+      "title": "Scope, policy, objectives and risk approach",
+      "minutes": 9,
+      "intro": "The establishment phase turns the project into an ISMS design. You set scope, policy and objectives, choose a risk method, plan the work and get sign-off.",
+      "sections": [
+        {
+          "heading": "Context and scope",
+          "body": [
+            "Use the clause 4 outputs to draft the scope. Agree it with top management. Avoid a scope so narrow it means nothing to customers, or so wide the project cannot finish."
+          ]
+        },
+        {
+          "heading": "Policy and objectives",
+          "body": [
+            "Draft the information security policy for top management to approve. Set objectives that are measurable where practicable and linked to the policy and risk results."
+          ]
+        },
+        {
+          "heading": "Risk assessment approach",
+          "body": [
+            "Choose a method that gives consistent, valid and comparable results. ISO/IEC 27005:2022 describes two ways to identify risks:"
+          ],
+          "points": [
+            "Asset-based: list assets, then the threats and vulnerabilities for each.",
+            "Event-based: start from risk scenarios or events, often at a strategic level, without listing every asset."
+          ]
+        },
+        {
+          "heading": "Risk criteria",
+          "body": [
+            "Define how you score likelihood and consequence, for example 1 to 5 each, and how scores combine into a risk level. Set the acceptance criteria: the level at or below which a risk owner can accept a risk without further treatment. Write these down before you assess, so results are comparable."
+          ]
+        },
+        {
+          "heading": "Implementation plan and authorisation",
+          "body": [
+            "Create an implementation plan with tasks, owners, dates and resources. Then obtain formal management authorisation. Sign-off confirms commitment and resources, and is evidence of leadership under clause 5.1."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A simple risk matrix",
+        "text": "Likelihood 1 to 5 multiplied by consequence 1 to 5 gives a score from 1 to 25. Criteria: 1 to 6 low, accept; 8 to 12 medium, treat or accept with risk owner sign-off; 15 to 25 high, must treat. A risk scored likelihood 4, consequence 4 is 16, so it is high and must be treated."
+      },
+      "exam_tips": [
+        "The method must give repeatable results. A method that depends on who runs it fails 6.1.2.",
+        "Management authorisation is not an Annex A control. It shows commitment and releases resources."
+      ],
+      "related": {
+        "clauses": [
+          "6"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q19",
+        "Q22",
+        "Q24",
+        "Q23"
+      ]
+    },
+    {
+      "id": "L13",
+      "domain": "D4",
+      "title": "Risk treatment and the Statement of Applicability",
+      "minutes": 10,
+      "intro": "Risk treatment decides what you do about each risk. The Statement of Applicability records which controls you chose and why.",
+      "sections": [
+        {
+          "heading": "The four treatment options",
+          "body": [
+            "These are commonly taught as four options, from the 2018 edition of ISO/IEC 27005:"
+          ],
+          "points": [
+            "Modify: apply controls to reduce likelihood or consequence.",
+            "Retain: accept the risk as it is, within the acceptance criteria.",
+            "Avoid: stop the activity that causes the risk.",
+            "Share: pass part of the consequence to another party, for example through insurance or a contract."
+          ]
+        },
+        {
+          "heading": "Choosing controls",
+          "body": [
+            "For risks you modify, determine every control needed. Draw on any source: 27002, industry frameworks or your own design. Then compare your list with all 93 Annex A controls to check nothing necessary is missing."
+          ]
+        },
+        {
+          "heading": "Statement of Applicability",
+          "body": [
+            "The SoA lists:"
+          ],
+          "points": [
+            "The necessary controls.",
+            "Why each is included.",
+            "Whether each is implemented.",
+            "Why any Annex A control is excluded."
+          ]
+        },
+        {
+          "heading": "Risk treatment plan and residual risk",
+          "body": [
+            "The risk treatment plan sets out actions, owners, resources and dates. Risk owners approve it and accept the residual risk, which is the risk left after treatment."
+          ]
+        },
+        {
+          "heading": "Worked flow",
+          "body": [],
+          "points": [
+            "Risk: laptop theft exposes customer data. Likelihood 3, consequence 4, score 12, medium.",
+            "Option: modify.",
+            "Controls: 8.1 user end point devices (full disk encryption), 8.24 use of cryptography, 6.7 remote working.",
+            "Residual score after controls: likelihood 3, consequence 1, score 3, low.",
+            "Risk owner signs the plan and accepts the residual risk."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Excluding a control",
+        "text": "A fully remote firm with no offices excludes 7.1 physical security perimeters. The SoA justification reads: 'No company premises. Home working risks are covered by 6.7 Remote working and 7.9 Security of assets off-premises.'"
+      },
+      "exam_tips": [
+        "Insurance is sharing. Stopping a service is avoiding. Accepting is retaining.",
+        "The SoA covers all 93 Annex A controls, not only the implemented ones."
+      ],
+      "related": {
+        "clauses": [
+          "6",
+          "8"
+        ],
+        "controls": [
+          "8.1",
+          "8.24",
+          "6.7",
+          "7.9"
+        ]
+      },
+      "check_questions": [
+        "Q26",
+        "Q27",
+        "Q28",
+        "Q29",
+        "Q30"
+      ]
+    },
+    {
+      "id": "L14",
+      "domain": "D4",
+      "title": "Implementing controls and running the ISMS",
+      "minutes": 9,
+      "intro": "Implementation turns the treatment plan into working controls, trained people and controlled documents.",
+      "sections": [
+        {
+          "heading": "Policies and procedures",
+          "body": [
+            "Write topic-specific policies where controls need them, such as access control, backup or acceptable use. Write procedures for repeatable tasks. Keep documents short enough that people follow them."
+          ]
+        },
+        {
+          "heading": "People",
+          "body": [
+            "Screen staff in proportion to risk (6.1). Put security responsibilities in contracts (6.2). Train staff and refresh it regularly (6.3). Make sure there is a disciplinary process (6.4). Recover assets when people leave (5.11) and remove their access (5.18)."
+          ]
+        },
+        {
+          "heading": "Competence, awareness and communication",
+          "body": [
+            "Run an awareness programme for everyone and targeted training for key roles. Keep records. Follow the communication plan from 7.4."
+          ]
+        },
+        {
+          "heading": "Operating the ISMS",
+          "body": [
+            "Once controls are live, the ISMS has to run as routine. Typical operating processes include access reviews, patching, backup tests, supplier reviews, incident handling and change management. Each needs an owner and evidence that it happens."
+          ]
+        },
+        {
+          "heading": "Incident management",
+          "body": [
+            "Plan roles and procedures (5.24). Staff report events (6.8). Assess whether an event is an incident (5.25). Respond (5.26). Learn from it (5.27). Collect evidence properly when needed (5.28)."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A leaver process",
+        "text": "HR tells IT the leaving date. On the last day IT disables the accounts, and the manager collects the laptop and badge. HR reminds the leaver of their confidentiality duties. This one process uses controls 5.11, 5.18, 6.5 and 6.6."
+      },
+      "exam_tips": [
+        "Scenario questions often ask which control fits best. Use the Annex A search to check control names."
+      ],
+      "related": {
+        "clauses": [
+          "7",
+          "8"
+        ],
+        "controls": [
+          "5.11",
+          "5.18",
+          "6.1",
+          "6.3",
+          "5.24",
+          "5.26",
+          "5.23"
+        ]
+      },
+      "check_questions": [
+        "Q33",
+        "Q34",
+        "Q35",
+        "Q36"
+      ]
+    },
+    {
+      "id": "L15",
+      "domain": "D5",
+      "title": "Monitoring and measurement",
+      "minutes": 6,
+      "intro": "You cannot show the ISMS works without measuring it. Clause 9.1 sets out what you must decide.",
+      "sections": [
+        {
+          "heading": "What 9.1 requires",
+          "body": [
+            "Decide:"
+          ],
+          "points": [
+            "What to monitor and measure, including processes and controls.",
+            "Which methods give valid results. The 2022 edition notes results should be comparable and reproducible.",
+            "When to monitor and measure.",
+            "Who does it.",
+            "When results are analysed and evaluated.",
+            "Who analyses and evaluates them."
+          ]
+        },
+        {
+          "heading": "Good metrics",
+          "body": [
+            "A useful metric is specific, measurable and linked to an objective or control. 'Percentage of critical patches applied within 14 days' is useful. 'Security is good' is not."
+          ]
+        },
+        {
+          "heading": "Evaluate both performance and effectiveness",
+          "body": [
+            "You evaluate the security performance and the effectiveness of the ISMS. Keep the results as evidence. ISO/IEC 27004 gives guidance on designing measures."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A metric set",
+        "text": "Objective: reduce phishing risk. Measures: training completion rate, phishing test click rate, number of reported suspicious emails. Collected monthly by the security team. Analysed quarterly by the ISMS manager. Reported to management review."
+      },
+      "exam_tips": [
+        "Know the 'what, how, when, who' structure of 9.1.",
+        "27004 is the measurement guidance standard."
+      ],
+      "related": {
+        "clauses": [
+          "9"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q41",
+        "Q43",
+        "Q54"
+      ]
+    },
+    {
+      "id": "L16",
+      "domain": "D5",
+      "title": "Internal audit",
+      "minutes": 8,
+      "intro": "Internal audit checks that the ISMS meets your own requirements and ISO 27001, and that it works in practice.",
+      "sections": [
+        {
+          "heading": "What 9.2 requires",
+          "body": [
+            "Carry out internal audits at planned intervals. Check that the ISMS conforms to the organisation's own requirements and to ISO 27001, and that it is effectively implemented and maintained."
+          ]
+        },
+        {
+          "heading": "The audit programme",
+          "body": [
+            "Plan a programme covering frequency, methods, responsibilities, planning requirements and reporting. Take into account the importance of the processes and the results of previous audits. Define the criteria and scope of each audit."
+          ]
+        },
+        {
+          "heading": "Objectivity and impartiality",
+          "body": [
+            "Choose auditors who are objective and impartial. They do not need to be external. They must not audit their own work."
+          ]
+        },
+        {
+          "heading": "Running an audit",
+          "body": [
+            "ISO 19011 and ISO/IEC 27007 give guidance. A typical audit has these stages: plan, opening meeting, gather evidence through interviews, document review and observation, record findings, closing meeting, report, follow-up.",
+            "Report results to relevant management and keep evidence of the programme and the results."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A small company",
+        "text": "A 40-person firm has one security manager. They cannot audit the security processes they run. The firm uses its finance manager, who is trained in auditing, to audit security. The security manager audits HR processes instead."
+      },
+      "exam_tips": [
+        "Objective and impartial does not mean external.",
+        "Programme planning considers process importance and previous results."
+      ],
+      "related": {
+        "clauses": [
+          "9"
+        ],
+        "controls": [
+          "5.35",
+          "8.34"
+        ]
+      },
+      "check_questions": [
+        "Q37",
+        "Q52",
+        "Q53",
+        "Q56",
+        "Q57"
+      ]
+    },
+    {
+      "id": "L17",
+      "domain": "D5",
+      "title": "Management review",
+      "minutes": 6,
+      "intro": "Management review is where top management looks at the evidence and decides what to change.",
+      "sections": [
+        {
+          "heading": "Who and when",
+          "body": [
+            "Top management reviews the ISMS at planned intervals to make sure it remains suitable, adequate and effective."
+          ]
+        },
+        {
+          "heading": "Inputs",
+          "body": [],
+          "points": [
+            "Status of actions from previous reviews.",
+            "Changes in external and internal issues.",
+            "Changes in the needs and expectations of interested parties (added in 2022).",
+            "Feedback on security performance: nonconformities and corrective actions, monitoring results, audit results, objectives.",
+            "Feedback from interested parties.",
+            "Results of risk assessment and status of the risk treatment plan.",
+            "Opportunities for continual improvement."
+          ]
+        },
+        {
+          "heading": "Outputs",
+          "body": [
+            "Decisions on continual improvement opportunities and any need for changes to the ISMS. Keep documented evidence of the results."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A review agenda",
+        "text": "Item 1: actions from the last review. Item 2: new regulation on the horizon. Item 3: audit findings and corrective actions. Item 4: objective scorecard. Item 5: top risks and treatment status. Item 6: improvement proposals and decisions."
+      },
+      "exam_tips": [
+        "Management review is run by top management, not internal audit.",
+        "An agenda that mirrors the input list is good evidence."
+      ],
+      "related": {
+        "clauses": [
+          "9"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q38",
+        "Q42",
+        "Q51"
+      ]
+    },
+    {
+      "id": "L18",
+      "domain": "D5",
+      "title": "Certification audits",
+      "minutes": 7,
+      "intro": "A Lead Implementer prepares the organisation for external certification. Know the stages and what happens to findings.",
+      "sections": [
+        {
+          "heading": "Who certifies",
+          "body": [
+            "An accredited certification body audits against ISO 27001 and follows ISO/IEC 27006-1. In the UK, UKAS accredits certification bodies."
+          ]
+        },
+        {
+          "heading": "Stage 1",
+          "body": [
+            "The certification body reviews documentation and readiness. It looks at scope, policy, risk process, SoA and whether internal audit and management review have run. It decides whether you are ready for Stage 2."
+          ]
+        },
+        {
+          "heading": "Stage 2",
+          "body": [
+            "The certification body checks the ISMS is implemented and effective in practice. Auditors interview staff, sample records and observe controls."
+          ]
+        },
+        {
+          "heading": "Findings",
+          "body": [],
+          "points": [
+            "Major nonconformity: a requirement is not met in a way that puts the ISMS's outcomes in doubt. Certification is withheld until the certification body accepts the correction and corrective action.",
+            "Minor nonconformity: a lapse that does not undermine the system. You submit a corrective action plan, and the next audit checks it.",
+            "Opportunity for improvement: a suggestion, not a failure."
+          ]
+        },
+        {
+          "heading": "The three-year cycle",
+          "body": [
+            "The certificate lasts three years. Surveillance audits take place at least annually in years two and three. A recertification audit takes place before expiry."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A Stage 2 finding",
+        "text": "The SoA says access reviews are quarterly. The auditor finds none have happened for nine months. That is likely a major nonconformity, because a key control is not operating. Certification waits until it is fixed and evidence is accepted."
+      },
+      "exam_tips": [
+        "Stage 1 is documents and readiness. Stage 2 is implementation and effectiveness."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "Q39",
+        "Q40",
+        "Q55"
+      ]
+    },
+    {
+      "id": "L19",
+      "domain": "D6",
+      "title": "Nonconformity and corrective action",
+      "minutes": 8,
+      "intro": "When something goes wrong, ISO 27001 wants you to fix it and stop it happening again.",
+      "sections": [
+        {
+          "heading": "Correction versus corrective action",
+          "body": [
+            "Correction fixes the immediate problem. Corrective action removes the root cause so it does not recur. Exams test this difference often."
+          ]
+        },
+        {
+          "heading": "What 10.2 requires",
+          "body": [],
+          "points": [
+            "React: control and correct it, and deal with the consequences.",
+            "Evaluate the need for action: review it, find the cause, and check whether similar nonconformities exist or could occur.",
+            "Implement any action needed.",
+            "Review the effectiveness of the corrective action.",
+            "Change the ISMS if needed.",
+            "Keep documented evidence of the nonconformity, actions taken and results."
+          ]
+        },
+        {
+          "heading": "Root cause analysis",
+          "body": [
+            "Common techniques include the 5 Whys and the Ishikawa (fishbone) diagram. The standard does not require a specific technique. The aim is to find the system cause, not to blame a person."
+          ]
+        },
+        {
+          "heading": "Preventive action",
+          "body": [
+            "ISO 27001:2013 removed the separate preventive action clause. Risk-based planning in clause 6 now does that job. TRECCERT's outline still uses the phrase 'corrective and preventive actions'."
+          ]
+        }
+      ],
+      "example": {
+        "title": "5 Whys",
+        "text": "Finding: a leaver's account was still active after three weeks. Why? IT was not told. Why? HR emailed one person, who was on leave. Why? No shared mailbox or ticket was used. Why? The leaver process was never documented. Correction: disable the account. Corrective action: document the process, use a ticket queue, and check leaver accounts monthly."
+      },
+      "exam_tips": [
+        "Fixing it today is correction. Stopping it recurring is corrective action.",
+        "Effectiveness review is required, not optional."
+      ],
+      "related": {
+        "clauses": [
+          "10"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "Q44",
+        "Q45",
+        "Q48",
+        "Q50"
+      ]
+    },
+    {
+      "id": "L20",
+      "domain": "D6",
+      "title": "Continual improvement",
+      "minutes": 5,
+      "intro": "The final lesson closes the loop. An ISMS is never finished.",
+      "sections": [
+        {
+          "heading": "10.1 Continual improvement",
+          "body": [
+            "Continually improve the suitability, adequacy and effectiveness of the ISMS. In the 2022 edition, this subclause comes before nonconformity and corrective action."
+          ]
+        },
+        {
+          "heading": "Where improvements come from",
+          "body": [],
+          "points": [
+            "Management review decisions.",
+            "Audit findings and opportunities for improvement.",
+            "Incidents and lessons learned (5.27).",
+            "Monitoring results and missed objectives.",
+            "Changes in threats, technology or business."
+          ]
+        },
+        {
+          "heading": "Communicating improvements",
+          "body": [
+            "Tell the people affected what changed and why. This supports awareness under 7.3 and makes it more likely the change sticks."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Closing the loop",
+        "text": "Monitoring shows phishing click rates have stopped falling. Management review approves a new reporting button and shorter monthly training. The change is planned under 6.3, communicated under 7.4, and measured again next quarter."
+      },
+      "exam_tips": [
+        "Suitability, adequacy and effectiveness: learn the three words together.",
+        "Clause 10 maps to Act in the PDCA convention."
+      ],
+      "related": {
+        "clauses": [
+          "10"
+        ],
+        "controls": [
+          "5.27"
+        ]
+      },
+      "check_questions": [
+        "Q46",
+        "Q47",
+        "Q49"
+      ]
+    }
+  ],
   "flashcards": [
     {
       "front": "How many controls are in ISO 27001:2022 Annex A?",

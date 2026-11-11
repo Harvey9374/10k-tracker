@@ -72,7 +72,7 @@ export default function App() {
     <ProgressProvider>
       <main className={examActive ? 'screen exam' : 'screen'}>
         {route === 'home' && <Home pack={pack} deck={deck} />}
-        {route === 'learn' && <Learn pack={pack} initialTab={loc.params.get('tab')} />}
+        {route === 'learn' && <Learn pack={pack} initialTab={loc.params.get('tab')} lessonId={loc.params.get('lesson')} />}
         {route === 'cards' && <Flashcards pack={pack} deck={deck} />}
         {route === 'quiz' && <Quiz pack={pack} preset={loc.params.get('d')} />}
         {route === 'mock' && <Mock pack={pack} onActiveChange={setExamActive} />}

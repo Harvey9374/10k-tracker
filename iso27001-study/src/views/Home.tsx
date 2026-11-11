@@ -2,6 +2,7 @@ import type { Card, StudyPack } from '../types'
 import { isDue, streak, useProgress } from '../lib/progress'
 import { pct } from '../lib/util'
 import { go } from '../App'
+import { nextLesson } from './Lessons'
 
 export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
   const { progress } = useProgress()
@@ -21,6 +22,9 @@ export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
       return a.acc - b.acc // weakest first
     })
   const lastMock = progress.mocks[progress.mocks.length - 1]
+  const lessons = pack.lessons ?? []
+  const lessonsDone = lessons.filter((l) => progress.lessons[l.id]).length
+  const next = nextLesson(pack, progress.lessons)
 
   return (
     <>
@@ -28,6 +32,20 @@ export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
         <p className="eyebrow">{pack.meta.target_exam}</p>
         <h1>Your study</h1>
       </header>
+
+      {lessons.length > 0 && (
+        <button
+          className="continue"
+          onClick={() => go('learn', next ? { lesson: next.id } : { tab: 'lessons' })}
+        >
+          <span className="eyebrow">{next ? (lessonsDone ? 'Continue learning' : 'Start here') : 'Course complete'}</span>
+          <span className="continue-title">
+            {next ? `Lesson ${lessons.indexOf(next) + 1}: ${next.title}` : 'Review any lesson'}
+          </span>
+          <span className="muted small">{lessonsDone} of {lessons.length} lessons complete</span>
+          <span className="bar"><span className="bar-fill good-bg" style={{ width: `${(lessonsDone / lessons.length) * 100}%` }} /></span>
+        </button>
+      )}
 
       <section className="stats">
         <div className="stat">
@@ -49,9 +67,7 @@ export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
       </section>
 
       <div className="actions">
-        <button className="btn primary" onClick={() => go('cards')}>
-          Study flashcards
-        </button>
+        <button className="btn" onClick={() => go('cards')}>Study flashcards</button>
         <button className="btn" onClick={() => go('quiz')}>Practice quiz</button>
         <button className="btn" onClick={() => go('mock')}>Mock exam</button>
         <button className="btn ghost" onClick={() => go('info')}>Exam information</button>

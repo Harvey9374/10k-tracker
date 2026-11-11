@@ -3,8 +3,10 @@ import type { InfoValue, StudyPack } from '../types'
 import { useProgress } from '../lib/progress'
 import { labelFor, stripNew } from '../lib/util'
 import { go } from '../App'
+import { LessonList, LessonView } from './Lessons'
 
 const TABS = [
+  { id: 'lessons', label: 'Lessons' },
   { id: 'domains', label: 'Domains' },
   { id: 'phases', label: 'Phases' },
   { id: 'clauses', label: 'Clauses' },
@@ -14,9 +16,25 @@ const TABS = [
 ] as const
 type Tab = (typeof TABS)[number]['id']
 
-export function Learn({ pack, initialTab }: { pack: StudyPack; initialTab: string | null }) {
+export function Learn({
+  pack,
+  initialTab,
+  lessonId,
+}: {
+  pack: StudyPack
+  initialTab: string | null
+  lessonId: string | null
+}) {
   const valid = TABS.some((t) => t.id === initialTab)
-  const [tab, setTab] = useState<Tab>(valid ? (initialTab as Tab) : 'domains')
+  const [tab, setTab] = useState<Tab>(valid ? (initialTab as Tab) : 'lessons')
+  const [lastTabParam, setLastTabParam] = useState(initialTab)
+  if (initialTab !== lastTabParam) {
+    setLastTabParam(initialTab)
+    if (valid) setTab(initialTab as Tab)
+  }
+
+  const lesson = lessonId ? pack.lessons?.find((l) => l.id === lessonId) : undefined
+  if (lesson) return <LessonView key={lesson.id} pack={pack} lesson={lesson} />
 
   return (
     <>
@@ -36,6 +54,7 @@ export function Learn({ pack, initialTab }: { pack: StudyPack; initialTab: strin
           </button>
         ))}
       </div>
+      {tab === 'lessons' && <LessonList pack={pack} />}
       {tab === 'domains' && <Domains pack={pack} />}
       {tab === 'phases' && <Phases pack={pack} />}
       {tab === 'clauses' && <Clauses pack={pack} />}
