@@ -91,11 +91,12 @@ export function Flashcards({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
           )}
         </button>
         {flipped && (
-          <div className="answer-buttons">
+          <div className="answer-buttons thumb">
             <button className="btn bad-btn" onClick={() => answer(false)}>Again</button>
             <button className="btn good-btn" onClick={() => answer(true)}>Got it</button>
           </div>
         )}
+        <div className="thumb-spacer" />
       </>
     )
   }

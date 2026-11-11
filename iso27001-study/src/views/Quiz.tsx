@@ -61,7 +61,7 @@ export function Quiz({ pack, preset }: { pack: StudyPack; preset: string | null 
           label={`${q.domain} ${domain?.name ?? ''}`}
         />
         {chosen !== undefined && (
-          <div className="actions sticky">
+          <div className="actions thumb">
             <button
               className="btn primary"
               onClick={() => {
@@ -73,6 +73,7 @@ export function Quiz({ pack, preset }: { pack: StudyPack; preset: string | null 
             </button>
           </div>
         )}
+        <div className="thumb-spacer" />
       </>
     )
   }

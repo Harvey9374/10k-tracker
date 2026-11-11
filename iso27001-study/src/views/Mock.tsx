@@ -200,6 +200,7 @@ export function Mock({ pack, onActiveChange }: { pack: StudyPack; onActiveChange
         <div className="actions">
           <button className="btn ghost" onClick={() => setConfirm(true)}>Submit exam</button>
         </div>
+        <div className="thumb-spacer" />
 
         {confirm && (
           <div className="modal-back" onClick={() => setConfirm(false)}>

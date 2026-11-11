@@ -47,7 +47,7 @@ export function Info({ pack }: { pack: StudyPack }) {
               const url = s.match(/^https?:\/\/\S+/)?.[0]
               return (
                 <li key={s} className="wrap">
-                  {url ? <a href={url} target="_blank" rel="noreferrer">{s}</a> : s}
+                  {url ? <a className="source-link" href={url} target="_blank" rel="noreferrer">{s}</a> : s}
                 </li>
               )
             })}
