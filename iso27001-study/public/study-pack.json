@@ -1,0 +1,1999 @@
+{
+  "meta": {
+    "title": "ISO/IEC 27001:2022 Lead Implementer Study Pack",
+    "target_exam": "TRECCERT ISO/IEC 27001 Lead Implementer (ANAB accredited)",
+    "exam_format": {
+      "questions": 150,
+      "type": "Multiple choice",
+      "duration_minutes": 180,
+      "pass_mark_percent": 60,
+      "delivery": "Online",
+      "certification_fee": "EUR 699",
+      "annual_maintenance_fee": "EUR 90",
+      "recertification_cycle_years": 3,
+      "book": "Closed book, online proctored",
+      "languages": [
+        "English",
+        "Italian",
+        "French",
+        "German",
+        "Spanish"
+      ],
+      "options_per_question": "Four options, one correct, no penalty for guessing",
+      "retake_included": false,
+      "retake_note": "Fee covers one attempt. Retakes cost extra; check the current price with TRECCERT.",
+      "triennial_maintenance_fee_alternative": "EUR 240",
+      "cpe_requirement": "90 CPE credits per 3-year cycle, minimum 30 per year"
+    },
+    "copyright_note": "All descriptions are paraphrased summaries for study. They are not the text of ISO/IEC 27001 or 27002. Buy the standard (BSI shop) for the authoritative wording.",
+    "sources": [
+      "https://treccert.com/certification-programs/information-security/iso-iec-27001-lead-implementer/",
+      "https://shop.treccert.com/products/iso-iec-27001-lead-implementer-certification-fee",
+      "https://treccert.com/wp-content/uploads/2026/06/TRECCERT-Candidate-Handbook-2.1.pdf",
+      "https://treccert.com/fileadmin/user_upload/6._ISOIEC_27001_Lead_Implementer_TCB-2024.pdf",
+      "https://classcentral.com/course/udemy-information-security-for-beginners-299473 (Aron Lange course listing)",
+      "https://www.dnv.com/news/2025/iso-iec-27701-standard-update-release/",
+      "https://ukas.com/resources/technical-bulletins/transition-to-iso-iec-27006-12024",
+      "Clause, control and terminology summaries: Claude training data, reviewed by two checking agents. Verify against the standard."
+    ],
+    "eligibility": {
+      "general_experience_years": 5,
+      "specific_experience_years": 2,
+      "implementation_hours": "400+",
+      "waivers": "Bachelor's degree waives 1 year of general experience; master's waives 2",
+      "evidence": "Experience Verification Form submitted after passing the exam",
+      "note": "Lower experience levels map to lower credential grades. Check the TRECCERT page for the current table."
+    }
+  },
+  "exam_domains": [
+    {
+      "id": "D1",
+      "name": "ISMS Fundamentals",
+      "covers": [
+        "Information security principles (confidentiality, integrity, availability)",
+        "ISMS concept and benefits",
+        "ISO 27000 family",
+        "Key vocabulary from ISO/IEC 27000",
+        "Laws, regulations and best practice"
+      ],
+      "weight_percent": 6.66
+    },
+    {
+      "id": "D2",
+      "name": "ISMS Requirements and Controls",
+      "covers": [
+        "Clauses 4 to 10 of ISO/IEC 27001",
+        "Annex A: 93 controls in 4 themes",
+        "ISO/IEC 27002 control attributes",
+        "Mandatory documented information"
+      ],
+      "weight_percent": 26.66
+    },
+    {
+      "id": "D3",
+      "name": "ISMS Initiation and Planning",
+      "covers": [
+        "Project charter",
+        "Management commitment",
+        "Interested parties",
+        "Gap analysis",
+        "Context and scope",
+        "Policy and objectives",
+        "Risk assessment approach",
+        "Implementation plan",
+        "Management authorisation"
+      ],
+      "weight_percent": 13.33
+    },
+    {
+      "id": "D4",
+      "name": "ISMS Implementation",
+      "covers": [
+        "Risk treatment",
+        "Statement of Applicability",
+        "Control implementation",
+        "Operating the ISMS",
+        "Resources, competence, awareness, communication",
+        "Documented information control"
+      ],
+      "weight_percent": 26.66
+    },
+    {
+      "id": "D5",
+      "name": "ISMS Evaluation",
+      "covers": [
+        "Monitoring, measurement, analysis and evaluation",
+        "Internal audit",
+        "Management review",
+        "Certification audit stages"
+      ],
+      "weight_percent": 26.66
+    },
+    {
+      "id": "D6",
+      "name": "ISMS Improvement",
+      "covers": [
+        "Nonconformity and corrective action",
+        "Root cause analysis",
+        "Continual improvement",
+        "Communicating improvements"
+      ],
+      "weight_percent": 13.33
+    }
+  ],
+  "implementation_phases": [
+    {
+      "phase": "Initiation",
+      "steps": [
+        "Develop the ISMS project charter",
+        "Ensure management commitment",
+        "Identify the interested parties",
+        "Conduct a gap analysis"
+      ]
+    },
+    {
+      "phase": "Establishment",
+      "steps": [
+        "Establish the context of the organization",
+        "Define the ISMS scope",
+        "Establish objectives, processes and procedures",
+        "Establish the ISMS policy",
+        "Define the risk assessment approach",
+        "Create the ISMS implementation plan",
+        "Obtain management authorisation"
+      ]
+    },
+    {
+      "phase": "Implementation and Operation",
+      "steps": [
+        "Risk treatment",
+        "Implement controls",
+        "Manage ISMS operations",
+        "Manage resources"
+      ]
+    },
+    {
+      "phase": "Monitor and Review",
+      "steps": [
+        "Monitor the ISMS",
+        "Conduct internal audits",
+        "Review the ISMS (management review)"
+      ]
+    },
+    {
+      "phase": "Maintenance and Improvement",
+      "steps": [
+        "Implement identified improvements",
+        "Corrective and preventive actions (TRECCERT outline wording; ISO 27001:2022 itself has no separate preventive action clause)",
+        "Communicate actions and improvements",
+        "Ensure continual improvement"
+      ]
+    }
+  ],
+  "standards_family": [
+    {
+      "id": "ISO/IEC 27000",
+      "summary": "Overview and vocabulary for the ISMS family. The source of definitions."
+    },
+    {
+      "id": "ISO/IEC 27001",
+      "summary": "The requirements standard. The only one in the family an organisation is certified against."
+    },
+    {
+      "id": "ISO/IEC 27002",
+      "summary": "Guidance on implementing the Annex A controls, including control attributes and purpose statements."
+    },
+    {
+      "id": "ISO/IEC 27003",
+      "summary": "Guidance on the ISMS requirements in clauses 4 to 10."
+    },
+    {
+      "id": "ISO/IEC 27004",
+      "summary": "Guidance on monitoring, measurement, analysis and evaluation."
+    },
+    {
+      "id": "ISO/IEC 27005",
+      "summary": "Guidance on information security risk management."
+    },
+    {
+      "id": "ISO/IEC 27006-1",
+      "summary": "Requirements for bodies that audit and certify ISMSs. Current edition 2024."
+    },
+    {
+      "id": "ISO/IEC 27007",
+      "summary": "Guidance on auditing an ISMS (builds on ISO 19011)."
+    },
+    {
+      "id": "ISO/IEC 27017",
+      "summary": "Security controls guidance for cloud services."
+    },
+    {
+      "id": "ISO/IEC 27018",
+      "summary": "Protecting personal data (PII) in public clouds acting as processors."
+    },
+    {
+      "id": "ISO/IEC 27701",
+      "summary": "Privacy information management. The 2025 edition is a standalone management system standard, so it can be certified without an ISO 27001 ISMS. The 2019 edition was an extension of 27001."
+    },
+    {
+      "id": "ISO 19011",
+      "summary": "Generic guidance for auditing any management system."
+    }
+  ],
+  "clauses": [
+    {
+      "clause": "4",
+      "title": "Context of the organization",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "4.1",
+          "title": "Understanding the organization and its context",
+          "summary": "Identify internal and external issues that affect the ability of the ISMS to achieve its outcomes. A 2024 amendment added that climate change must be considered as a possible relevant issue."
+        },
+        {
+          "id": "4.2",
+          "title": "Needs and expectations of interested parties",
+          "summary": "Identify interested parties, their relevant requirements, and which of those the ISMS will address. The 2024 amendment notes that interested parties can have climate-related requirements."
+        },
+        {
+          "id": "4.3",
+          "title": "Determining the scope of the ISMS",
+          "summary": "Set the boundaries of the ISMS using 4.1, 4.2, and the interfaces and dependencies with other organisations. The scope must be documented."
+        },
+        {
+          "id": "4.4",
+          "title": "Information security management system",
+          "summary": "Establish, implement, maintain and continually improve the ISMS, including the processes it needs and how they interact."
+        }
+      ]
+    },
+    {
+      "clause": "5",
+      "title": "Leadership",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "5.1",
+          "title": "Leadership and commitment",
+          "summary": "Top management must show commitment, for example by aligning the policy with strategy, integrating the ISMS into business processes, providing resources and supporting other managers."
+        },
+        {
+          "id": "5.2",
+          "title": "Policy",
+          "summary": "Top management sets an information security policy that suits the organisation's purpose, includes or frames objectives, commits to meeting requirements and to continual improvement. It must be documented, communicated and available to interested parties as appropriate."
+        },
+        {
+          "id": "5.3",
+          "title": "Organizational roles, responsibilities and authorities",
+          "summary": "Top management makes sure responsibilities and authorities for security-relevant roles are assigned and communicated. It must specifically assign who ensures the ISMS conforms to the standard and who reports ISMS performance to top management."
+        }
+      ]
+    },
+    {
+      "clause": "6",
+      "title": "Planning",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "6.1.1",
+          "title": "Actions to address risks and opportunities: general",
+          "summary": "Plan actions for risks and opportunities so the ISMS achieves its outcomes, prevents undesired effects and improves continually."
+        },
+        {
+          "id": "6.1.2",
+          "title": "Information security risk assessment",
+          "summary": "Define and apply a risk assessment process with criteria for risk acceptance and for performing assessments. Repeated assessments must give consistent, valid and comparable results. Identify risks to confidentiality, integrity and availability, assign risk owners, analyse consequences and likelihood, determine risk levels and evaluate against criteria. Keep the process documented."
+        },
+        {
+          "id": "6.1.3",
+          "title": "Information security risk treatment",
+          "summary": "Choose treatment options, determine the necessary controls, compare them with Annex A so nothing is missed, produce a Statement of Applicability, write a risk treatment plan, and get risk owners to approve the plan and accept residual risk. Keep the process documented."
+        },
+        {
+          "id": "6.2",
+          "title": "Information security objectives and planning to achieve them",
+          "summary": "Set measurable (where practicable) objectives consistent with the policy, monitored, communicated and updated. Plan what will be done, resources, who is responsible, completion dates and how results are evaluated."
+        },
+        {
+          "id": "6.3",
+          "title": "Planning of changes",
+          "summary": "New in 2022. Changes to the ISMS must be carried out in a planned way."
+        }
+      ]
+    },
+    {
+      "clause": "7",
+      "title": "Support",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "7.1",
+          "title": "Resources",
+          "summary": "Provide the resources needed for the ISMS."
+        },
+        {
+          "id": "7.2",
+          "title": "Competence",
+          "summary": "Determine required competence, ensure people are competent through education, training or experience, take action to close gaps, and keep evidence of competence."
+        },
+        {
+          "id": "7.3",
+          "title": "Awareness",
+          "summary": "People working under the organisation's control must know the policy, their contribution to the ISMS, and the consequences of not conforming."
+        },
+        {
+          "id": "7.4",
+          "title": "Communication",
+          "summary": "Decide what to communicate, when, with whom and how."
+        },
+        {
+          "id": "7.5",
+          "title": "Documented information",
+          "summary": "Include documented information required by the standard and that the organisation decides it needs. Control creation, updating, identification, format, review, approval, distribution, access, storage, version control, retention and disposal, including external documents."
+        }
+      ]
+    },
+    {
+      "clause": "8",
+      "title": "Operation",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "8.1",
+          "title": "Operational planning and control",
+          "summary": "Plan, implement and control the processes needed, set criteria for them, control planned changes, review unintended changes, and control externally provided processes, products or services relevant to the ISMS."
+        },
+        {
+          "id": "8.2",
+          "title": "Information security risk assessment",
+          "summary": "Perform risk assessments at planned intervals and when significant changes occur. Keep the results."
+        },
+        {
+          "id": "8.3",
+          "title": "Information security risk treatment",
+          "summary": "Implement the risk treatment plan. Keep the results."
+        }
+      ]
+    },
+    {
+      "clause": "9",
+      "title": "Performance evaluation",
+      "domain": "D5",
+      "subclauses": [
+        {
+          "id": "9.1",
+          "title": "Monitoring, measurement, analysis and evaluation",
+          "summary": "Decide what to monitor and measure, methods, when, who does it, and when and by whom results are analysed and evaluated. Keep evidence of results."
+        },
+        {
+          "id": "9.2",
+          "title": "Internal audit",
+          "summary": "Run audits at planned intervals to check the ISMS conforms to the organisation's own requirements and the standard, and is effectively implemented. Plan an audit programme, define criteria and scope, pick objective and impartial auditors, report results to management, and keep evidence."
+        },
+        {
+          "id": "9.3",
+          "title": "Management review",
+          "summary": "Top management reviews the ISMS at planned intervals. Inputs include status of previous actions, changes in issues and interested party needs, performance feedback (nonconformities, monitoring results, audit results, objectives), interested party feedback, risk assessment results and treatment status, and improvement opportunities. Outputs include improvement decisions and any changes needed. Keep evidence."
+        }
+      ]
+    },
+    {
+      "clause": "10",
+      "title": "Improvement",
+      "domain": "D6",
+      "subclauses": [
+        {
+          "id": "10.1",
+          "title": "Continual improvement",
+          "summary": "Continually improve the suitability, adequacy and effectiveness of the ISMS. In the 2022 edition this subclause comes first."
+        },
+        {
+          "id": "10.2",
+          "title": "Nonconformity and corrective action",
+          "summary": "React to the nonconformity, control and correct it, deal with consequences, find the root cause, check whether similar issues exist or could occur, implement actions, review their effectiveness and change the ISMS if needed. Keep evidence of the nonconformity, actions taken and results."
+        }
+      ]
+    }
+  ],
+  "mandatory_documented_information": [
+    {
+      "item": "ISMS scope",
+      "ref": "4.3"
+    },
+    {
+      "item": "Information security policy",
+      "ref": "5.2"
+    },
+    {
+      "item": "Risk assessment process",
+      "ref": "6.1.2"
+    },
+    {
+      "item": "Risk treatment process",
+      "ref": "6.1.3"
+    },
+    {
+      "item": "Statement of Applicability",
+      "ref": "6.1.3 d"
+    },
+    {
+      "item": "Risk treatment plan",
+      "ref": "6.1.3 e / 8.3",
+      "note": "Treated as mandatory by most certification bodies. The standard explicitly requires documented information on the treatment process and its results."
+    },
+    {
+      "item": "Information security objectives",
+      "ref": "6.2"
+    },
+    {
+      "item": "Evidence of competence",
+      "ref": "7.2"
+    },
+    {
+      "item": "Documented information the organisation decides is necessary",
+      "ref": "7.5.1 b"
+    },
+    {
+      "item": "Evidence that processes have been carried out as planned",
+      "ref": "8.1"
+    },
+    {
+      "item": "Risk assessment results",
+      "ref": "8.2"
+    },
+    {
+      "item": "Risk treatment results",
+      "ref": "8.3"
+    },
+    {
+      "item": "Monitoring and measurement results",
+      "ref": "9.1"
+    },
+    {
+      "item": "Audit programme and audit results",
+      "ref": "9.2"
+    },
+    {
+      "item": "Management review results",
+      "ref": "9.3"
+    },
+    {
+      "item": "Nonconformities, actions taken and corrective action results",
+      "ref": "10.2"
+    }
+  ],
+  "annex_a": {
+    "total_controls": 93,
+    "new_in_2022": [
+      "5.7",
+      "5.23",
+      "5.30",
+      "7.4",
+      "8.9",
+      "8.10",
+      "8.11",
+      "8.12",
+      "8.16",
+      "8.23",
+      "8.28"
+    ],
+    "attributes_iso27002": {
+      "control_types": [
+        "Preventive",
+        "Detective",
+        "Corrective"
+      ],
+      "information_security_properties": [
+        "Confidentiality",
+        "Integrity",
+        "Availability"
+      ],
+      "cybersecurity_concepts": [
+        "Identify",
+        "Protect",
+        "Detect",
+        "Respond",
+        "Recover"
+      ],
+      "security_domains": [
+        "Governance and Ecosystem",
+        "Protection",
+        "Defence",
+        "Resilience"
+      ],
+      "operational_capabilities_note": "Fifteen capabilities such as governance, asset management, identity and access management, threat and vulnerability management"
+    },
+    "themes": [
+      {
+        "theme": "Organizational controls",
+        "clause": "5",
+        "count": 37,
+        "controls": [
+          {
+            "id": "5.1",
+            "name": "Policies for information security",
+            "summary": "Define, approve, publish and review a policy and topic-specific policies."
+          },
+          {
+            "id": "5.2",
+            "name": "Information security roles and responsibilities",
+            "summary": "Define and allocate security roles."
+          },
+          {
+            "id": "5.3",
+            "name": "Segregation of duties",
+            "summary": "Split conflicting duties so no one person can misuse or hide misuse."
+          },
+          {
+            "id": "5.4",
+            "name": "Management responsibilities",
+            "summary": "Managers require staff to apply security in line with policy."
+          },
+          {
+            "id": "5.5",
+            "name": "Contact with authorities",
+            "summary": "Keep contact with relevant authorities such as regulators and law enforcement."
+          },
+          {
+            "id": "5.6",
+            "name": "Contact with special interest groups",
+            "summary": "Keep contact with security forums and professional associations."
+          },
+          {
+            "id": "5.7",
+            "name": "Threat intelligence",
+            "summary": "NEW. Collect and analyse threat information to produce intelligence."
+          },
+          {
+            "id": "5.8",
+            "name": "Information security in project management",
+            "summary": "Build security into project management."
+          },
+          {
+            "id": "5.9",
+            "name": "Inventory of information and other associated assets",
+            "summary": "Keep an inventory of assets with owners."
+          },
+          {
+            "id": "5.10",
+            "name": "Acceptable use of information and other associated assets",
+            "summary": "Set rules for acceptable use and handling of assets."
+          },
+          {
+            "id": "5.11",
+            "name": "Return of assets",
+            "summary": "Recover assets when employment or contracts change or end."
+          },
+          {
+            "id": "5.12",
+            "name": "Classification of information",
+            "summary": "Classify information by security needs."
+          },
+          {
+            "id": "5.13",
+            "name": "Labelling of information",
+            "summary": "Label information in line with the classification scheme."
+          },
+          {
+            "id": "5.14",
+            "name": "Information transfer",
+            "summary": "Set rules or agreements for all types of information transfer."
+          },
+          {
+            "id": "5.15",
+            "name": "Access control",
+            "summary": "Set rules for physical and logical access based on business and security needs."
+          },
+          {
+            "id": "5.16",
+            "name": "Identity management",
+            "summary": "Manage the full life cycle of identities."
+          },
+          {
+            "id": "5.17",
+            "name": "Authentication information",
+            "summary": "Control allocation and management of passwords and other authentication information."
+          },
+          {
+            "id": "5.18",
+            "name": "Access rights",
+            "summary": "Provision, review, modify and remove access rights."
+          },
+          {
+            "id": "5.19",
+            "name": "Information security in supplier relationships",
+            "summary": "Manage risks from suppliers' products and services."
+          },
+          {
+            "id": "5.20",
+            "name": "Addressing information security within supplier agreements",
+            "summary": "Agree security requirements with each supplier."
+          },
+          {
+            "id": "5.21",
+            "name": "Managing information security in the ICT supply chain",
+            "summary": "Manage risks in the ICT product and service supply chain."
+          },
+          {
+            "id": "5.22",
+            "name": "Monitoring, review and change management of supplier services",
+            "summary": "Monitor, review and manage changes in supplier security practice."
+          },
+          {
+            "id": "5.23",
+            "name": "Information security for use of cloud services",
+            "summary": "NEW. Manage acquiring, using, managing and exiting cloud services."
+          },
+          {
+            "id": "5.24",
+            "name": "Information security incident management planning and preparation",
+            "summary": "Plan incident management processes, roles and responsibilities."
+          },
+          {
+            "id": "5.25",
+            "name": "Assessment and decision on information security events",
+            "summary": "Assess events and decide if they are incidents."
+          },
+          {
+            "id": "5.26",
+            "name": "Response to information security incidents",
+            "summary": "Respond to incidents using documented procedures."
+          },
+          {
+            "id": "5.27",
+            "name": "Learning from information security incidents",
+            "summary": "Use incident knowledge to strengthen controls."
+          },
+          {
+            "id": "5.28",
+            "name": "Collection of evidence",
+            "summary": "Identify, collect, acquire and preserve evidence."
+          },
+          {
+            "id": "5.29",
+            "name": "Information security during disruption",
+            "summary": "Maintain security at an appropriate level during disruption."
+          },
+          {
+            "id": "5.30",
+            "name": "ICT readiness for business continuity",
+            "summary": "NEW. Plan, implement, maintain and test ICT readiness for continuity objectives."
+          },
+          {
+            "id": "5.31",
+            "name": "Legal, statutory, regulatory and contractual requirements",
+            "summary": "Identify and meet relevant legal and contractual requirements."
+          },
+          {
+            "id": "5.32",
+            "name": "Intellectual property rights",
+            "summary": "Protect intellectual property rights."
+          },
+          {
+            "id": "5.33",
+            "name": "Protection of records",
+            "summary": "Keep records safe from being lost, tampered with, destroyed or seen by the wrong people."
+          },
+          {
+            "id": "5.34",
+            "name": "Privacy and protection of PII",
+            "summary": "Meet requirements for preserving privacy and protecting personal data."
+          },
+          {
+            "id": "5.35",
+            "name": "Independent review of information security",
+            "summary": "Review the approach to security independently at planned intervals or after significant change."
+          },
+          {
+            "id": "5.36",
+            "name": "Compliance with policies, rules and standards for information security",
+            "summary": "Regularly review compliance with policies and standards."
+          },
+          {
+            "id": "5.37",
+            "name": "Documented operating procedures",
+            "summary": "Document operating procedures and make them available."
+          }
+        ]
+      },
+      {
+        "theme": "People controls",
+        "clause": "6",
+        "count": 8,
+        "controls": [
+          {
+            "id": "6.1",
+            "name": "Screening",
+            "summary": "Background checks before joining and on an ongoing basis, proportionate to risk."
+          },
+          {
+            "id": "6.2",
+            "name": "Terms and conditions of employment",
+            "summary": "Contracts state security responsibilities."
+          },
+          {
+            "id": "6.3",
+            "name": "Information security awareness, education and training",
+            "summary": "Give staff appropriate awareness and training with regular updates."
+          },
+          {
+            "id": "6.4",
+            "name": "Disciplinary process",
+            "summary": "Formal process for policy violations, communicated to staff."
+          },
+          {
+            "id": "6.5",
+            "name": "Responsibilities after termination or change of employment",
+            "summary": "Define and enforce duties that continue after leaving or changing role."
+          },
+          {
+            "id": "6.6",
+            "name": "Confidentiality or non-disclosure agreements",
+            "summary": "Use and review NDAs."
+          },
+          {
+            "id": "6.7",
+            "name": "Remote working",
+            "summary": "Security measures for working away from premises."
+          },
+          {
+            "id": "6.8",
+            "name": "Information security event reporting",
+            "summary": "Mechanism for staff to report observed or suspected events promptly."
+          }
+        ]
+      },
+      {
+        "theme": "Physical controls",
+        "clause": "7",
+        "count": 14,
+        "controls": [
+          {
+            "id": "7.1",
+            "name": "Physical security perimeters",
+            "summary": "Define perimeters to protect areas holding information and assets."
+          },
+          {
+            "id": "7.2",
+            "name": "Physical entry",
+            "summary": "Protect secure areas with entry controls and access points."
+          },
+          {
+            "id": "7.3",
+            "name": "Securing offices, rooms and facilities",
+            "summary": "Design and apply physical security for offices and facilities."
+          },
+          {
+            "id": "7.4",
+            "name": "Physical security monitoring",
+            "summary": "NEW. Monitor premises continuously for unauthorised physical access."
+          },
+          {
+            "id": "7.5",
+            "name": "Protecting against physical and environmental threats",
+            "summary": "Protect against natural disasters, attacks and accidents."
+          },
+          {
+            "id": "7.6",
+            "name": "Working in secure areas",
+            "summary": "Security measures for working in secure areas."
+          },
+          {
+            "id": "7.7",
+            "name": "Clear desk and clear screen",
+            "summary": "Rules for clear desks and screens."
+          },
+          {
+            "id": "7.8",
+            "name": "Equipment siting and protection",
+            "summary": "Site and protect equipment securely."
+          },
+          {
+            "id": "7.9",
+            "name": "Security of assets off-premises",
+            "summary": "Protect assets used away from the site."
+          },
+          {
+            "id": "7.10",
+            "name": "Storage media",
+            "summary": "Manage media through acquisition, use, transport and disposal."
+          },
+          {
+            "id": "7.11",
+            "name": "Supporting utilities",
+            "summary": "Protect facilities from power failures and utility disruption."
+          },
+          {
+            "id": "7.12",
+            "name": "Cabling security",
+            "summary": "Protect power and data cables from interception, interference or damage."
+          },
+          {
+            "id": "7.13",
+            "name": "Equipment maintenance",
+            "summary": "Maintain equipment correctly."
+          },
+          {
+            "id": "7.14",
+            "name": "Secure disposal or re-use of equipment",
+            "summary": "Check equipment before it is disposed of or reused, and make sure sensitive data and licensed software are wiped."
+          }
+        ]
+      },
+      {
+        "theme": "Technological controls",
+        "clause": "8",
+        "count": 34,
+        "controls": [
+          {
+            "id": "8.1",
+            "name": "User end point devices",
+            "summary": "Protect information on or reachable from user devices."
+          },
+          {
+            "id": "8.2",
+            "name": "Privileged access rights",
+            "summary": "Restrict and manage privileged access."
+          },
+          {
+            "id": "8.3",
+            "name": "Information access restriction",
+            "summary": "Restrict access to information in line with access control policy."
+          },
+          {
+            "id": "8.4",
+            "name": "Access to source code",
+            "summary": "Manage read and write access to source code and development tools."
+          },
+          {
+            "id": "8.5",
+            "name": "Secure authentication",
+            "summary": "Implement secure authentication technology and procedures."
+          },
+          {
+            "id": "8.6",
+            "name": "Capacity management",
+            "summary": "Monitor and adjust resource use to meet current and expected demand."
+          },
+          {
+            "id": "8.7",
+            "name": "Protection against malware",
+            "summary": "Malware protection supported by user awareness."
+          },
+          {
+            "id": "8.8",
+            "name": "Management of technical vulnerabilities",
+            "summary": "Get vulnerability information, assess exposure and act."
+          },
+          {
+            "id": "8.9",
+            "name": "Configuration management",
+            "summary": "NEW. Establish, document, monitor and review configurations including security settings."
+          },
+          {
+            "id": "8.10",
+            "name": "Information deletion",
+            "summary": "NEW. Delete information when no longer required."
+          },
+          {
+            "id": "8.11",
+            "name": "Data masking",
+            "summary": "NEW. Mask data in line with access policy and legal requirements."
+          },
+          {
+            "id": "8.12",
+            "name": "Data leakage prevention",
+            "summary": "NEW. Apply measures to detect and prevent unauthorised disclosure."
+          },
+          {
+            "id": "8.13",
+            "name": "Information backup",
+            "summary": "Keep and test backups in line with a backup policy."
+          },
+          {
+            "id": "8.14",
+            "name": "Redundancy of information processing facilities",
+            "summary": "Build in enough redundancy to meet availability needs."
+          },
+          {
+            "id": "8.15",
+            "name": "Logging",
+            "summary": "Produce, store, protect and analyse logs of activities, exceptions and faults."
+          },
+          {
+            "id": "8.16",
+            "name": "Monitoring activities",
+            "summary": "NEW. Monitor networks, systems and applications for anomalous behaviour and act on it."
+          },
+          {
+            "id": "8.17",
+            "name": "Clock synchronization",
+            "summary": "Synchronise system clocks to approved time sources."
+          },
+          {
+            "id": "8.18",
+            "name": "Use of privileged utility programs",
+            "summary": "Restrict and control utilities that can override system controls."
+          },
+          {
+            "id": "8.19",
+            "name": "Installation of software on operational systems",
+            "summary": "Control software installation on operational systems."
+          },
+          {
+            "id": "8.20",
+            "name": "Networks security",
+            "summary": "Secure, manage and control networks and devices."
+          },
+          {
+            "id": "8.21",
+            "name": "Security of network services",
+            "summary": "Identify, implement and monitor security for network services."
+          },
+          {
+            "id": "8.22",
+            "name": "Segregation of networks",
+            "summary": "Separate groups of services, users and systems on networks."
+          },
+          {
+            "id": "8.23",
+            "name": "Web filtering",
+            "summary": "NEW. Manage access to external websites to reduce exposure to malicious content."
+          },
+          {
+            "id": "8.24",
+            "name": "Use of cryptography",
+            "summary": "Define and apply rules for cryptography, including key management."
+          },
+          {
+            "id": "8.25",
+            "name": "Secure development life cycle",
+            "summary": "Set rules for secure development of software and systems."
+          },
+          {
+            "id": "8.26",
+            "name": "Application security requirements",
+            "summary": "Identify and approve security requirements when developing or acquiring applications."
+          },
+          {
+            "id": "8.27",
+            "name": "Secure system architecture and engineering principles",
+            "summary": "Define and apply secure engineering principles."
+          },
+          {
+            "id": "8.28",
+            "name": "Secure coding",
+            "summary": "NEW. Apply secure coding principles to software development."
+          },
+          {
+            "id": "8.29",
+            "name": "Security testing in development and acceptance",
+            "summary": "Define and run security testing in the development life cycle."
+          },
+          {
+            "id": "8.30",
+            "name": "Outsourced development",
+            "summary": "Direct, monitor and review outsourced development."
+          },
+          {
+            "id": "8.31",
+            "name": "Separation of development, test and production environments",
+            "summary": "Keep these environments separate and secured."
+          },
+          {
+            "id": "8.32",
+            "name": "Change management",
+            "summary": "Control changes to information processing facilities and systems."
+          },
+          {
+            "id": "8.33",
+            "name": "Test information",
+            "summary": "Select, protect and manage test data appropriately."
+          },
+          {
+            "id": "8.34",
+            "name": "Protection of information systems during audit testing",
+            "summary": "Plan and agree audit tests on operational systems to limit disruption."
+          }
+        ]
+      }
+    ]
+  },
+  "key_concepts": [
+    {
+      "term": "Confidentiality",
+      "definition": "Information is not made available or disclosed to unauthorised people, entities or processes."
+    },
+    {
+      "term": "Integrity",
+      "definition": "Information is accurate and complete."
+    },
+    {
+      "term": "Availability",
+      "definition": "Information is accessible and usable on demand by an authorised entity."
+    },
+    {
+      "term": "ISMS",
+      "definition": "Policies, procedures, guidelines and the related resources and activities, managed together by an organisation to protect its information assets (ISO/IEC 27000)."
+    },
+    {
+      "term": "Risk",
+      "definition": "Effect of uncertainty on objectives. Often expressed as a combination of consequence and likelihood."
+    },
+    {
+      "term": "Risk owner",
+      "definition": "Person or entity with the accountability and authority to manage a risk."
+    },
+    {
+      "term": "Residual risk",
+      "definition": "Risk remaining after risk treatment."
+    },
+    {
+      "term": "Risk appetite / acceptance criteria",
+      "definition": "The level of risk the organisation is prepared to accept. Set in the risk criteria under 6.1.2."
+    },
+    {
+      "term": "Risk treatment options",
+      "definition": "Commonly taught as four options: modify (apply controls), retain (accept), avoid, and share (for example insurance). ISO/IEC 27005:2018 had a subclause for each. The 2022 edition replaced these with one general clause on selecting treatment options, but sharing and retention remain defined terms."
+    },
+    {
+      "term": "Statement of Applicability (SoA)",
+      "definition": "Document listing the necessary controls, justification for including them, whether they are implemented, and justification for excluding any Annex A controls."
+    },
+    {
+      "term": "Nonconformity",
+      "definition": "Non-fulfilment of a requirement."
+    },
+    {
+      "term": "Correction vs corrective action",
+      "definition": "Correction fixes the immediate problem. Corrective action removes the root cause to stop it recurring."
+    },
+    {
+      "term": "Interested party",
+      "definition": "Person or organisation that can affect, be affected by, or think itself affected by a decision or activity."
+    },
+    {
+      "term": "Top management",
+      "definition": "Person or group that directs and controls the organisation at the highest level."
+    },
+    {
+      "term": "Documented information",
+      "definition": "Information an organisation must control and maintain, and the medium holding it. Replaces the older terms documents and records."
+    },
+    {
+      "term": "Harmonized structure",
+      "definition": "The common clause structure (formerly Annex SL) shared by ISO management system standards such as 27001, 9001, 14001 and 42001. Makes integration easier."
+    },
+    {
+      "term": "PDCA",
+      "definition": "Plan-Do-Check-Act. ISO 27001:2022 does not require or mention PDCA. By common training convention, clauses 4 to 6 map to Plan, 7 to 8 to Do, 9 to Check and 10 to Act."
+    },
+    {
+      "term": "Stage 1 audit",
+      "definition": "Certification body reviews documentation and readiness, including scope, policy, risk process and SoA."
+    },
+    {
+      "term": "Stage 2 audit",
+      "definition": "Certification body checks the ISMS is implemented and effective in practice."
+    },
+    {
+      "term": "Surveillance audit",
+      "definition": "Annual audits in years two and three of the certification cycle."
+    },
+    {
+      "term": "Recertification",
+      "definition": "Full re-audit before the three-year certificate expires."
+    },
+    {
+      "term": "2013 to 2022 transition",
+      "definition": "Annex A went from 114 controls in 14 domains to 93 controls in 4 themes. 11 controls are new. Clause 6.3 Planning of changes was added. The transition period for certified organisations ended on 31 October 2025."
+    }
+  ],
+  "flashcards": [
+    {
+      "front": "How many controls are in ISO 27001:2022 Annex A?",
+      "back": "93"
+    },
+    {
+      "front": "Name the four Annex A themes and their control counts.",
+      "back": "Organizational 37, People 8, Physical 14, Technological 34"
+    },
+    {
+      "front": "How many Annex A controls are new in 2022?",
+      "back": "11"
+    },
+    {
+      "front": "Which clause covers determining ISMS scope?",
+      "back": "4.3"
+    },
+    {
+      "front": "Which clause requires the Statement of Applicability?",
+      "back": "6.1.3"
+    },
+    {
+      "front": "Which clause was added in 2022 for planning of changes?",
+      "back": "6.3"
+    },
+    {
+      "front": "Which clause covers internal audit?",
+      "back": "9.2"
+    },
+    {
+      "front": "Which clause covers management review?",
+      "back": "9.3"
+    },
+    {
+      "front": "Which clause covers nonconformity and corrective action?",
+      "back": "10.2"
+    },
+    {
+      "front": "Who must approve the risk treatment plan and accept residual risk?",
+      "back": "The risk owners"
+    },
+    {
+      "front": "What are the four risk treatment options in ISO 27005?",
+      "back": "Modify, retain, avoid, share (the 2018 grouping, still widely taught)"
+    },
+    {
+      "front": "Which standard gives implementation guidance for Annex A controls?",
+      "back": "ISO/IEC 27002"
+    },
+    {
+      "front": "Which standard gives risk management guidance?",
+      "back": "ISO/IEC 27005"
+    },
+    {
+      "front": "Which standard holds the ISMS vocabulary?",
+      "back": "ISO/IEC 27000"
+    },
+    {
+      "front": "Which standard sets requirements for certification bodies?",
+      "back": "ISO/IEC 27006-1 (2024 edition)"
+    },
+    {
+      "front": "What does Stage 1 of a certification audit check?",
+      "back": "Documentation and readiness"
+    },
+    {
+      "front": "What does Stage 2 of a certification audit check?",
+      "back": "Implementation and effectiveness"
+    },
+    {
+      "front": "How long is an ISO 27001 certificate valid?",
+      "back": "Three years, with annual surveillance audits"
+    },
+    {
+      "front": "What are the five cybersecurity concepts used as 27002 attributes?",
+      "back": "Identify, Protect, Detect, Respond, Recover"
+    },
+    {
+      "front": "What are the three control types used as 27002 attributes?",
+      "back": "Preventive, Detective, Corrective"
+    },
+    {
+      "front": "Control 5.7 is?",
+      "back": "Threat intelligence (new)"
+    },
+    {
+      "front": "Control 5.23 is?",
+      "back": "Information security for use of cloud services (new)"
+    },
+    {
+      "front": "Control 5.30 is?",
+      "back": "ICT readiness for business continuity (new)"
+    },
+    {
+      "front": "Control 7.4 is?",
+      "back": "Physical security monitoring (new)"
+    },
+    {
+      "front": "Control 8.9 is?",
+      "back": "Configuration management (new)"
+    },
+    {
+      "front": "Control 8.10 is?",
+      "back": "Information deletion (new)"
+    },
+    {
+      "front": "Control 8.11 is?",
+      "back": "Data masking (new)"
+    },
+    {
+      "front": "Control 8.12 is?",
+      "back": "Data leakage prevention (new)"
+    },
+    {
+      "front": "Control 8.16 is?",
+      "back": "Monitoring activities (new)"
+    },
+    {
+      "front": "Control 8.23 is?",
+      "back": "Web filtering (new)"
+    },
+    {
+      "front": "Control 8.28 is?",
+      "back": "Secure coding (new)"
+    },
+    {
+      "front": "Control 5.3 is?",
+      "back": "Segregation of duties"
+    },
+    {
+      "front": "Control 6.1 is?",
+      "back": "Screening"
+    },
+    {
+      "front": "Control 7.7 is?",
+      "back": "Clear desk and clear screen"
+    },
+    {
+      "front": "Control 8.24 is?",
+      "back": "Use of cryptography"
+    },
+    {
+      "front": "Control 8.32 is?",
+      "back": "Change management"
+    },
+    {
+      "front": "Correction vs corrective action?",
+      "back": "Correction fixes the immediate issue. Corrective action removes the root cause."
+    },
+    {
+      "front": "What did the 2024 amendment to ISO 27001 add?",
+      "back": "Climate change as a consideration in 4.1 and 4.2"
+    },
+    {
+      "front": "Which PDCA stage do clauses 9 and 10 map to?",
+      "back": "Check (9) and Act (10)"
+    },
+    {
+      "front": "What are the four 27002 security domains?",
+      "back": "Governance and Ecosystem, Protection, Defence, Resilience"
+    }
+  ],
+  "questions": [
+    {
+      "id": "Q1",
+      "domain": "D1",
+      "question": "Which property is lost when an attacker alters payroll figures without being detected?",
+      "options": [
+        "Confidentiality",
+        "Integrity",
+        "Availability",
+        "Non-repudiation"
+      ],
+      "answer": 1,
+      "explanation": "Integrity concerns accuracy and completeness. Unauthorised change breaks integrity."
+    },
+    {
+      "id": "Q2",
+      "domain": "D1",
+      "question": "A ransomware attack encrypts a file server so staff cannot open files. No data was copied out. Which property is affected?",
+      "options": [
+        "Confidentiality",
+        "Integrity",
+        "Availability",
+        "Authenticity"
+      ],
+      "answer": 2,
+      "explanation": "Staff cannot access or use the information, so availability is lost."
+    },
+    {
+      "id": "Q3",
+      "domain": "D1",
+      "question": "Which standard in the 27000 family can an organisation be certified against?",
+      "options": [
+        "ISO/IEC 27002",
+        "ISO/IEC 27005",
+        "ISO/IEC 27001",
+        "ISO/IEC 27003"
+      ],
+      "answer": 2,
+      "explanation": "27001 holds the requirements. The others are guidance."
+    },
+    {
+      "id": "Q4",
+      "domain": "D1",
+      "question": "Where would you find the official definitions of ISMS terms?",
+      "options": [
+        "ISO/IEC 27000",
+        "ISO/IEC 27004",
+        "ISO 19011",
+        "ISO/IEC 27006"
+      ],
+      "answer": 0,
+      "explanation": "27000 is the overview and vocabulary standard."
+    },
+    {
+      "id": "Q5",
+      "domain": "D1",
+      "question": "What does the harmonized structure provide?",
+      "options": [
+        "A list of mandatory controls",
+        "A common clause structure across ISO management system standards",
+        "A certification scheme for auditors",
+        "A risk scoring method"
+      ],
+      "answer": 1,
+      "explanation": "The shared structure lets organisations integrate 27001 with 9001, 42001 and others."
+    },
+    {
+      "id": "Q6",
+      "domain": "D1",
+      "question": "Which standard provides requirements for bodies that certify ISMSs?",
+      "options": [
+        "ISO/IEC 27007",
+        "ISO/IEC 27006",
+        "ISO/IEC 27003",
+        "ISO/IEC 27701"
+      ],
+      "answer": 1,
+      "explanation": "27006 covers certification body requirements. 27007 is audit guidance."
+    },
+    {
+      "id": "Q7",
+      "domain": "D2",
+      "question": "How many controls are in Annex A of ISO/IEC 27001:2022?",
+      "options": [
+        "114",
+        "93",
+        "37",
+        "133"
+      ],
+      "answer": 1,
+      "explanation": "93 controls in four themes. 114 was the 2013 figure."
+    },
+    {
+      "id": "Q8",
+      "domain": "D2",
+      "question": "Which theme contains the most controls?",
+      "options": [
+        "People",
+        "Physical",
+        "Technological",
+        "Organizational"
+      ],
+      "answer": 3,
+      "explanation": "Organizational has 37, Technological 34, Physical 14, People 8."
+    },
+    {
+      "id": "Q9",
+      "domain": "D2",
+      "question": "Which clause requires top management to show leadership and commitment?",
+      "options": [
+        "4.4",
+        "5.1",
+        "6.2",
+        "9.3"
+      ],
+      "answer": 1,
+      "explanation": "5.1 Leadership and commitment."
+    },
+    {
+      "id": "Q10",
+      "domain": "D2",
+      "question": "Which clause was newly added in the 2022 edition?",
+      "options": [
+        "6.3 Planning of changes",
+        "7.4 Communication",
+        "9.2 Internal audit",
+        "8.1 Operational planning"
+      ],
+      "answer": 0,
+      "explanation": "6.3 requires changes to the ISMS to be planned."
+    },
+    {
+      "id": "Q11",
+      "domain": "D2",
+      "question": "Which of these is a new control in 2022?",
+      "options": [
+        "Segregation of duties",
+        "Threat intelligence",
+        "Screening",
+        "Clock synchronization"
+      ],
+      "answer": 1,
+      "explanation": "5.7 Threat intelligence is one of the 11 new controls."
+    },
+    {
+      "id": "Q12",
+      "domain": "D2",
+      "question": "Which of these is NOT a new 2022 control?",
+      "options": [
+        "Data masking",
+        "Web filtering",
+        "Secure coding",
+        "Information backup"
+      ],
+      "answer": 3,
+      "explanation": "8.13 Information backup existed in 2013."
+    },
+    {
+      "id": "Q13",
+      "domain": "D2",
+      "question": "Clause 4.2 requires the organisation to identify what?",
+      "options": [
+        "Annex A controls",
+        "Interested parties and their relevant requirements",
+        "Audit criteria",
+        "Risk owners"
+      ],
+      "answer": 1,
+      "explanation": "4.2 covers needs and expectations of interested parties."
+    },
+    {
+      "id": "Q14",
+      "domain": "D2",
+      "question": "Which item is mandatory documented information?",
+      "options": [
+        "Organisation chart",
+        "Business continuity plan",
+        "Information security objectives",
+        "Network diagram"
+      ],
+      "answer": 2,
+      "explanation": "6.2 requires documented objectives. The others may be useful but are not explicitly required."
+    },
+    {
+      "id": "Q15",
+      "domain": "D2",
+      "question": "Which 27002 attribute set uses Identify, Protect, Detect, Respond, Recover?",
+      "options": [
+        "Control types",
+        "Security domains",
+        "Cybersecurity concepts",
+        "Operational capabilities"
+      ],
+      "answer": 2,
+      "explanation": "These five concepts align with the NIST Cybersecurity Framework functions."
+    },
+    {
+      "id": "Q16",
+      "domain": "D2",
+      "question": "Control 8.31 requires separation of which environments?",
+      "options": [
+        "Office and home",
+        "Development, test and production",
+        "Cloud and on-premises",
+        "Guest and corporate Wi-Fi"
+      ],
+      "answer": 1,
+      "explanation": "8.31 separates development, test and production."
+    },
+    {
+      "id": "Q17",
+      "domain": "D2",
+      "question": "What did Amendment 1 (2024) add to ISO/IEC 27001:2022?",
+      "options": [
+        "Five new AI controls",
+        "Climate change consideration in clauses 4.1 and 4.2",
+        "A new clause 11",
+        "Mandatory penetration testing"
+      ],
+      "answer": 1,
+      "explanation": "The climate action amendment applied to many ISO management system standards."
+    },
+    {
+      "id": "Q18",
+      "domain": "D3",
+      "question": "What is the main purpose of a gap analysis at project start?",
+      "options": [
+        "Certify the organisation",
+        "Compare current practice with ISO 27001 requirements",
+        "Select the certification body",
+        "Write the SoA"
+      ],
+      "answer": 1,
+      "explanation": "It shows what exists and what is missing, which shapes the project plan."
+    },
+    {
+      "id": "Q19",
+      "domain": "D3",
+      "question": "Which input should the ISMS scope consider?",
+      "options": [
+        "Only IT systems",
+        "Issues from 4.1, requirements from 4.2, and interfaces and dependencies",
+        "Only the certification body's preference",
+        "Only Annex A"
+      ],
+      "answer": 1,
+      "explanation": "4.3 lists these three inputs."
+    },
+    {
+      "id": "Q20",
+      "domain": "D3",
+      "question": "Who establishes the information security policy?",
+      "options": [
+        "The internal auditor",
+        "The certification body",
+        "Top management",
+        "The CISO alone"
+      ],
+      "answer": 2,
+      "explanation": "5.2 places the policy with top management."
+    },
+    {
+      "id": "Q21",
+      "domain": "D3",
+      "question": "The risk assessment process must produce results that are:",
+      "options": [
+        "Quantitative only",
+        "Consistent, valid and comparable",
+        "Approved by the certification body",
+        "Reviewed monthly"
+      ],
+      "answer": 1,
+      "explanation": "6.1.2 requires repeated assessments to give consistent, valid and comparable results."
+    },
+    {
+      "id": "Q22",
+      "domain": "D3",
+      "question": "Which two sets of criteria must the risk assessment process establish?",
+      "options": [
+        "Audit and review criteria",
+        "Risk acceptance criteria and criteria for performing assessments",
+        "Supplier and customer criteria",
+        "Budget and time criteria"
+      ],
+      "answer": 1,
+      "explanation": "Both are required by 6.1.2."
+    },
+    {
+      "id": "Q23",
+      "domain": "D3",
+      "question": "Why is management authorisation obtained before implementation?",
+      "options": [
+        "It is an Annex A control",
+        "To confirm commitment, resources and acceptance of the plan",
+        "To satisfy GDPR",
+        "To start the Stage 2 audit"
+      ],
+      "answer": 1,
+      "explanation": "Formal sign-off secures resources and shows the leadership commitment 5.1 requires."
+    },
+    {
+      "id": "Q24",
+      "domain": "D3",
+      "question": "Information security objectives must be:",
+      "options": [
+        "Secret",
+        "Measurable where practicable and consistent with the policy",
+        "Set by the certification body",
+        "Only financial"
+      ],
+      "answer": 1,
+      "explanation": "6.2 sets this requirement."
+    },
+    {
+      "id": "Q25",
+      "domain": "D3",
+      "question": "A project charter for an ISMS project should mainly define:",
+      "options": [
+        "Firewall rules",
+        "Objectives, scope, sponsor, roles, resources and milestones",
+        "Audit findings",
+        "Supplier contracts"
+      ],
+      "answer": 1,
+      "explanation": "The charter authorises and frames the project."
+    },
+    {
+      "id": "Q26",
+      "domain": "D4",
+      "question": "Which risk treatment option is insurance an example of?",
+      "options": [
+        "Modify",
+        "Retain",
+        "Avoid",
+        "Share"
+      ],
+      "answer": 3,
+      "explanation": "Insurance transfers part of the consequence to a third party."
+    },
+    {
+      "id": "Q27",
+      "domain": "D4",
+      "question": "An organisation stops offering a risky online service. Which option is this?",
+      "options": [
+        "Modify",
+        "Retain",
+        "Avoid",
+        "Share"
+      ],
+      "answer": 2,
+      "explanation": "Ending the activity removes the risk source."
+    },
+    {
+      "id": "Q28",
+      "domain": "D4",
+      "question": "The SoA must contain:",
+      "options": [
+        "Only implemented controls",
+        "Necessary controls, justification for inclusion, implementation status, and justification for excluding Annex A controls",
+        "A list of risks only",
+        "Audit results"
+      ],
+      "answer": 1,
+      "explanation": "6.1.3 d sets these contents."
+    },
+    {
+      "id": "Q29",
+      "domain": "D4",
+      "question": "Why must the organisation compare its controls with Annex A?",
+      "options": [
+        "Every Annex A control is mandatory",
+        "To check no necessary controls are overlooked",
+        "To score the audit",
+        "To replace the risk assessment"
+      ],
+      "answer": 1,
+      "explanation": "Annex A is a checklist. Controls can be excluded with justification."
+    },
+    {
+      "id": "Q30",
+      "domain": "D4",
+      "question": "Who approves the risk treatment plan?",
+      "options": [
+        "Internal audit",
+        "Risk owners",
+        "The certification body",
+        "Any employee"
+      ],
+      "answer": 1,
+      "explanation": "Risk owners approve it and accept residual risk under 6.1.3."
+    },
+    {
+      "id": "Q31",
+      "domain": "D4",
+      "question": "Clause 7.3 Awareness requires people to know:",
+      "options": [
+        "Every Annex A control",
+        "The policy, their contribution, and consequences of not conforming",
+        "The audit schedule",
+        "The risk register contents"
+      ],
+      "answer": 1,
+      "explanation": "These three points form 7.3."
+    },
+    {
+      "id": "Q32",
+      "domain": "D4",
+      "question": "When must risk assessments be repeated under 8.2?",
+      "options": [
+        "Only at certification",
+        "At planned intervals and when significant changes occur",
+        "Only after an incident",
+        "Every five years"
+      ],
+      "answer": 1,
+      "explanation": "Both triggers are required."
+    },
+    {
+      "id": "Q33",
+      "domain": "D4",
+      "question": "Which control best addresses an employee leaving with a company laptop?",
+      "options": [
+        "5.11 Return of assets",
+        "8.23 Web filtering",
+        "7.12 Cabling security",
+        "5.6 Contact with special interest groups"
+      ],
+      "answer": 0,
+      "explanation": "5.11 covers recovering assets on leaving."
+    },
+    {
+      "id": "Q34",
+      "domain": "D4",
+      "question": "Which control applies to background checks on new staff?",
+      "options": [
+        "6.1 Screening",
+        "6.4 Disciplinary process",
+        "5.16 Identity management",
+        "6.6 NDAs"
+      ],
+      "answer": 0,
+      "explanation": "6.1 Screening."
+    },
+    {
+      "id": "Q35",
+      "domain": "D4",
+      "question": "A company stores customer data in a SaaS platform. Which new control is most directly relevant?",
+      "options": [
+        "7.4",
+        "5.23",
+        "8.17",
+        "6.7"
+      ],
+      "answer": 1,
+      "explanation": "5.23 Information security for use of cloud services."
+    },
+    {
+      "id": "Q36",
+      "domain": "D4",
+      "question": "Clause 7.5 controls documented information. Which is part of that control?",
+      "options": [
+        "Version control and retention",
+        "Penetration testing",
+        "Screening",
+        "Budget approval"
+      ],
+      "answer": 0,
+      "explanation": "7.5.3 covers version control, retention and disposal among others."
+    },
+    {
+      "id": "Q37",
+      "domain": "D5",
+      "question": "Internal audits must be carried out by auditors who are:",
+      "options": [
+        "External",
+        "Objective and impartial",
+        "Members of top management",
+        "Certified lead auditors"
+      ],
+      "answer": 1,
+      "explanation": "9.2 requires objectivity and impartiality, not external status."
+    },
+    {
+      "id": "Q38",
+      "domain": "D5",
+      "question": "Which is an input to management review?",
+      "options": [
+        "Results of risk assessment and status of risk treatment",
+        "The certificate",
+        "Employee salaries",
+        "The marketing plan"
+      ],
+      "answer": 0,
+      "explanation": "9.3 lists risk assessment results and treatment status as inputs."
+    },
+    {
+      "id": "Q39",
+      "domain": "D5",
+      "question": "What does Stage 1 of the certification audit mainly assess?",
+      "options": [
+        "Effectiveness of controls in practice",
+        "Documentation and readiness for Stage 2",
+        "Supplier performance",
+        "Penetration test results"
+      ],
+      "answer": 1,
+      "explanation": "Stage 1 reviews documentation and readiness. Stage 2 tests implementation."
+    },
+    {
+      "id": "Q40",
+      "domain": "D5",
+      "question": "How often are surveillance audits normally held?",
+      "options": [
+        "Monthly",
+        "Annually",
+        "Every three years",
+        "Only after incidents"
+      ],
+      "answer": 1,
+      "explanation": "Surveillance audits happen yearly between certification and recertification."
+    },
+    {
+      "id": "Q41",
+      "domain": "D5",
+      "question": "Clause 9.1 requires the organisation to determine:",
+      "options": [
+        "What to monitor and measure, methods, timing and who analyses results",
+        "Which certification body to use",
+        "Staff salaries",
+        "The SoA format"
+      ],
+      "answer": 0,
+      "explanation": "These are the 9.1 requirements."
+    },
+    {
+      "id": "Q42",
+      "domain": "D5",
+      "question": "Who conducts the management review?",
+      "options": [
+        "Internal auditors",
+        "Top management",
+        "The certification body",
+        "Risk owners only"
+      ],
+      "answer": 1,
+      "explanation": "9.3 places the review with top management."
+    },
+    {
+      "id": "Q43",
+      "domain": "D5",
+      "question": "Which standard gives guidance on monitoring and measurement?",
+      "options": [
+        "ISO/IEC 27004",
+        "ISO/IEC 27005",
+        "ISO/IEC 27017",
+        "ISO/IEC 27018"
+      ],
+      "answer": 0,
+      "explanation": "27004 covers monitoring, measurement, analysis and evaluation."
+    },
+    {
+      "id": "Q44",
+      "domain": "D6",
+      "question": "An auditor finds a firewall rule review was missed. The team completes the review that day. This is:",
+      "options": [
+        "Corrective action",
+        "Correction",
+        "Preventive action",
+        "Risk acceptance"
+      ],
+      "answer": 1,
+      "explanation": "Fixing the immediate issue is correction. Corrective action addresses why it was missed."
+    },
+    {
+      "id": "Q45",
+      "domain": "D6",
+      "question": "What must happen after corrective action is implemented?",
+      "options": [
+        "Nothing",
+        "Review its effectiveness",
+        "Notify the certification body immediately",
+        "Delete the records"
+      ],
+      "answer": 1,
+      "explanation": "10.2 requires effectiveness review."
+    },
+    {
+      "id": "Q46",
+      "domain": "D6",
+      "question": "In ISO/IEC 27001:2022, what is the title of clause 10.1?",
+      "options": [
+        "Continual improvement",
+        "Nonconformity and corrective action",
+        "Preventive action",
+        "Management review"
+      ],
+      "answer": 0,
+      "explanation": "The 2022 edition reordered clause 10. 10.1 is Continual improvement and 10.2 is Nonconformity and corrective action. Preventive action was removed in 2013, and management review is 9.3."
+    },
+    {
+      "id": "Q47",
+      "domain": "D6",
+      "question": "Continual improvement in clause 10.1 targets the ISMS's:",
+      "options": [
+        "Cost, speed and size",
+        "Suitability, adequacy and effectiveness",
+        "Number of controls",
+        "Certification grade"
+      ],
+      "answer": 1,
+      "explanation": "10.1 requires continual improvement of the ISMS's suitability, adequacy and effectiveness."
+    },
+    {
+      "id": "Q48",
+      "domain": "D6",
+      "question": "Why check whether similar nonconformities exist elsewhere?",
+      "options": [
+        "To blame staff",
+        "To find wider weaknesses and prevent recurrence",
+        "To raise audit fees",
+        "It is optional"
+      ],
+      "answer": 1,
+      "explanation": "10.2 requires this check as part of corrective action."
+    },
+    {
+      "id": "Q49",
+      "domain": "D6",
+      "question": "Which PDCA stage does clause 10 represent?",
+      "options": [
+        "Plan",
+        "Do",
+        "Check",
+        "Act"
+      ],
+      "answer": 3,
+      "explanation": "By convention, improvement is the Act stage. The standard itself does not mention PDCA."
+    },
+    {
+      "id": "Q50",
+      "domain": "D6",
+      "question": "What evidence must be kept for nonconformities?",
+      "options": [
+        "None",
+        "Nature of the nonconformity, actions taken and results of corrective action",
+        "Only the auditor's name",
+        "Only the date"
+      ],
+      "answer": 1,
+      "explanation": "10.2 requires this documented information."
+    },
+    {
+      "id": "Q51",
+      "domain": "D5",
+      "question": "Which is an output of management review?",
+      "options": [
+        "Decisions on improvement opportunities and any changes needed to the ISMS",
+        "The certification body's audit report",
+        "The risk acceptance criteria for the first time",
+        "Employee screening results"
+      ],
+      "answer": 0,
+      "explanation": "9.3 outputs include improvement decisions and any need for changes to the ISMS."
+    },
+    {
+      "id": "Q52",
+      "domain": "D5",
+      "question": "Who should internal audit results be reported to?",
+      "options": [
+        "Relevant management",
+        "The certification body only",
+        "All staff",
+        "The regulator"
+      ],
+      "answer": 0,
+      "explanation": "9.2 requires results to be reported to relevant management."
+    },
+    {
+      "id": "Q53",
+      "domain": "D5",
+      "question": "An audit programme under 9.2 must take into account:",
+      "options": [
+        "The importance of the processes concerned and the results of previous audits",
+        "Only the number of staff",
+        "Only the certification body's calendar",
+        "The marketing budget"
+      ],
+      "answer": 0,
+      "explanation": "Programme planning considers process importance and previous audit results."
+    },
+    {
+      "id": "Q54",
+      "domain": "D5",
+      "question": "Which is the best example of a measurable ISMS metric under 9.1?",
+      "options": [
+        "Percentage of staff completing awareness training within 30 days of joining",
+        "Staff feel more secure",
+        "Security is good",
+        "The firewall exists"
+      ],
+      "answer": 0,
+      "explanation": "A useful metric is specific and measurable, so trends can be analysed and evaluated."
+    },
+    {
+      "id": "Q55",
+      "domain": "D5",
+      "question": "During Stage 2, the auditor finds a major nonconformity. What normally happens?",
+      "options": [
+        "Certification is withheld until correction and corrective action are accepted",
+        "The certificate is issued with a note",
+        "The audit is cancelled permanently",
+        "The organisation self-certifies"
+      ],
+      "answer": 0,
+      "explanation": "A major nonconformity must be addressed, with evidence accepted by the certification body, before certification is granted."
+    },
+    {
+      "id": "Q56",
+      "domain": "D5",
+      "question": "Can an internal auditor audit their own work?",
+      "options": [
+        "No, it breaches objectivity and impartiality",
+        "Yes, if they are senior",
+        "Yes, in small organisations always",
+        "Only during Stage 1"
+      ],
+      "answer": 0,
+      "explanation": "9.2 requires auditors who ensure objectivity and impartiality. Auditing your own work undermines both."
+    },
+    {
+      "id": "Q57",
+      "domain": "D5",
+      "question": "Which standard gives guidance specific to auditing an ISMS?",
+      "options": [
+        "ISO/IEC 27007",
+        "ISO/IEC 27003",
+        "ISO/IEC 27017",
+        "ISO/IEC 27002"
+      ],
+      "answer": 0,
+      "explanation": "27007 gives ISMS audit guidance, building on ISO 19011."
+    }
+  ],
+  "exam_domain_weight_note": "Weights as published by TRECCERT. They add up to about 113%, so treat them as relative emphasis, not exact question counts."
+}

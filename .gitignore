@@ -3,3 +3,5 @@ app/dist/
 existing-pwa/
 *.zip
 .claude/
+iso27001-study/node_modules/
+iso27001-study/dist/
