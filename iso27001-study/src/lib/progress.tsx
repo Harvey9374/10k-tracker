@@ -27,12 +27,13 @@ export interface Progress {
   lessons: Record<string, string> // lesson id -> date completed
 }
 
-const KEY = 'iso27001-li-progress-v1'
 const empty: Progress = { cards: {}, domains: {}, mocks: [], days: [], checklist: {}, lessons: {} }
 
-function load(): Progress {
+const keyFor = (storage: string) => `${storage}-progress-v1`
+
+function load(key: string): Progress {
   try {
-    const raw = localStorage.getItem(KEY)
+    const raw = localStorage.getItem(key)
     return raw ? { ...empty, ...JSON.parse(raw) } : empty
   } catch {
     return empty
@@ -40,6 +41,7 @@ function load(): Progress {
 }
 
 interface Ctx {
+  storage: string
   progress: Progress
   reviewCard: (id: string, correct: boolean) => void
   recordAnswer: (domain: string, correct: boolean) => void
@@ -56,12 +58,12 @@ function markDay(days: string[]): string[] {
   return days.includes(d) ? days : [...days, d].slice(-400)
 }
 
-export function ProgressProvider({ children }: { children: ReactNode }) {
-  const [progress, setProgress] = useState<Progress>(load)
+export function ProgressProvider({ storage, children }: { storage: string; children: ReactNode }) {
+  const [progress, setProgress] = useState<Progress>(() => load(keyFor(storage)))
 
   useEffect(() => {
-    localStorage.setItem(KEY, JSON.stringify(progress))
-  }, [progress])
+    localStorage.setItem(keyFor(storage), JSON.stringify(progress))
+  }, [progress, storage])
 
   const reviewCard = useCallback((id: string, correct: boolean) => {
     setProgress((p) => {
@@ -104,7 +106,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
   const reset = useCallback(() => setProgress(empty), [])
 
   return (
-    <ProgressContext.Provider value={{ progress, reviewCard, recordAnswer, recordMock, toggleCheck, completeLesson, reset }}>
+    <ProgressContext.Provider value={{ storage, progress, reviewCard, recordAnswer, recordMock, toggleCheck, completeLesson, reset }}>
       {children}
     </ProgressContext.Provider>
   )

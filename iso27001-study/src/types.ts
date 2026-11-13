@@ -83,6 +83,8 @@ export interface StudyPack {
   annex_a: {
     total_controls?: number
     new_in_2022: string[]
+    group_label?: string
+    attributes_title?: string
     attributes_iso27002?: Record<string, InfoValue>
     themes: Theme[]
   }

@@ -148,12 +148,13 @@ function AnnexA({ pack }: { pack: StudyPack }) {
   return (
     <>
       <p className="muted small">
-        {total} controls in {pack.annex_a.themes.length} themes. {pack.annex_a.new_in_2022.length} are new in 2022.
+        {total} controls in {pack.annex_a.themes.length} {pack.annex_a.group_label ?? 'themes'}.
+        {pack.annex_a.new_in_2022.length > 0 && ` ${pack.annex_a.new_in_2022.length} are new in 2022.`}
       </p>
       <input
         className="search"
         type="search"
-        placeholder="Search controls, e.g. backup or 8.12"
+        placeholder="Search by control number or keyword"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
@@ -168,9 +169,11 @@ function AnnexA({ pack }: { pack: StudyPack }) {
             {t.clause} {t.theme.replace(/ controls$/i, '')} ({t.controls.length})
           </button>
         ))}
-        <button className={newOnly ? 'chip active' : 'chip'} onClick={() => setNewOnly(!newOnly)}>
-          New in 2022 only
-        </button>
+        {isNew.size > 0 && (
+          <button className={newOnly ? 'chip active' : 'chip'} onClick={() => setNewOnly(!newOnly)}>
+            New in 2022 only
+          </button>
+        )}
       </div>
       {themes.map((t) => {
         const controls = t.controls.filter(
@@ -199,7 +202,7 @@ function AnnexA({ pack }: { pack: StudyPack }) {
       })}
       {pack.annex_a.attributes_iso27002 && (
         <section className="panel">
-          <h2>ISO/IEC 27002 control attributes</h2>
+          <h2>{pack.annex_a.attributes_title ?? 'ISO/IEC 27002 control attributes'}</h2>
           <InfoList data={pack.annex_a.attributes_iso27002} />
         </section>
       )}

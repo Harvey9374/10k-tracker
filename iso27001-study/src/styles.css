@@ -303,3 +303,7 @@ p { margin: 0.35rem 0; }
 .callout.example { border-color: var(--good); }
 .callout.tips { border-color: var(--warn); }
 .done-badge { background: var(--good); color: #052e1f; margin-left: 0; }
+
+/* Course switch */
+.course-switch { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.course-switch .seg { width: 100%; }

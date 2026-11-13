@@ -14,20 +14,20 @@ interface ActiveMock {
   minutes: number
 }
 
-const ACTIVE_KEY = 'iso27001-li-mock-active'
+const activeKey = (storage: string) => `${storage}-mock-active`
 
-export function loadActiveMock(): ActiveMock | null {
+export function loadActiveMock(storage: string): ActiveMock | null {
   try {
-    const raw = localStorage.getItem(ACTIVE_KEY)
+    const raw = localStorage.getItem(activeKey(storage))
     return raw ? (JSON.parse(raw) as ActiveMock) : null
   } catch {
     return null
   }
 }
 
-function saveActive(m: ActiveMock | null) {
-  if (m) localStorage.setItem(ACTIVE_KEY, JSON.stringify(m))
-  else localStorage.removeItem(ACTIVE_KEY)
+function saveActive(storage: string, m: ActiveMock | null) {
+  if (m) localStorage.setItem(activeKey(storage), JSON.stringify(m))
+  else localStorage.removeItem(activeKey(storage))
 }
 
 interface Finished {
@@ -37,16 +37,18 @@ interface Finished {
 }
 
 export function Mock({ pack, onActiveChange }: { pack: StudyPack; onActiveChange: (a: boolean) => void }) {
-  const { recordMock } = useProgress()
+  const { recordMock, storage } = useProgress()
   const fmt = pack.meta.exam_format
-  const realQ = Number(fmt.questions ?? 150)
-  const realMin = Number(fmt.duration_minutes ?? 180)
-  const secsPerQ = (realMin * 60) / realQ
+  const realQ = Number(fmt.questions) || 0
+  const realMin = Number(fmt.duration_minutes) || 0
+  const officialFormat = realQ > 0 && realMin > 0
+  // Without an official format, use the 27001 ratio of 1.2 minutes per question.
+  const secsPerQ = officialFormat ? (realMin * 60) / realQ : 72
   const passMark = Number(fmt.pass_mark_percent ?? 60)
   const total = pack.questions.length
   const sizes = [...new Set([25, 50].filter((n) => n < total).concat(total))]
 
-  const [active, setActive] = useState<ActiveMock | null>(loadActiveMock)
+  const [active, setActive] = useState<ActiveMock | null>(() => loadActiveMock(storage))
   const [index, setIndex] = useState(0)
   const [now, setNow] = useState(Date.now())
   const [showGrid, setShowGrid] = useState(false)
@@ -63,17 +65,17 @@ export function Mock({ pack, onActiveChange }: { pack: StudyPack; onActiveChange
 
   useEffect(() => {
     if (broken) {
-      saveActive(null)
+      saveActive(storage, null)
       setActive(null)
     }
-  }, [broken])
+  }, [broken, storage])
 
   useEffect(() => {
     onActiveChange(!!active && !broken)
   }, [active, broken, onActiveChange])
 
   const update = (m: ActiveMock | null) => {
-    saveActive(m)
+    saveActive(storage, m)
     setActive(m)
   }
 
@@ -292,10 +294,11 @@ export function Mock({ pack, onActiveChange }: { pack: StudyPack; onActiveChange
       <header className="page-head">
         <h1>Mock exam</h1>
         <p className="muted small">
-          The real exam has {realQ} questions in {realMin} minutes. That is {(secsPerQ / 60).toFixed(1)} minutes per
-          question, and the timer here scales the same way. Closed book: Learn and the tab bar are hidden until you submit.
-          Questions are drawn in proportion to each domain's weight. Four options, no penalty for guessing. Pass mark{' '}
-          {passMark}%.
+          {officialFormat
+            ? `The real exam has ${realQ} questions in ${realMin} minutes. That is ${(secsPerQ / 60).toFixed(1)} minutes per question, and the timer here scales the same way.`
+            : `This course has no official exam format. The timer allows ${(secsPerQ / 60).toFixed(1)} minutes per question.`}{' '}
+          Closed book: Learn and the tab bar are hidden until you submit.
+          Questions are drawn in proportion to each domain's weight. {fmt.options_per_question ? `${fmt.options_per_question}. ` : ''}Pass mark {passMark}%.
         </p>
       </header>
       {sizes.map((n) => (

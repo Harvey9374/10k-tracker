@@ -18,9 +18,9 @@ export default defineConfig({
         clientsClaim: true,
       },
       manifest: {
-        name: 'ISO 27001 Lead Implementer Study',
-        short_name: 'ISO 27001 LI',
-        description: 'Learn, practise and test for the ISO/IEC 27001 Lead Implementer exam',
+        name: 'ISO Lead Implementer Study',
+        short_name: 'ISO Study',
+        description: 'Learn, practise and test for ISO/IEC 27001 and ISO/IEC 42001',
         theme_color: '#0b1020',
         background_color: '#0b1020',
         display: 'standalone',

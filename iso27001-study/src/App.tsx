@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { StudyPack } from './types'
 import { ProgressProvider } from './lib/progress'
 import { buildDeck } from './lib/cards'
@@ -11,6 +11,16 @@ import { Info } from './views/Info'
 
 export type Route = 'home' | 'learn' | 'cards' | 'quiz' | 'mock' | 'info'
 const ROUTES: Route[] = ['home', 'learn', 'cards', 'quiz', 'mock', 'info']
+
+export interface Course {
+  id: string
+  title: string
+  short: string
+  file: string
+  storage: string
+}
+
+const COURSE_KEY = 'study-current-course'
 
 function parseHash(): { route: Route; params: URLSearchParams } {
   const [path, query] = window.location.hash.replace(/^#\/?/, '').split('?')
@@ -31,21 +41,41 @@ const NAV: { route: Route; label: string; icon: string }[] = [
   { route: 'mock', label: 'Mock', icon: '⏱' },
 ]
 
+const base = import.meta.env.BASE_URL
+
 export default function App() {
-  const [pack, setPack] = useState<StudyPack | null>(null)
+  const [courses, setCourses] = useState<Course[] | null>(null)
+  const [courseId, setCourseId] = useState<string | null>(() => localStorage.getItem(COURSE_KEY))
+  const [pack, setPack] = useState<{ id: string; data: StudyPack } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loc, setLoc] = useState(parseHash)
-  const [examActive, setExamActive] = useState(() => loadActiveMock() !== null)
+  const [examActive, setExamActive] = useState(false)
 
   useEffect(() => {
-    fetch(`${import.meta.env.BASE_URL}study-pack.json`, { cache: 'no-cache' })
-      .then((r) => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`)
-        return r.json()
-      })
-      .then(setPack)
+    fetch(`${base}courses.json`, { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((list: Course[]) => setCourses(list))
       .catch((e) => setError(String(e)))
   }, [])
+
+  const course = courses ? (courses.find((c) => c.id === courseId) ?? courses[0]) : null
+
+  useEffect(() => {
+    if (!course) return
+    let cancelled = false
+    setExamActive(loadActiveMock(course.storage) !== null)
+    fetch(`${base}${course.file}`, { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+      .then((data: StudyPack) => {
+        if (cancelled) return
+        setPack({ id: course.id, data })
+        document.title = data.meta.title
+      })
+      .catch((e) => setError(String(e)))
+    return () => {
+      cancelled = true
+    }
+  }, [course])
 
   useEffect(() => {
     const onHash = () => {
@@ -61,22 +91,29 @@ export default function App() {
     if (examActive && loc.route !== 'mock') go('mock')
   }, [examActive, loc.route])
 
-  const deck = useMemo(() => (pack ? buildDeck(pack) : []), [pack])
+  const switchCourse = useCallback((id: string) => {
+    localStorage.setItem(COURSE_KEY, id)
+    setCourseId(id)
+    go('home')
+  }, [])
+
+  const data = pack && course && pack.id === course.id ? pack.data : null
+  const deck = useMemo(() => (data ? buildDeck(data) : []), [data])
 
   if (error) return <div className="screen center">Could not load the study pack: {error}</div>
-  if (!pack) return <div className="screen center">Loading…</div>
+  if (!course || !data || !courses) return <div className="screen center">Loading…</div>
 
   const route = examActive ? 'mock' : loc.route
 
   return (
-    <ProgressProvider>
+    <ProgressProvider key={course.id} storage={course.storage}>
       <main className={examActive ? 'screen exam' : 'screen'}>
-        {route === 'home' && <Home pack={pack} deck={deck} />}
-        {route === 'learn' && <Learn pack={pack} initialTab={loc.params.get('tab')} lessonId={loc.params.get('lesson')} />}
-        {route === 'cards' && <Flashcards pack={pack} deck={deck} />}
-        {route === 'quiz' && <Quiz pack={pack} preset={loc.params.get('d')} />}
-        {route === 'mock' && <Mock pack={pack} onActiveChange={setExamActive} />}
-        {route === 'info' && <Info pack={pack} />}
+        {route === 'home' && <Home pack={data} deck={deck} courses={courses} course={course} onSwitch={switchCourse} />}
+        {route === 'learn' && <Learn pack={data} initialTab={loc.params.get('tab')} lessonId={loc.params.get('lesson')} />}
+        {route === 'cards' && <Flashcards pack={data} deck={deck} />}
+        {route === 'quiz' && <Quiz pack={data} preset={loc.params.get('d')} />}
+        {route === 'mock' && <Mock pack={data} onActiveChange={setExamActive} />}
+        {route === 'info' && <Info pack={data} />}
       </main>
       {!examActive && (
         <nav className="tabbar" aria-label="Main">

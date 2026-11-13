@@ -1,0 +1,2733 @@
+{
+  "meta": {
+    "title": "ISO/IEC 42001:2023 AI Management System Study Pack",
+    "target_exam": "ISO/IEC 42001:2023 AI management system (Udemy course study companion)",
+    "exam_format": {
+      "standard": "ISO/IEC 42001:2023, first edition (December 2023), including the climate change text in 4.1 and 4.2",
+      "course": "ISO 42001:2023 Complete Course | Implement AI Management (Udemy)",
+      "certification_exam": "None. The course offers two practice exams and a certificate of completion, not an accredited certification.",
+      "pass_mark_percent": 60,
+      "pass_mark_note": "App default, matching the 27001 course. Not an official 42001 figure.",
+      "mock_timing": "1.2 minutes per question, the same ratio as the 27001 exam. Not an official 42001 figure.",
+      "options_per_question": "Four options, one correct"
+    },
+    "copyright_note": "All descriptions are paraphrased summaries for study. They are not the text of ISO/IEC 42001. Buy the standard for the authoritative wording.",
+    "sources": [
+      "ISO/IEC 42001:2023 (copy supplied by the user). Clause, control and definition summaries were checked against it.",
+      "Udemy course outline: ISO 42001:2023 Complete Course | Implement AI Management (screenshot supplied by the user)",
+      "OECD AI Principles, EU AI Act, NIST AI RMF, ISO/IEC 42005 and 42006 details: Claude training data. Verify before relying on them."
+    ]
+  },
+  "exam_domains": [
+    {
+      "id": "D1",
+      "name": "AI and AIMS Fundamentals",
+      "weight_percent": 16.67,
+      "covers": [
+        "What makes AI different to manage",
+        "AI roles from 4.1",
+        "ISO/IEC 42001 structure and related standards",
+        "AI threats and trustworthiness",
+        "OECD principles, EU AI Act and NIST AI RMF"
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "Context and Leadership",
+      "weight_percent": 16.67,
+      "covers": [
+        "Clause 4: context, interested parties, scope",
+        "Clause 5: leadership, AI policy, roles"
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "Planning: AI Risk and Impact",
+      "weight_percent": 16.67,
+      "covers": [
+        "AI risk criteria",
+        "AI risk assessment and treatment",
+        "Statement of Applicability",
+        "AI system impact assessment",
+        "AI objectives and planning of changes"
+      ]
+    },
+    {
+      "id": "D4",
+      "name": "Support and Operation",
+      "weight_percent": 16.67,
+      "covers": [
+        "Clause 7: resources, competence, awareness, communication, documented information",
+        "Clause 8: operational control, repeat assessments, treatment"
+      ]
+    },
+    {
+      "id": "D5",
+      "name": "Annex A Controls",
+      "weight_percent": 16.67,
+      "covers": [
+        "The 38 Annex A controls in A.2 to A.10",
+        "Annex B guidance",
+        "Annex C objectives and risk sources",
+        "Annex D sectors and integration"
+      ]
+    },
+    {
+      "id": "D6",
+      "name": "Evaluation, Improvement and Certification",
+      "weight_percent": 16.67,
+      "covers": [
+        "Monitoring and measurement",
+        "Internal audit",
+        "Management review",
+        "Nonconformity and corrective action",
+        "Certification audits and integration with 27001"
+      ]
+    }
+  ],
+  "implementation_phases": [
+    {
+      "phase": "Initiation",
+      "steps": [
+        "Agree the AIMS project charter and sponsor",
+        "Secure top management commitment",
+        "Build an inventory of AI systems and use cases",
+        "Run a gap analysis against ISO/IEC 42001"
+      ]
+    },
+    {
+      "phase": "Establishment",
+      "steps": [
+        "Determine context, AI roles and interested parties",
+        "Define the AIMS scope",
+        "Set the AI policy and AI objectives",
+        "Define AI risk criteria and the risk assessment method",
+        "Define the AI system impact assessment process",
+        "Plan the implementation and obtain management authorisation"
+      ]
+    },
+    {
+      "phase": "Implementation and Operation",
+      "steps": [
+        "Assess AI risks and AI system impacts",
+        "Treat risks and produce the Statement of Applicability",
+        "Implement controls across the AI system life cycle",
+        "Build competence and awareness",
+        "Control documented information"
+      ]
+    },
+    {
+      "phase": "Monitor and Review",
+      "steps": [
+        "Monitor AI system and AIMS performance, including drift and bias",
+        "Conduct internal audits",
+        "Hold management reviews"
+      ]
+    },
+    {
+      "phase": "Improvement",
+      "steps": [
+        "Handle nonconformities with corrective action",
+        "Continually improve the AIMS",
+        "Prepare for and maintain certification"
+      ]
+    }
+  ],
+  "standards_family": [
+    {
+      "id": "ISO/IEC 42001",
+      "summary": "Requirements for an AI management system (AIMS). The standard an organisation can be certified against."
+    },
+    {
+      "id": "ISO/IEC 22989",
+      "summary": "AI concepts and terminology. The only normative reference in 42001, so its terms apply."
+    },
+    {
+      "id": "ISO/IEC 23053",
+      "summary": "Framework for AI systems that use machine learning. Cited in Annex B for tooling, drift and data preparation."
+    },
+    {
+      "id": "ISO/IEC 23894",
+      "summary": "Guidance on AI risk management. Cited for risk appetite, risk sources and impact analysis."
+    },
+    {
+      "id": "ISO/IEC 38507",
+      "summary": "Governance implications of AI for governing bodies. Cited for AI policy and risk appetite."
+    },
+    {
+      "id": "ISO/IEC 5338",
+      "summary": "AI system life cycle processes. Cited in Annex B for describing the life cycle."
+    },
+    {
+      "id": "ISO/IEC 5259 series",
+      "summary": "Data quality for analytics and machine learning. Cited for data quality and preparation."
+    },
+    {
+      "id": "ISO/IEC TR 24027",
+      "summary": "Bias in AI systems and AI-aided decision making."
+    },
+    {
+      "id": "ISO/IEC TR 24368",
+      "summary": "Overview of ethical and societal concerns for AI."
+    },
+    {
+      "id": "ISO/IEC 25059",
+      "summary": "Quality model for AI systems. Can be used to define performance criteria."
+    },
+    {
+      "id": "ISO/IEC 42005",
+      "summary": "Guidance on AI system impact assessment. From Claude training data: published 2025. Not cited in 42001 itself."
+    },
+    {
+      "id": "ISO/IEC 42006",
+      "summary": "Requirements for bodies that audit and certify AI management systems. From Claude training data: published 2025. Not cited in 42001 itself."
+    },
+    {
+      "id": "ISO/IEC 27001 and 27701",
+      "summary": "Information security and privacy management systems. Annex D says integrating them with an AIMS is beneficial because they share the harmonized structure."
+    },
+    {
+      "id": "ISO 9001",
+      "summary": "Quality management. Annex D names it as a standard an AIMS can complement."
+    },
+    {
+      "id": "ISO 31000",
+      "summary": "General risk management guidelines. Source of the 42001 definition of control."
+    },
+    {
+      "id": "ISO 37002",
+      "summary": "Whistleblowing management systems. Cited for the reporting of concerns control."
+    },
+    {
+      "id": "NIST AI RMF 1.0",
+      "summary": "US AI Risk Management Framework (January 2023), cited in the 42001 bibliography. From Claude training data: its four functions are Govern, Map, Measure and Manage."
+    }
+  ],
+  "clauses": [
+    {
+      "clause": "4",
+      "title": "Context of the organization",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "4.1",
+          "title": "Understanding the organization and its context",
+          "summary": "Work out the internal and external issues that affect the AIMS, and decide whether climate change is one of them. Consider the intended purpose of the AI systems you develop, provide or use, and determine your roles for them, such as AI provider, producer, customer, partner or subject."
+        },
+        {
+          "id": "4.2",
+          "title": "Needs and expectations of interested parties",
+          "summary": "Identify the interested parties relevant to the AIMS, their relevant requirements, and which of those the AIMS will address. A note says these parties can have climate-related requirements."
+        },
+        {
+          "id": "4.3",
+          "title": "Determining the scope of the AI management system",
+          "summary": "Set the boundaries and applicability of the AIMS, considering the issues from 4.1 and requirements from 4.2. The scope must be available as documented information. Unlike 27001, there is no separate input on interfaces and dependencies."
+        },
+        {
+          "id": "4.4",
+          "title": "AI management system",
+          "summary": "Establish, implement, maintain, continually improve and document the AIMS, including its processes and how they interact."
+        }
+      ]
+    },
+    {
+      "clause": "5",
+      "title": "Leadership",
+      "domain": "D2",
+      "subclauses": [
+        {
+          "id": "5.1",
+          "title": "Leadership and commitment",
+          "summary": "Top management shows commitment, for example by aligning the AI policy and objectives with strategy, building AIMS requirements into business processes, providing resources, communicating why AI management matters, directing people, promoting improvement and supporting other managers. A note highlights building a culture of responsible AI."
+        },
+        {
+          "id": "5.2",
+          "title": "AI policy",
+          "summary": "Top management sets an AI policy that suits the organisation's purpose, gives a framework for AI objectives, and commits to meeting requirements and to continual improvement. It must be documented, refer to other relevant policies, be communicated internally and be available to interested parties as appropriate."
+        },
+        {
+          "id": "5.3",
+          "title": "Roles, responsibilities and authorities",
+          "summary": "Top management assigns and communicates responsibilities and authorities. It must specifically assign who ensures the AIMS conforms to the standard and who reports AIMS performance to top management."
+        }
+      ]
+    },
+    {
+      "clause": "6",
+      "title": "Planning",
+      "domain": "D3",
+      "subclauses": [
+        {
+          "id": "6.1.1",
+          "title": "Actions to address risks and opportunities: general",
+          "summary": "Plan for risks and opportunities using 4.1 and 4.2. Set AI risk criteria that separate acceptable from unacceptable risk and support risk assessment, risk treatment and assessing AI risk impacts. Base the analysis on each AI system's domain and application context, its intended use and the context. Keep documented information on the actions taken."
+        },
+        {
+          "id": "6.1.2",
+          "title": "AI risk assessment",
+          "summary": "Define a process that is aligned with the AI policy and objectives and gives consistent, valid and comparable results. Identify risks that help or hinder AI objectives. Analyse consequences for the organisation, individuals and societies, the realistic likelihood where applicable, and the risk level. Evaluate against the criteria and prioritise. Keep the process documented."
+        },
+        {
+          "id": "6.1.3",
+          "title": "AI risk treatment",
+          "summary": "Select treatment options, determine all necessary controls and compare them with Annex A so nothing is missed. Consider Annex A and Annex B, add other controls where needed, produce a Statement of Applicability with justification for inclusion and exclusion, and write an AI risk treatment plan. Designated management approves the plan and accepts residual risk."
+        },
+        {
+          "id": "6.1.4",
+          "title": "AI system impact assessment",
+          "summary": "Define a process to assess the possible consequences of AI systems for individuals, groups and societies, covering deployment, intended use and foreseeable misuse in their technical and societal context and jurisdiction. Document the results, share them where appropriate, and feed them into the risk assessment."
+        },
+        {
+          "id": "6.2",
+          "title": "AI objectives and planning to achieve them",
+          "summary": "Set AI objectives at relevant functions and levels. They must be consistent with the AI policy, measurable if practicable, take account of requirements, and be monitored, communicated, updated and documented. Plan what, resources, who, when and how results are evaluated."
+        },
+        {
+          "id": "6.3",
+          "title": "Planning of changes",
+          "summary": "When the AIMS needs to change, make the change in a planned way."
+        }
+      ]
+    },
+    {
+      "clause": "7",
+      "title": "Support",
+      "domain": "D4",
+      "subclauses": [
+        {
+          "id": "7.1",
+          "title": "Resources",
+          "summary": "Determine and provide the resources the AIMS needs. Annex A.4 covers resources for AI systems."
+        },
+        {
+          "id": "7.2",
+          "title": "Competence",
+          "summary": "Determine the competence needed by people whose work affects AI performance, make sure they are competent, act to close gaps and check those actions worked. Keep evidence of competence."
+        },
+        {
+          "id": "7.3",
+          "title": "Awareness",
+          "summary": "People working under the organisation's control must know the AI policy, how they contribute to the AIMS and the benefits of better AI performance, and the implications of not conforming."
+        },
+        {
+          "id": "7.4",
+          "title": "Communication",
+          "summary": "Decide what to communicate internally and externally, when, with whom and how."
+        },
+        {
+          "id": "7.5",
+          "title": "Documented information",
+          "summary": "Include documented information the standard requires and what the organisation decides it needs. Control its identification, format, review and approval, then its distribution, access, storage, version control, retention and disposal, including documents from outside."
+        }
+      ]
+    },
+    {
+      "clause": "8",
+      "title": "Operation",
+      "domain": "D4",
+      "subclauses": [
+        {
+          "id": "8.1",
+          "title": "Operational planning and control",
+          "summary": "Plan and control the processes needed, set criteria and run to them. Implement the operational controls from 6.1.3, such as AI life cycle controls, monitor their effectiveness and consider corrective action if results fall short. Control planned changes, review unintended ones and control relevant external processes, products and services."
+        },
+        {
+          "id": "8.2",
+          "title": "AI risk assessment",
+          "summary": "Perform AI risk assessments at planned intervals or when significant changes are proposed or occur. Keep the results."
+        },
+        {
+          "id": "8.3",
+          "title": "AI risk treatment",
+          "summary": "Implement the AI risk treatment plan and verify it works. Treat new risks through 6.1.3. If treatment options are not effective, review and revalidate them and update the plan. Keep the results."
+        },
+        {
+          "id": "8.4",
+          "title": "AI system impact assessment",
+          "summary": "Perform AI system impact assessments at planned intervals or when significant changes are proposed. Keep the results."
+        }
+      ]
+    },
+    {
+      "clause": "9",
+      "title": "Performance evaluation",
+      "domain": "D6",
+      "subclauses": [
+        {
+          "id": "9.1",
+          "title": "Monitoring, measurement, analysis and evaluation",
+          "summary": "Decide what to monitor and measure, the methods that give valid results, when to monitor and when to analyse and evaluate. Keep evidence of results. Evaluate the performance and effectiveness of the AIMS. Unlike 27001, this clause does not list 'who'."
+        },
+        {
+          "id": "9.2",
+          "title": "Internal audit",
+          "summary": "Audit at planned intervals to check the AIMS meets your own requirements and the standard and is effectively implemented and maintained. Plan an audit programme covering frequency, methods, responsibilities, planning and reporting, considering process importance and previous results. Define objectives, criteria and scope, choose objective and impartial auditors, report to relevant managers and keep evidence."
+        },
+        {
+          "id": "9.3",
+          "title": "Management review",
+          "summary": "Top management reviews the AIMS at planned intervals. Inputs: status of previous actions, changes in issues, changes in interested party needs, AIMS performance trends (nonconformities and corrective actions, monitoring results, audit results), and improvement opportunities. Outputs: improvement decisions and needed changes. Keep evidence."
+        }
+      ]
+    },
+    {
+      "clause": "10",
+      "title": "Improvement",
+      "domain": "D6",
+      "subclauses": [
+        {
+          "id": "10.1",
+          "title": "Continual improvement",
+          "summary": "Continually improve the suitability, adequacy and effectiveness of the AIMS."
+        },
+        {
+          "id": "10.2",
+          "title": "Nonconformity and corrective action",
+          "summary": "React and correct, deal with consequences, find the causes, check for similar cases, act, review effectiveness and change the AIMS if needed. Corrective action must suit the effects of the nonconformity. Keep evidence of the nonconformity, actions and results."
+        }
+      ]
+    }
+  ],
+  "mandatory_documented_information": [
+    {
+      "item": "AIMS scope",
+      "ref": "4.3"
+    },
+    {
+      "item": "The AI management system itself, documented",
+      "ref": "4.4"
+    },
+    {
+      "item": "AI policy",
+      "ref": "5.2"
+    },
+    {
+      "item": "Actions taken to identify and address AI risks and opportunities",
+      "ref": "6.1.1"
+    },
+    {
+      "item": "AI risk assessment process",
+      "ref": "6.1.2"
+    },
+    {
+      "item": "AI risk treatment process",
+      "ref": "6.1.3"
+    },
+    {
+      "item": "Statement of Applicability",
+      "ref": "6.1.3 f"
+    },
+    {
+      "item": "Necessary controls",
+      "ref": "6.1.3",
+      "note": "The standard says the necessary controls must be available as documented information, communicated and available to interested parties as appropriate."
+    },
+    {
+      "item": "AI risk treatment plan",
+      "ref": "6.1.3 g / 8.3",
+      "note": "The plan must be formulated and approved. Its results must be retained under 8.3."
+    },
+    {
+      "item": "AI system impact assessment results",
+      "ref": "6.1.4 / 8.4"
+    },
+    {
+      "item": "AI objectives",
+      "ref": "6.2"
+    },
+    {
+      "item": "Evidence of competence",
+      "ref": "7.2"
+    },
+    {
+      "item": "Documented information the organisation decides is necessary",
+      "ref": "7.5.1 b"
+    },
+    {
+      "item": "Evidence that processes have been carried out as planned",
+      "ref": "8.1"
+    },
+    {
+      "item": "AI risk assessment results",
+      "ref": "8.2"
+    },
+    {
+      "item": "AI risk treatment results",
+      "ref": "8.3"
+    },
+    {
+      "item": "Monitoring and measurement results",
+      "ref": "9.1"
+    },
+    {
+      "item": "Audit programme implementation and audit results",
+      "ref": "9.2.2"
+    },
+    {
+      "item": "Management review results",
+      "ref": "9.3.3"
+    },
+    {
+      "item": "Nonconformities, actions taken and corrective action results",
+      "ref": "10.2"
+    }
+  ],
+  "annex_a": {
+    "total_controls": 38,
+    "new_in_2022": [],
+    "group_label": "control objective areas",
+    "themes": [
+      {
+        "theme": "Policies related to AI",
+        "clause": "A.2",
+        "count": 3,
+        "controls": [
+          {
+            "id": "A.2.2",
+            "name": "AI policy",
+            "summary": "Document a policy for developing or using AI systems."
+          },
+          {
+            "id": "A.2.3",
+            "name": "Alignment with other organizational policies",
+            "summary": "Work out where other policies affect or apply to your AI objectives, such as quality, security, safety and privacy."
+          },
+          {
+            "id": "A.2.4",
+            "name": "Review of the AI policy",
+            "summary": "Review the AI policy at planned intervals, and when needed, so it stays suitable, adequate and effective."
+          }
+        ]
+      },
+      {
+        "theme": "Internal organization",
+        "clause": "A.3",
+        "count": 2,
+        "controls": [
+          {
+            "id": "A.3.2",
+            "name": "AI roles and responsibilities",
+            "summary": "Define and allocate AI roles and responsibilities to suit the organisation."
+          },
+          {
+            "id": "A.3.3",
+            "name": "Reporting of concerns",
+            "summary": "Set up a process for people to raise concerns about the organisation's role with an AI system across its life cycle, with confidentiality and protection from reprisals."
+          }
+        ]
+      },
+      {
+        "theme": "Resources for AI systems",
+        "clause": "A.4",
+        "count": 5,
+        "controls": [
+          {
+            "id": "A.4.2",
+            "name": "Resource documentation",
+            "summary": "Identify and document the resources needed at each AI life cycle stage."
+          },
+          {
+            "id": "A.4.3",
+            "name": "Data resources",
+            "summary": "Document the data resources used for the AI system, such as provenance, categories, quality and known bias."
+          },
+          {
+            "id": "A.4.4",
+            "name": "Tooling resources",
+            "summary": "Document the tools used, such as algorithms, models and development tools."
+          },
+          {
+            "id": "A.4.5",
+            "name": "System and computing resources",
+            "summary": "Document the system and computing resources used, including where they run and their environmental impact."
+          },
+          {
+            "id": "A.4.6",
+            "name": "Human resources",
+            "summary": "Document the people and competences used across the AI system life cycle, such as data scientists and human oversight roles."
+          }
+        ]
+      },
+      {
+        "theme": "Assessing impacts of AI systems",
+        "clause": "A.5",
+        "count": 4,
+        "controls": [
+          {
+            "id": "A.5.2",
+            "name": "AI system impact assessment process",
+            "summary": "Set up a process to assess possible consequences of the AI system for individuals, groups and societies across its life cycle."
+          },
+          {
+            "id": "A.5.3",
+            "name": "Documentation of AI system impact assessments",
+            "summary": "Document impact assessment results and keep them for a defined period."
+          },
+          {
+            "id": "A.5.4",
+            "name": "Assessing AI system impact on individuals or groups of individuals",
+            "summary": "Assess and document possible impacts on individuals and groups, such as fairness, transparency, safety and human rights."
+          },
+          {
+            "id": "A.5.5",
+            "name": "Assessing societal impacts of AI systems",
+            "summary": "Assess and document possible societal impacts, such as environmental, economic and political effects."
+          }
+        ]
+      },
+      {
+        "theme": "AI system life cycle",
+        "clause": "A.6",
+        "count": 9,
+        "controls": [
+          {
+            "id": "A.6.1.2",
+            "name": "Objectives for responsible development of AI system",
+            "summary": "Identify and document objectives for responsible AI development and build measures for them into development."
+          },
+          {
+            "id": "A.6.1.3",
+            "name": "Processes for responsible AI system design and development",
+            "summary": "Define and document the processes for responsible design and development."
+          },
+          {
+            "id": "A.6.2.2",
+            "name": "AI system requirements and specification",
+            "summary": "Specify and document requirements for new AI systems or major enhancements."
+          },
+          {
+            "id": "A.6.2.3",
+            "name": "Documentation of AI system design and development",
+            "summary": "Document the design and development against objectives, requirements and specification criteria."
+          },
+          {
+            "id": "A.6.2.4",
+            "name": "AI system verification and validation",
+            "summary": "Define and document verification and validation measures and the criteria for using them."
+          },
+          {
+            "id": "A.6.2.5",
+            "name": "AI system deployment",
+            "summary": "Document a deployment plan and make sure requirements are met before deployment."
+          },
+          {
+            "id": "A.6.2.6",
+            "name": "AI system operation and monitoring",
+            "summary": "Define and document what ongoing operation needs, at least monitoring, repairs, updates and support."
+          },
+          {
+            "id": "A.6.2.7",
+            "name": "AI system technical documentation",
+            "summary": "Decide what technical documentation each group of interested parties needs and provide it in a suitable form."
+          },
+          {
+            "id": "A.6.2.8",
+            "name": "AI system recording of event logs",
+            "summary": "Decide at which life cycle phases event logging is enabled, and at least while the AI system is in use."
+          }
+        ]
+      },
+      {
+        "theme": "Data for AI systems",
+        "clause": "A.7",
+        "count": 5,
+        "controls": [
+          {
+            "id": "A.7.2",
+            "name": "Data for development and enhancement of AI system",
+            "summary": "Define, document and implement data management processes for AI development."
+          },
+          {
+            "id": "A.7.3",
+            "name": "Acquisition of data",
+            "summary": "Determine and document how data is acquired and selected."
+          },
+          {
+            "id": "A.7.4",
+            "name": "Quality of data for AI systems",
+            "summary": "Define data quality requirements and make sure development and operational data meet them."
+          },
+          {
+            "id": "A.7.5",
+            "name": "Data provenance",
+            "summary": "Define and document a process to record where data came from and what happened to it over its life cycle."
+          },
+          {
+            "id": "A.7.6",
+            "name": "Data preparation",
+            "summary": "Define and document criteria for choosing data preparation methods and the methods used."
+          }
+        ]
+      },
+      {
+        "theme": "Information for interested parties of AI systems",
+        "clause": "A.8",
+        "count": 4,
+        "controls": [
+          {
+            "id": "A.8.2",
+            "name": "System documentation and information for users",
+            "summary": "Determine and give users the information they need about the AI system."
+          },
+          {
+            "id": "A.8.3",
+            "name": "External reporting",
+            "summary": "Give interested parties a way to report adverse impacts of the AI system."
+          },
+          {
+            "id": "A.8.4",
+            "name": "Communication of incidents",
+            "summary": "Determine and document a plan for telling users about incidents."
+          },
+          {
+            "id": "A.8.5",
+            "name": "Information for interested parties",
+            "summary": "Determine and document obligations to report information about the AI system to interested parties, such as regulators."
+          }
+        ]
+      },
+      {
+        "theme": "Use of AI systems",
+        "clause": "A.9",
+        "count": 3,
+        "controls": [
+          {
+            "id": "A.9.2",
+            "name": "Processes for responsible use of AI systems",
+            "summary": "Define and document processes for using AI systems responsibly."
+          },
+          {
+            "id": "A.9.3",
+            "name": "Objectives for responsible use of AI system",
+            "summary": "Identify and document objectives that guide responsible use, such as fairness, transparency and safety."
+          },
+          {
+            "id": "A.9.4",
+            "name": "Intended use of the AI system",
+            "summary": "Make sure the AI system is used as intended and in line with its documentation."
+          }
+        ]
+      },
+      {
+        "theme": "Third-party and customer relationships",
+        "clause": "A.10",
+        "count": 3,
+        "controls": [
+          {
+            "id": "A.10.2",
+            "name": "Allocating responsibilities",
+            "summary": "Allocate AI life cycle responsibilities between the organisation, partners, suppliers, customers and third parties."
+          },
+          {
+            "id": "A.10.3",
+            "name": "Suppliers",
+            "summary": "Set up a process so supplied services, products and materials fit your responsible approach to AI."
+          },
+          {
+            "id": "A.10.4",
+            "name": "Customers",
+            "summary": "Make sure your responsible approach to AI considers customer expectations and needs."
+          }
+        ]
+      }
+    ]
+  },
+  "key_concepts": [
+    {
+      "term": "AI management system (AIMS)",
+      "definition": "The set of interrelated elements an organisation uses to set AI policies and objectives and the processes to achieve them."
+    },
+    {
+      "term": "AI system",
+      "definition": "Defined in ISO/IEC 22989. From Claude training data: an engineered system that generates outputs such as content, forecasts, recommendations or decisions for human-defined objectives."
+    },
+    {
+      "term": "Risk",
+      "definition": "In 42001, the effect of uncertainty. Note that 42001 drops 'on objectives' from the usual wording. Effects can be positive or negative."
+    },
+    {
+      "term": "AI risk criteria",
+      "definition": "Criteria set under 6.1.1 that separate acceptable from unacceptable risk and support risk assessment, treatment and impact assessment."
+    },
+    {
+      "term": "AI system impact assessment",
+      "definition": "A formal, documented process that identifies, evaluates and addresses impacts of AI on individuals, groups and societies."
+    },
+    {
+      "term": "Statement of Applicability",
+      "definition": "Documentation of all necessary controls with justification for including or excluding them. You may need fewer than Annex A lists, or more."
+    },
+    {
+      "term": "Control",
+      "definition": "A measure that maintains or modifies risk. Taken from ISO 31000."
+    },
+    {
+      "term": "Governing body",
+      "definition": "The person or group accountable for the organisation's performance and conformance, such as a board. Small organisations may not have one separate from top management."
+    },
+    {
+      "term": "Top management",
+      "definition": "The person or group that directs and controls the organisation at the highest level."
+    },
+    {
+      "term": "Interested party",
+      "definition": "A person or organisation that can affect, be affected by, or believe it is affected by a decision or activity."
+    },
+    {
+      "term": "Data quality",
+      "definition": "How far data meets the organisation's data requirements for a given context."
+    },
+    {
+      "term": "Data provenance",
+      "definition": "The record of where data came from and how it was created, changed and transferred over time (A.7.5)."
+    },
+    {
+      "term": "Intended use and foreseeable misuse",
+      "definition": "How the AI system is meant to be used, and how it could reasonably be misused. Both feed the impact assessment (6.1.4)."
+    },
+    {
+      "term": "Human oversight",
+      "definition": "People checking AI outputs and, where needed, having authority to override decisions. Annex B links it to responsible use objectives (B.9.3)."
+    },
+    {
+      "term": "Continuous learning",
+      "definition": "An AI system that keeps changing its behaviour during use. The standard's introduction says this needs special care."
+    },
+    {
+      "term": "Concept or data drift",
+      "definition": "Performance changes because production data moves away from training data, even without continuous learning. Monitoring can show when retraining is needed."
+    },
+    {
+      "term": "Transparency and explainability",
+      "definition": "Transparency concerns information about the organisation and its AI systems. Explainability concerns explaining the main factors behind an AI result in a way people understand (Annex C)."
+    },
+    {
+      "term": "Robustness",
+      "definition": "Whether the system performs as well on new data as on its training or typical data (Annex C)."
+    },
+    {
+      "term": "AI-specific security threats",
+      "definition": "Annex B names data poisoning, model stealing and model inversion attacks."
+    },
+    {
+      "term": "AI roles",
+      "definition": "4.1 notes roles such as AI provider, AI producer, AI customer, AI partner, AI subject and relevant authorities. Your role shapes which requirements and controls apply."
+    },
+    {
+      "term": "Harmonized structure",
+      "definition": "The common clause structure of ISO management system standards. 42001 uses it, so it integrates with 27001, 27701 and 9001."
+    },
+    {
+      "term": "Nonconformity and corrective action",
+      "definition": "A nonconformity is a requirement not met. Corrective action removes the cause to stop it recurring. Correction fixes the immediate issue."
+    },
+    {
+      "term": "Normative and informative annexes",
+      "definition": "In 42001, Annex A (controls) and Annex B (implementation guidance) are normative. Annex C (objectives and risk sources) and Annex D (sectors) are informative."
+    }
+  ],
+  "lessons_note": "Lesson text is paraphrased study material. Clause and control content was checked against ISO/IEC 42001:2023. Content marked as Claude training data (OECD, EU AI Act, NIST functions, 42005, 42006, certification stages) was not checked against a source. It is not the wording of the standard.",
+  "lessons": [
+    {
+      "id": "M1",
+      "domain": "D1",
+      "title": "Why AI needs its own management system",
+      "minutes": 7,
+      "intro": "ISO/IEC 42001 exists because AI raises issues that ordinary IT management does not cover. This lesson explains those issues and the roles an organisation can play.",
+      "sections": [
+        {
+          "heading": "What is different about AI",
+          "body": [
+            "The standard's introduction points to three features that need specific management:"
+          ],
+          "points": [
+            "Automatic decision-making that can be hard to see into or explain.",
+            "Systems built from data and machine learning rather than hand-written logic, which changes how they are developed and justified.",
+            "Systems that keep learning and so change their behaviour while in use."
+          ]
+        },
+        {
+          "heading": "What an AIMS does",
+          "body": [
+            "An AI management system is the set of policies, objectives and processes an organisation uses to develop, provide or use AI responsibly. It follows the same plan, run, check and improve pattern as other ISO management systems, but adds AI risk, AI impact on people and society, and AI life cycle controls.",
+            "42001 applies to any organisation that provides or uses products or services that use AI, whatever its size or sector."
+          ]
+        },
+        {
+          "heading": "Your AI roles",
+          "body": [
+            "Clause 4.1 asks you to work out your roles for each AI system. A note lists examples drawn from ISO/IEC 22989:"
+          ],
+          "points": [
+            "AI provider: offers an AI platform, product or service.",
+            "AI producer: designs, develops, tests or deploys AI.",
+            "AI customer: uses AI, including AI users.",
+            "AI partner: for example a system integrator or data provider.",
+            "AI subject: a person affected, including data subjects.",
+            "Relevant authorities: policymakers and regulators."
+          ]
+        },
+        {
+          "heading": "Why roles matter",
+          "body": [
+            "Your role decides which requirements and controls apply and how far. A company that only buys AI tools will focus on responsible use, suppliers and intended use. A company that builds models also needs the development, data and verification controls."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Two companies, two roles",
+        "text": "A bank buys a credit scoring model and uses it on loan applications. It is an AI customer, and applicants are AI subjects. The software firm that built the model is an AI producer and provider. Both could implement 42001, but the bank's Statement of Applicability will look very different from the developer's."
+      },
+      "exam_tips": [
+        "If a question describes buying and using an AI tool, the answer is usually 'AI customer'.",
+        "Continuous learning is the feature the introduction says needs special care."
+      ],
+      "related": {
+        "clauses": [
+          "4"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "A1",
+        "A3",
+        "A7"
+      ]
+    },
+    {
+      "id": "M2",
+      "domain": "D1",
+      "title": "ISO/IEC 42001 and the standards around it",
+      "minutes": 7,
+      "intro": "This lesson maps the standard and the documents it relies on, so you can answer 'which standard' and 'which annex' questions.",
+      "sections": [
+        {
+          "heading": "Structure of 42001",
+          "body": [],
+          "points": [
+            "Clauses 1 to 3: scope, normative reference and terms. No auditable requirements.",
+            "Clauses 4 to 10: requirements, in the harmonized structure shared with 27001 and 9001.",
+            "Annex A (normative): 38 reference controls in areas A.2 to A.10.",
+            "Annex B (normative): implementation guidance for every Annex A control.",
+            "Annex C (informative): possible AI objectives and risk sources.",
+            "Annex D (informative): use across sectors and integration with other management systems."
+          ]
+        },
+        {
+          "heading": "Normative versus informative",
+          "body": [
+            "Normative content is part of what you must meet or use. Informative content helps but is not required. A common exam trap: Annex B is normative in 42001, unlike the guidance in a separate standard such as 27002. You can still adapt the guidance and you do not justify it in the SoA."
+          ]
+        },
+        {
+          "heading": "Standards to know",
+          "body": [],
+          "points": [
+            "ISO/IEC 22989: AI concepts and terms. The only normative reference.",
+            "ISO/IEC 23894: AI risk management guidance.",
+            "ISO/IEC 38507: governance implications of AI for governing bodies.",
+            "ISO/IEC 23053: framework for machine learning systems.",
+            "ISO/IEC 5338: AI system life cycle processes.",
+            "ISO/IEC 5259 series: data quality for analytics and ML.",
+            "ISO/IEC 42005 and 42006: impact assessment guidance and certification body requirements. From Claude training data, both published in 2025."
+          ]
+        },
+        {
+          "heading": "Integration",
+          "body": [
+            "Because 42001 uses the harmonized structure, you can run it alongside 27001 (security), 27701 (privacy) and 9001 (quality). Annex D recommends this, since AI systems also contain ordinary software and data that those systems already protect."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Which document?",
+        "text": "You need the definition of 'AI system'. Go to ISO/IEC 22989. You need guidance on how to implement A.7.4 data quality. Go to Annex B, B.7.4, then the 5259 series. You need to brief the board on AI governance duties. Go to ISO/IEC 38507."
+      },
+      "exam_tips": [
+        "Annex A and B are normative. C and D are informative.",
+        "42001 has 38 controls. 93 is the 27001 figure."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": []
+      },
+      "check_questions": [
+        "A2",
+        "A6",
+        "F8"
+      ]
+    },
+    {
+      "id": "M3",
+      "domain": "D1",
+      "title": "AI threats and trustworthiness",
+      "minutes": 8,
+      "intro": "AI systems fail in ways ordinary software does not. This lesson covers the threats and the trustworthiness goals the course and the standard focus on.",
+      "sections": [
+        {
+          "heading": "AI-specific attacks",
+          "body": [
+            "Annex B names three AI-specific security threats:"
+          ],
+          "points": [
+            "Data poisoning: an attacker corrupts training data so the model learns the wrong behaviour.",
+            "Model stealing: an attacker copies a model, often by querying it repeatedly.",
+            "Model inversion: an attacker uses outputs to infer sensitive training data."
+          ]
+        },
+        {
+          "heading": "Reliability problems",
+          "body": [
+            "Not every failure is an attack. Bias in data can lead to unfair outcomes. Drift happens when live data moves away from training data, so accuracy falls even without continuous learning. Overfitting means a model does well on training data and poorly on new data, which is a robustness issue. From Claude training data: adversarial examples are inputs crafted to make a model misclassify."
+          ]
+        },
+        {
+          "heading": "Trustworthiness objectives",
+          "body": [
+            "Annex C lists objectives an organisation may set. Learn the list:"
+          ],
+          "points": [
+            "Accountability",
+            "AI expertise",
+            "Availability and quality of training and test data",
+            "Environmental impact",
+            "Fairness",
+            "Maintainability",
+            "Privacy",
+            "Robustness",
+            "Safety",
+            "Security",
+            "Transparency and explainability"
+          ]
+        },
+        {
+          "heading": "Risk sources",
+          "body": [
+            "Annex C also lists risk sources: complexity of environment, lack of transparency and explainability, level of automation, ML-related sources such as data quality and poisoning, hardware issues, life cycle issues, and technology readiness, which covers both immature technology and complacency with mature technology."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Spot the threat",
+        "text": "A competitor sends thousands of queries to your pricing model and trains a copy on the answers. That is model stealing. Someone uploads manipulated reviews that your sentiment model later trains on. That is data poisoning."
+      },
+      "exam_tips": [
+        "Drift can occur without continuous learning.",
+        "Transparency is about the organisation and system. Explainability is about why a specific result happened."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "A.6.2.6",
+          "A.7.4"
+        ]
+      },
+      "check_questions": [
+        "A4",
+        "A5",
+        "F10"
+      ]
+    },
+    {
+      "id": "M4",
+      "domain": "D1",
+      "title": "Global AI frameworks: OECD, EU AI Act and NIST",
+      "minutes": 7,
+      "intro": "The course maps 42001 to other frameworks. Except for the NIST AI RMF, which 42001 cites in its bibliography, the details here come from Claude training data. Check them against the original sources.",
+      "sections": [
+        {
+          "heading": "OECD AI Principles",
+          "body": [
+            "From Claude training data: the OECD adopted its AI Principles in 2019 and updated them in 2024. The values-based principles cover inclusive growth and well-being; human rights and democratic values, including fairness and privacy; transparency and explainability; robustness, security and safety; and accountability."
+          ]
+        },
+        {
+          "heading": "EU AI Act",
+          "body": [
+            "From Claude training data: the EU AI Act entered into force in August 2024 with obligations phased in over several years. It takes a risk-based approach:"
+          ],
+          "points": [
+            "Unacceptable risk: prohibited practices, such as social scoring by public authorities.",
+            "High risk: strict requirements, including risk management, data governance, logging, human oversight and conformity assessment.",
+            "Limited risk: transparency duties, such as telling people they are dealing with AI.",
+            "Minimal risk: no specific duties."
+          ]
+        },
+        {
+          "heading": "NIST AI Risk Management Framework",
+          "body": [
+            "The 42001 bibliography cites NIST AI RMF 1.0 from January 2023. From Claude training data: it has four functions, Govern, Map, Measure and Manage."
+          ]
+        },
+        {
+          "heading": "How 42001 fits",
+          "body": [
+            "42001 is a certifiable management system, not a law. It gives you the policies, risk process, impact assessments, logs and documentation that help show compliance with laws like the EU AI Act. Certification alone does not prove legal compliance."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Mapping a duty",
+        "text": "The EU AI Act expects logging for high-risk systems. In 42001, A.6.2.8 event logs and A.6.2.6 operation and monitoring give you the matching control, and A.8.5 covers what you must report to authorities."
+      },
+      "exam_tips": [
+        "42001 cites NIST AI RMF in its bibliography. It does not cite the EU AI Act.",
+        "Treat dates and tiers here as training-data facts to verify."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "A.6.2.8",
+          "A.8.5"
+        ]
+      },
+      "check_questions": [
+        "A8",
+        "A9",
+        "A10"
+      ]
+    },
+    {
+      "id": "M5",
+      "domain": "D2",
+      "title": "Clause 4: context, roles and scope",
+      "minutes": 8,
+      "intro": "Clause 4 sets the boundaries. 42001 adds AI-specific steps that 27001 does not have.",
+      "sections": [
+        {
+          "heading": "4.1 Context",
+          "body": [
+            "Determine internal and external issues that affect the AIMS. Decide whether climate change is relevant. Then two AI-specific steps: consider the intended purpose of the AI systems you develop, provide or use, and determine your roles for them.",
+            "External issues include law, including prohibited uses of AI, regulator guidance, incentives, culture and ethics, and competition. Internal issues include governance, objectives, contracts and the intended purpose of each AI system."
+          ]
+        },
+        {
+          "heading": "4.2 Interested parties",
+          "body": [
+            "Identify relevant interested parties, their requirements, and which requirements the AIMS will address. Parties can include users, AI subjects, regulators, customers and suppliers. They can have climate-related requirements."
+          ]
+        },
+        {
+          "heading": "4.3 Scope",
+          "body": [
+            "Set boundaries and applicability, considering 4.1 and 4.2. Document it. Note the difference from 27001: 42001 does not list interfaces and dependencies as a scope input. The scope also determines how the standard's requirements and controls apply to your activities."
+          ]
+        },
+        {
+          "heading": "4.4 The AIMS",
+          "body": [
+            "Establish, implement, maintain, continually improve and document the AIMS. 'Document' is an addition compared with the common wording."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A scope statement",
+        "text": "'The development, provision and monitoring of the AI-based fraud detection service for UK retail banking clients, including the data science, MLOps and customer support teams.' Internal chatbots used by HR are excluded and covered by a separate review."
+      },
+      "exam_tips": [
+        "Scope inputs in 42001: 4.1 and 4.2 only.",
+        "4.1 asks you to determine your AI roles."
+      ],
+      "related": {
+        "clauses": [
+          "4"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "B1",
+        "B2",
+        "B3",
+        "B7",
+        "B10"
+      ]
+    },
+    {
+      "id": "M6",
+      "domain": "D2",
+      "title": "Clause 5: leadership and the AI policy",
+      "minutes": 6,
+      "intro": "Top management owns the AIMS. Clause 5 sets its duties and the AI policy.",
+      "sections": [
+        {
+          "heading": "5.1 Leadership and commitment",
+          "body": [
+            "Top management aligns AI policy and objectives with strategy, builds AIMS requirements into business processes, provides resources, communicates why AI management matters, makes sure the AIMS achieves its results, directs people, promotes continual improvement and supports other managers.",
+            "A note suggests building and modelling a culture of responsible AI as strong evidence of commitment."
+          ]
+        },
+        {
+          "heading": "5.2 AI policy",
+          "body": [
+            "The AI policy must suit the organisation's purpose, give a framework for AI objectives, and commit to meeting requirements and to continual improvement. It must be documented, refer to other relevant policies, be communicated internally and be available to interested parties as appropriate.",
+            "Annex B suggests the policy draws on business strategy, values and risk appetite, the risk level of the AI systems, legal requirements and impacts on interested parties. It should include guiding principles and how exceptions are handled."
+          ]
+        },
+        {
+          "heading": "5.3 Roles",
+          "body": [
+            "Top management assigns and communicates responsibilities. Two are required by name: making sure the AIMS conforms to 42001, and reporting AIMS performance to top management. Control A.3.2 extends this to AI-specific roles such as human oversight and data quality."
+          ]
+        },
+        {
+          "heading": "Governing body",
+          "body": [
+            "42001 defines a governing body as those accountable for performance and conformance, such as a board. ISO/IEC 38507 guides boards on AI. In small organisations, the governing body and top management may be the same people."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A policy that passes",
+        "text": "A two-page AI policy signed by the CEO states principles such as fairness and human oversight, links to the information security and privacy policies, sets the framework for AI objectives, commits to legal compliance and improvement, and is on the intranet and the customer trust page."
+      },
+      "exam_tips": [
+        "5.2 requires the AI policy to refer to other organisational policies. 27001 has no such requirement.",
+        "Control A.2.4 requires the AI policy to be reviewed."
+      ],
+      "related": {
+        "clauses": [
+          "5"
+        ],
+        "controls": [
+          "A.2.2",
+          "A.2.3",
+          "A.2.4",
+          "A.3.2"
+        ]
+      },
+      "check_questions": [
+        "B4",
+        "B5",
+        "B6",
+        "B8",
+        "B9"
+      ]
+    },
+    {
+      "id": "M7",
+      "domain": "D3",
+      "title": "AI risk criteria and risk assessment",
+      "minutes": 9,
+      "intro": "Clause 6.1 is the core of 42001. This lesson covers risk criteria and the assessment process.",
+      "sections": [
+        {
+          "heading": "6.1.1 Risks, opportunities and criteria",
+          "body": [
+            "Using 4.1 and 4.2, plan for risks and opportunities to the AIMS. Then set AI risk criteria. They must support:"
+          ],
+          "points": [
+            "Telling acceptable risks from unacceptable ones.",
+            "Performing AI risk assessments.",
+            "Conducting AI risk treatment.",
+            "Assessing AI risk impacts."
+          ]
+        },
+        {
+          "heading": "Base risks on context",
+          "body": [
+            "Determine risks and opportunities according to each AI system's domain and application context, its intended use, and the context from 4.1. You can group similar AI systems. Keep documented information on actions taken."
+          ]
+        },
+        {
+          "heading": "6.1.2 AI risk assessment",
+          "body": [
+            "The process must be aligned with the AI policy and objectives and give consistent, valid and comparable results. It:"
+          ],
+          "points": [
+            "Identifies risks that help or hinder AI objectives.",
+            "Analyses consequences for the organisation, individuals and societies.",
+            "Assesses realistic likelihood where applicable.",
+            "Determines risk levels.",
+            "Evaluates against the criteria and prioritises for treatment."
+          ]
+        },
+        {
+          "heading": "Differences from 27001",
+          "body": [
+            "42001 defines risk as 'effect of uncertainty', without 'on objectives'. Risks are not limited to confidentiality, integrity and availability. Consequences reach individuals and societies. The standard does not use the term 'risk owner'."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A hiring model",
+        "text": "A recruitment screening model may reject qualified candidates from some groups. Consequence for the organisation: legal and reputational. For individuals: lost job opportunities. For society: reinforced inequality. The likelihood depends on how representative the training data is. The level is high, so it is prioritised for treatment."
+      },
+      "exam_tips": [
+        "Four things AI risk criteria support. Learn them.",
+        "'Where applicable' applies to likelihood in 6.1.2."
+      ],
+      "related": {
+        "clauses": [
+          "6"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "C1",
+        "C2",
+        "C9"
+      ]
+    },
+    {
+      "id": "M8",
+      "domain": "D3",
+      "title": "AI risk treatment and the Statement of Applicability",
+      "minutes": 8,
+      "intro": "Risk treatment decides what to do about each AI risk. The Statement of Applicability records the controls.",
+      "sections": [
+        {
+          "heading": "6.1.3 Steps",
+          "body": [],
+          "points": [
+            "Select treatment options.",
+            "Determine all necessary controls, and compare them with Annex A to check none is missing.",
+            "Consider relevant Annex A controls and add others where needed.",
+            "Use Annex B guidance for implementation.",
+            "Produce a Statement of Applicability.",
+            "Formulate an AI risk treatment plan."
+          ]
+        },
+        {
+          "heading": "The Statement of Applicability",
+          "body": [
+            "It lists the necessary controls and justifies including or excluding each. Exclusions can rest on the risk assessment showing a control is not needed, or on applicable external requirements not requiring it. You can exclude whole control objectives, for all or some AI systems, with justification."
+          ]
+        },
+        {
+          "heading": "Approval and the controls",
+          "body": [
+            "Designated management approves the treatment plan and accepts residual AI risk. The necessary controls must be aligned with AI objectives, documented, communicated internally and available to interested parties as appropriate. Keep the treatment process documented."
+          ]
+        },
+        {
+          "heading": "Annex A is a reference, not a checklist",
+          "body": [
+            "Not all Annex A controls are required, and you can design your own. You may need fewer controls or more."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Excluding a control",
+        "text": "A firm only buys and uses off-the-shelf AI tools and does not train models. It excludes A.7.6 data preparation, justified because it does no data preparation. It keeps A.9 and A.10 because responsible use and suppliers are central to its risks."
+      },
+      "exam_tips": [
+        "Approval comes from designated management, not risk owners.",
+        "The SoA justifies both inclusion and exclusion."
+      ],
+      "related": {
+        "clauses": [
+          "6",
+          "8"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "C3",
+        "C4",
+        "C5"
+      ]
+    },
+    {
+      "id": "M9",
+      "domain": "D3",
+      "title": "AI system impact assessment",
+      "minutes": 9,
+      "intro": "The impact assessment is the most distinctive part of 42001. It looks outward at people and society, not only at the organisation.",
+      "sections": [
+        {
+          "heading": "What 6.1.4 requires",
+          "body": [
+            "Define a process to assess the possible consequences of AI systems for individuals, groups of individuals, and societies. It covers the system's deployment, intended use and foreseeable misuse, and must take account of the technical and societal context and the applicable jurisdictions.",
+            "Document the results, make them available to interested parties where appropriate, and consider them in the AI risk assessment."
+          ]
+        },
+        {
+          "heading": "When to assess",
+          "body": [
+            "Clause 8.4 requires assessments at planned intervals or when significant changes are proposed. Annex B suggests triggers such as the criticality of the purpose, the complexity and automation level, and the sensitivity of data."
+          ]
+        },
+        {
+          "heading": "What to look at",
+          "body": [
+            "B.5.4 lists areas of impact on individuals: fairness, accountability, transparency and explainability, security and privacy, safety and health, financial consequences, accessibility and human rights. B.5.5 lists societal areas: environmental sustainability, economic, government, health and safety, and norms and culture.",
+            "Consider groups with specific needs, such as children, older people, impaired persons and workers."
+          ]
+        },
+        {
+          "heading": "Related controls",
+          "body": [
+            "A.5.2 sets up the process, A.5.3 documents and retains results, A.5.4 covers individuals and groups, and A.5.5 covers society."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A benefits eligibility tool",
+        "text": "A council plans an AI tool that flags benefit claims for review. The impact assessment notes that wrong flags could delay payments to vulnerable people (individual, financial), could erode trust in public services (societal), and that staff might rubber-stamp flags (foreseeable misuse). It recommends human review of every flag and an appeals route."
+      },
+      "exam_tips": [
+        "Intended use and foreseeable misuse both go into 6.1.4.",
+        "Impact assessment results feed the risk assessment. They do not replace it."
+      ],
+      "related": {
+        "clauses": [
+          "6",
+          "8"
+        ],
+        "controls": [
+          "A.5.2",
+          "A.5.3",
+          "A.5.4",
+          "A.5.5"
+        ]
+      },
+      "check_questions": [
+        "C6",
+        "C7",
+        "E6"
+      ]
+    },
+    {
+      "id": "M10",
+      "domain": "D3",
+      "title": "AI objectives and planning changes",
+      "minutes": 5,
+      "intro": "Objectives turn the AI policy into measurable targets.",
+      "sections": [
+        {
+          "heading": "6.2 AI objectives",
+          "body": [
+            "Set AI objectives at relevant functions and levels. They must be consistent with the AI policy, measurable if practicable, take account of applicable requirements, be monitored, communicated, updated and documented. Plan what will be done, the resources, who is responsible, when it will be done and how results will be evaluated."
+          ]
+        },
+        {
+          "heading": "Where objectives come from",
+          "body": [
+            "Annex C lists possible objectives, such as fairness, robustness and transparency. Controls A.6.1.2 and A.9.3 ask for objectives for responsible development and responsible use."
+          ]
+        },
+        {
+          "heading": "6.3 Planning of changes",
+          "body": [
+            "Changes to the AIMS are made in a planned way."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A measurable AI objective",
+        "text": "'By Q3, every customer-facing model has a documented fairness test, and approval rates across protected groups differ by less than five percentage points.'"
+      },
+      "exam_tips": [
+        "Annex C is where the standard lists example objectives."
+      ],
+      "related": {
+        "clauses": [
+          "6"
+        ],
+        "controls": [
+          "A.6.1.2",
+          "A.9.3"
+        ]
+      },
+      "check_questions": [
+        "C8",
+        "C10"
+      ]
+    },
+    {
+      "id": "M11",
+      "domain": "D4",
+      "title": "Clause 7: support",
+      "minutes": 6,
+      "intro": "Clause 7 covers people, skills, awareness, communication and documents for the AIMS.",
+      "sections": [
+        {
+          "heading": "7.1 and 7.2",
+          "body": [
+            "Provide the resources the AIMS needs. Determine the competence needed by people whose work affects AI performance, make sure they have it, close gaps and check those actions worked. Keep evidence. A.4.6 asks you to document the human resources and competences used across the AI life cycle."
+          ]
+        },
+        {
+          "heading": "7.3 Awareness",
+          "body": [
+            "People must know the AI policy, how they contribute to the AIMS including the benefits of better AI performance, and the implications of not conforming."
+          ]
+        },
+        {
+          "heading": "7.4 and 7.5",
+          "body": [
+            "Decide what to communicate, when, with whom and how. Control documented information: identify it, format it, review and approve it, then control distribution, access, storage, version control, retention and disposal, including documents from outside."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Competence for oversight",
+        "text": "Claims handlers who review AI decisions need training on how the model works, its known limits and when to override it. Their training records are evidence for 7.2."
+      },
+      "exam_tips": [
+        "Competence is tied to work that affects AI performance."
+      ],
+      "related": {
+        "clauses": [
+          "7"
+        ],
+        "controls": [
+          "A.4.6"
+        ]
+      },
+      "check_questions": [
+        "E1",
+        "E2",
+        "E3",
+        "E8"
+      ]
+    },
+    {
+      "id": "M12",
+      "domain": "D4",
+      "title": "Clause 8: operation",
+      "minutes": 7,
+      "intro": "Clause 8 puts the plans into practice and repeats the risk and impact work.",
+      "sections": [
+        {
+          "heading": "8.1 Operational planning and control",
+          "body": [
+            "Plan and control the processes needed, set criteria and work to them. Implement the operational controls from 6.1.3, such as AI life cycle controls. Monitor whether they work and consider corrective action if they do not. Control planned changes, review unintended ones and control relevant external processes, products and services."
+          ]
+        },
+        {
+          "heading": "8.2, 8.3 and 8.4",
+          "body": [],
+          "points": [
+            "8.2: repeat AI risk assessments at planned intervals or when significant changes are proposed or occur. Keep results.",
+            "8.3: implement the treatment plan and verify it works. Treat new risks. If treatments fail, revalidate them and update the plan. Keep results.",
+            "8.4: repeat AI system impact assessments at planned intervals or when significant changes are proposed. Keep results."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A model update",
+        "text": "A team retrains a fraud model on new data. That is a significant change, so it triggers a new risk assessment (8.2) and impact assessment (8.4). Verification and validation (A.6.2.4) run before deployment (A.6.2.5)."
+      },
+      "exam_tips": [
+        "8.3 adds 'verify effectiveness' and revalidation compared with 27001."
+      ],
+      "related": {
+        "clauses": [
+          "8"
+        ],
+        "controls": [
+          "A.6.2.4",
+          "A.6.2.5"
+        ]
+      },
+      "check_questions": [
+        "E4",
+        "E5",
+        "E7",
+        "E9",
+        "E10"
+      ]
+    },
+    {
+      "id": "M13",
+      "domain": "D5",
+      "title": "Annex A part 1: policy, organisation, resources, impact",
+      "minutes": 8,
+      "intro": "Annex A has 38 controls. This lesson covers A.2 to A.5.",
+      "sections": [
+        {
+          "heading": "A.2 Policies related to AI (3)",
+          "body": [
+            "A.2.2 document an AI policy. A.2.3 align it with other policies. A.2.4 review it at planned intervals."
+          ]
+        },
+        {
+          "heading": "A.3 Internal organization (2)",
+          "body": [
+            "A.3.2 define and allocate AI roles. A.3.3 set up a way to report concerns about the organisation's AI role, with confidentiality, protection from reprisals and timely responses. Annex B points to ISO 37002 on whistleblowing."
+          ]
+        },
+        {
+          "heading": "A.4 Resources for AI systems (5)",
+          "body": [
+            "A.4.2 document resources needed at each life cycle stage. Then document the data (A.4.3), tooling (A.4.4), system and computing (A.4.5) and human resources (A.4.6). Annex B notes the environmental impact of hardware under A.4.5."
+          ]
+        },
+        {
+          "heading": "A.5 Assessing impacts of AI systems (4)",
+          "body": [
+            "A.5.2 impact assessment process. A.5.3 document and retain results. A.5.4 impacts on individuals and groups. A.5.5 societal impacts."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Reporting concerns",
+        "text": "A data scientist suspects a model is being used outside its approved purpose. A.3.3 means there is a known, confidential channel to raise it, staffed by qualified people who can investigate and escalate."
+      },
+      "exam_tips": [
+        "Count: A.2 has 3, A.3 has 2, A.4 has 5, A.5 has 4."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "A.2.2",
+          "A.3.3",
+          "A.4.2",
+          "A.4.5",
+          "A.5.2"
+        ]
+      },
+      "check_questions": [
+        "F2",
+        "F4",
+        "F1"
+      ]
+    },
+    {
+      "id": "M14",
+      "domain": "D5",
+      "title": "Annex A part 2: AI life cycle and data",
+      "minutes": 9,
+      "intro": "A.6 and A.7 hold the most controls. They cover building and running AI systems and the data they use.",
+      "sections": [
+        {
+          "heading": "A.6.1 Responsible development (2)",
+          "body": [
+            "A.6.1.2 set objectives for responsible development and build them into the development process. A.6.1.3 define processes for responsible design and development, such as testing, human oversight, release criteria and change control."
+          ]
+        },
+        {
+          "heading": "A.6.2 AI system life cycle (7)",
+          "body": [],
+          "points": [
+            "A.6.2.2 requirements and specification.",
+            "A.6.2.3 documentation of design and development.",
+            "A.6.2.4 verification and validation.",
+            "A.6.2.5 deployment plan and pre-release requirements.",
+            "A.6.2.6 operation and monitoring: at least monitoring, repairs, updates and support.",
+            "A.6.2.7 technical documentation for each group of interested parties.",
+            "A.6.2.8 event logging, at least while the system is in use."
+          ]
+        },
+        {
+          "heading": "A.7 Data for AI systems (5)",
+          "body": [
+            "A.7.2 data management processes. A.7.3 acquisition and selection of data. A.7.4 data quality requirements. A.7.5 data provenance. A.7.6 data preparation criteria and methods, such as cleaning, imputation, normalisation and labelling."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Life cycle in one model",
+        "text": "A loan model's requirements (A.6.2.2) set a maximum error rate. Its design record (A.6.2.3) explains the algorithm choice. Tests (A.6.2.4) check fairness. A deployment plan (A.6.2.5) needs sign-off. Monitoring (A.6.2.6) watches for drift. Logs (A.6.2.8) record each decision. The training data's source is recorded (A.7.5)."
+      },
+      "exam_tips": [
+        "A.6 has 9 controls across two objectives. A.7 has 5.",
+        "Logging at minimum when the AI system is in use."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "A.6.2.4",
+          "A.6.2.6",
+          "A.6.2.8",
+          "A.7.4",
+          "A.7.5"
+        ]
+      },
+      "check_questions": [
+        "F3",
+        "F5",
+        "F9"
+      ]
+    },
+    {
+      "id": "M15",
+      "domain": "D5",
+      "title": "Annex A part 3: information, use and third parties",
+      "minutes": 7,
+      "intro": "The last three areas cover what you tell people, how you use AI, and who does what.",
+      "sections": [
+        {
+          "heading": "A.8 Information for interested parties (4)",
+          "body": [
+            "A.8.2 give users the information they need, such as that they are interacting with AI, its purpose, limits and how to override it. A.8.3 let interested parties report adverse impacts. A.8.4 plan how to tell users about incidents. A.8.5 document obligations to report to interested parties such as regulators."
+          ]
+        },
+        {
+          "heading": "A.9 Use of AI systems (3)",
+          "body": [
+            "A.9.2 processes for responsible use, such as approvals, cost and sourcing. A.9.3 objectives for responsible use, such as fairness and human oversight. A.9.4 use the system as intended and per its documentation, and keep logs to show it."
+          ]
+        },
+        {
+          "heading": "A.10 Third-party and customer relationships (3)",
+          "body": [
+            "A.10.2 allocate life cycle responsibilities between you, partners, suppliers and customers. A.10.3 make sure suppliers fit your responsible AI approach, and require corrective action if their systems fall short. A.10.4 consider customer needs and expectations, such as telling customers the limits of a model's domain."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Buying a model",
+        "text": "Before buying a CV screening tool, procurement checks the supplier's documentation (A.10.3), agrees who handles bias testing (A.10.2), and HR sets rules that every rejection gets human review (A.9.3, A.9.4)."
+      },
+      "exam_tips": [
+        "Telling users they are talking to AI fits A.8.2.",
+        "A.10 is about responsibilities with suppliers and customers."
+      ],
+      "related": {
+        "clauses": [],
+        "controls": [
+          "A.8.2",
+          "A.8.3",
+          "A.9.4",
+          "A.10.2",
+          "A.10.3"
+        ]
+      },
+      "check_questions": [
+        "F6",
+        "F7"
+      ]
+    },
+    {
+      "id": "M16",
+      "domain": "D6",
+      "title": "Monitoring, internal audit and management review",
+      "minutes": 8,
+      "intro": "Clause 9 checks that the AIMS works.",
+      "sections": [
+        {
+          "heading": "9.1 Monitoring and measurement",
+          "body": [
+            "Decide what to monitor and measure, the methods for valid results, when to monitor and when to analyse and evaluate. Keep evidence. Evaluate the performance and effectiveness of the AIMS. Note: 42001 does not include the 'who' items that 27001 has.",
+            "Useful AI metrics include drift alerts, fairness test results, error rates, human override rates and the number of concerns reported."
+          ]
+        },
+        {
+          "heading": "9.2 Internal audit",
+          "body": [
+            "Audit at planned intervals to check conformity with your own requirements and 42001, and that the AIMS is effectively implemented and maintained. The programme covers frequency, methods, responsibilities, planning and reporting, and considers process importance and previous results. Auditors must be objective and impartial. Report results to relevant managers."
+          ]
+        },
+        {
+          "heading": "9.3 Management review",
+          "body": [
+            "Top management reviews the AIMS at planned intervals. Inputs:"
+          ],
+          "points": [
+            "Status of previous actions.",
+            "Changes in external and internal issues.",
+            "Changes in interested party needs.",
+            "AIMS performance trends: nonconformities and corrective actions, monitoring results, audit results.",
+            "Opportunities for continual improvement."
+          ]
+        },
+        {
+          "heading": "Outputs",
+          "body": [
+            "Decisions on improvement opportunities and any need for changes. Keep evidence."
+          ]
+        }
+      ],
+      "example": {
+        "title": "A review that works",
+        "text": "The quarterly AI review shows the override rate on the claims model has doubled. Management decides to retrain the model, update the impact assessment, and add a drift alert."
+      },
+      "exam_tips": [
+        "42001 management review inputs are a shorter list than 27001's. Learn the five.",
+        "9.1 has no 'who' items in 42001."
+      ],
+      "related": {
+        "clauses": [
+          "9"
+        ],
+        "controls": []
+      },
+      "check_questions": [
+        "G1",
+        "G2",
+        "G3",
+        "G4",
+        "G8",
+        "G10"
+      ]
+    },
+    {
+      "id": "M17",
+      "domain": "D6",
+      "title": "Improvement and certification",
+      "minutes": 7,
+      "intro": "The last lesson covers fixing problems, improving the AIMS, and getting certified.",
+      "sections": [
+        {
+          "heading": "10.1 and 10.2",
+          "body": [
+            "Continually improve the suitability, adequacy and effectiveness of the AIMS. When a nonconformity occurs: react and correct, deal with consequences, find the causes, check for similar cases, act, review effectiveness and change the AIMS if needed. Corrective action must suit the effects of the nonconformity. Keep evidence.",
+            "Correction fixes the immediate issue. Corrective action removes the cause."
+          ]
+        },
+        {
+          "heading": "Certification journey",
+          "body": [
+            "Certification follows the general pattern for management systems. From Claude training data: a Stage 1 audit checks documentation and readiness, a Stage 2 audit checks implementation and effectiveness, surveillance audits run in the following years, and recertification comes before the three-year certificate expires. ISO/IEC 42006 sets requirements for bodies that certify an AIMS."
+          ]
+        },
+        {
+          "heading": "Integrating with 27001 and 9001",
+          "body": [
+            "Annex D recommends integrating the AIMS with other management systems. Shared clauses mean one policy framework, one internal audit programme and one management review can cover several standards, with AI-specific additions such as impact assessments."
+          ]
+        }
+      ],
+      "example": {
+        "title": "Correction then corrective action",
+        "text": "An audit finds a model was trained on a dataset without recorded provenance. Correction: remove the model from production and record the dataset's source. Corrective action: add a provenance check to the release criteria so it cannot happen again."
+      },
+      "exam_tips": [
+        "Corrective action must be appropriate to the effects of the nonconformity.",
+        "Stage 1 is readiness, Stage 2 is effectiveness."
+      ],
+      "related": {
+        "clauses": [
+          "10"
+        ],
+        "controls": [
+          "A.7.5"
+        ]
+      },
+      "check_questions": [
+        "G5",
+        "G6",
+        "G7",
+        "G9"
+      ]
+    }
+  ],
+  "flashcards": [
+    {
+      "front": "How many controls are in ISO/IEC 42001 Annex A?",
+      "back": "38"
+    },
+    {
+      "front": "How many control objective areas does Annex A have, and which numbers?",
+      "back": "9 areas, A.2 to A.10"
+    },
+    {
+      "front": "Which annexes of 42001 are normative?",
+      "back": "Annex A (controls) and Annex B (implementation guidance)"
+    },
+    {
+      "front": "Which annexes of 42001 are informative?",
+      "back": "Annex C (objectives and risk sources) and Annex D (domains and sectors)"
+    },
+    {
+      "front": "What is the only normative reference in 42001?",
+      "back": "ISO/IEC 22989, AI concepts and terminology"
+    },
+    {
+      "front": "Which clause requires the AI system impact assessment process?",
+      "back": "6.1.4"
+    },
+    {
+      "front": "Which clause requires impact assessments to be performed at planned intervals?",
+      "back": "8.4"
+    },
+    {
+      "front": "Which clause sets the AI risk criteria?",
+      "back": "6.1.1"
+    },
+    {
+      "front": "What must AI risk criteria support?",
+      "back": "Telling acceptable from unacceptable risk, risk assessment, risk treatment, and assessing AI risk impacts"
+    },
+    {
+      "front": "Who approves the AI risk treatment plan in 42001?",
+      "back": "Designated management"
+    },
+    {
+      "front": "Which clause requires the Statement of Applicability?",
+      "back": "6.1.3 f"
+    },
+    {
+      "front": "What can justify excluding a control from the SoA?",
+      "back": "The risk assessment does not need it, or applicable external requirements do not require it"
+    },
+    {
+      "front": "Under 6.1.2, consequences are assessed for whom?",
+      "back": "The organisation, individuals and societies"
+    },
+    {
+      "front": "What two inputs does 4.3 say the scope must consider?",
+      "back": "Issues from 4.1 and requirements from 4.2"
+    },
+    {
+      "front": "What does 4.1 require beyond internal and external issues?",
+      "back": "Decide whether climate change is relevant, consider AI systems' intended purpose, and determine the organisation's AI roles"
+    },
+    {
+      "front": "What must the AI policy refer to?",
+      "back": "Other relevant organisational policies"
+    },
+    {
+      "front": "Which clause covers the AI policy?",
+      "back": "5.2"
+    },
+    {
+      "front": "Which clause covers planning of changes?",
+      "back": "6.3"
+    },
+    {
+      "front": "What does 9.1 not require that 27001 does?",
+      "back": "Deciding who monitors and who analyses results"
+    },
+    {
+      "front": "Name the five management review input groups in 9.3.2.",
+      "back": "Previous actions, changes in issues, changes in interested party needs, AIMS performance trends, improvement opportunities"
+    },
+    {
+      "front": "How does 42001 define risk?",
+      "back": "Effect of uncertainty"
+    },
+    {
+      "front": "Name three AI-specific security threats listed in Annex B.",
+      "back": "Data poisoning, model stealing, model inversion"
+    },
+    {
+      "front": "Which control covers whistleblowing-style reporting of concerns?",
+      "back": "A.3.3 Reporting of concerns"
+    },
+    {
+      "front": "Which control requires logging at least while the AI system is in use?",
+      "back": "A.6.2.8 AI system recording of event logs"
+    },
+    {
+      "front": "Which control gives interested parties a way to report adverse impacts?",
+      "back": "A.8.3 External reporting"
+    },
+    {
+      "front": "Which control makes sure an AI system is used as intended?",
+      "back": "A.9.4 Intended use of the AI system"
+    },
+    {
+      "front": "Which Annex A area covers suppliers and customers?",
+      "back": "A.10 Third-party and customer relationships"
+    },
+    {
+      "front": "Which Annex A area covers data provenance and data quality?",
+      "back": "A.7 Data for AI systems"
+    },
+    {
+      "front": "Name four societal impact areas from B.5.5.",
+      "back": "Environmental sustainability, economic, government, health and safety, norms and culture"
+    },
+    {
+      "front": "Which standard gives guidance on AI risk management?",
+      "back": "ISO/IEC 23894"
+    },
+    {
+      "front": "Which standard addresses governance implications of AI for boards?",
+      "back": "ISO/IEC 38507"
+    },
+    {
+      "front": "What are the four NIST AI RMF functions?",
+      "back": "Govern, Map, Measure, Manage (Claude training data)"
+    },
+    {
+      "front": "What are the four EU AI Act risk tiers?",
+      "back": "Unacceptable (prohibited), high, limited (transparency) and minimal risk (Claude training data)"
+    },
+    {
+      "front": "Correction vs corrective action?",
+      "back": "Correction fixes the immediate issue. Corrective action removes the cause so it does not recur."
+    },
+    {
+      "front": "What must corrective action be appropriate to?",
+      "back": "The effects of the nonconformity (10.2)"
+    }
+  ],
+  "questions": [
+    {
+      "id": "A1",
+      "domain": "D1",
+      "question": "Which feature of AI does the 42001 introduction say needs special consideration because behaviour changes during use?",
+      "options": [
+        "Rule-based logic",
+        "Continuous learning",
+        "Batch processing",
+        "Encryption"
+      ],
+      "answer": 1,
+      "explanation": "Systems that keep learning change their behaviour in use, so responsible use must continue as behaviour changes."
+    },
+    {
+      "id": "A2",
+      "domain": "D1",
+      "question": "What is the only normative reference in ISO/IEC 42001?",
+      "options": [
+        "ISO/IEC 27001",
+        "ISO 31000",
+        "ISO/IEC 22989",
+        "ISO/IEC 23894"
+      ],
+      "answer": 2,
+      "explanation": "Clause 2 cites ISO/IEC 22989, AI concepts and terminology. Its terms apply to 42001."
+    },
+    {
+      "id": "A3",
+      "domain": "D1",
+      "question": "A hospital buys an AI triage tool from a vendor and uses it with patients. Under the roles noted in 4.1, the hospital is mainly an:",
+      "options": [
+        "AI producer",
+        "AI customer",
+        "AI partner",
+        "Relevant authority"
+      ],
+      "answer": 1,
+      "explanation": "Using an AI product or service makes the organisation an AI customer, which includes AI users."
+    },
+    {
+      "id": "A4",
+      "domain": "D1",
+      "question": "Which three attacks does Annex B name as AI-specific security threats?",
+      "options": [
+        "Phishing, vishing and smishing",
+        "Data poisoning, model stealing and model inversion",
+        "DDoS, SQL injection and XSS",
+        "Tailgating, shoulder surfing and dumpster diving"
+      ],
+      "answer": 1,
+      "explanation": "B.6.2.3 and B.6.2.6 list data poisoning, model stealing and model inversion."
+    },
+    {
+      "id": "A5",
+      "domain": "D1",
+      "question": "An AI model's accuracy falls because live data has moved away from its training data. The system does not learn continuously. This is:",
+      "options": [
+        "Data poisoning",
+        "Concept or data drift",
+        "Model inversion",
+        "Overfitting at training time"
+      ],
+      "answer": 1,
+      "explanation": "Annex B notes performance can change without continuous learning, usually through concept or data drift in production data."
+    },
+    {
+      "id": "A6",
+      "domain": "D1",
+      "question": "Why does 42001 integrate easily with ISO/IEC 27001 and ISO 9001?",
+      "options": [
+        "It copies their Annex A",
+        "It uses the harmonized structure",
+        "It replaces them",
+        "It is certified by the same body"
+      ],
+      "answer": 1,
+      "explanation": "Identical clause numbers, titles and core text make integration easier. Annex D encourages it."
+    },
+    {
+      "id": "A7",
+      "domain": "D1",
+      "question": "Which statement about the scope of applicability of 42001 is correct?",
+      "options": [
+        "Only AI developers can use it",
+        "Only large organisations can use it",
+        "Any organisation that provides or uses products or services using AI systems can use it",
+        "Only public bodies can use it"
+      ],
+      "answer": 2,
+      "explanation": "Clause 1 says it applies to any organisation, regardless of size, type and nature, that provides or uses AI-based products or services."
+    },
+    {
+      "id": "A8",
+      "domain": "D1",
+      "question": "Which framework uses the functions Govern, Map, Measure and Manage?",
+      "options": [
+        "OECD AI Principles",
+        "EU AI Act",
+        "NIST AI RMF",
+        "ISO/IEC 22989"
+      ],
+      "answer": 2,
+      "explanation": "NIST AI RMF 1.0 is cited in the 42001 bibliography. Its four functions come from Claude training data."
+    },
+    {
+      "id": "A9",
+      "domain": "D1",
+      "question": "Under the EU AI Act, a social scoring system run by public authorities is most likely classed as:",
+      "options": [
+        "Minimal risk",
+        "Limited risk",
+        "High risk",
+        "Unacceptable risk and prohibited"
+      ],
+      "answer": 3,
+      "explanation": "From Claude training data: the EU AI Act prohibits certain practices, including social scoring, as unacceptable risk."
+    },
+    {
+      "id": "A10",
+      "domain": "D1",
+      "question": "Which is one of the OECD AI Principles?",
+      "options": [
+        "Maximise model size",
+        "Transparency and explainability",
+        "Open-source all models",
+        "Avoid human oversight"
+      ],
+      "answer": 1,
+      "explanation": "From Claude training data: the OECD principles include transparency and explainability, robustness, security and safety, and accountability."
+    },
+    {
+      "id": "B1",
+      "domain": "D2",
+      "question": "Under 4.1, what must the organisation decide about climate change?",
+      "options": [
+        "Nothing",
+        "Whether it is a relevant issue",
+        "How to offset AI emissions",
+        "Whether to publish a climate report"
+      ],
+      "answer": 1,
+      "explanation": "4.1 requires the organisation to determine whether climate change is a relevant issue."
+    },
+    {
+      "id": "B2",
+      "domain": "D2",
+      "question": "Which inputs must be considered when determining the AIMS scope under 4.3?",
+      "options": [
+        "Issues from 4.1 and requirements from 4.2",
+        "Only Annex A",
+        "Interfaces, dependencies and Annex A",
+        "The certification body's preference"
+      ],
+      "answer": 0,
+      "explanation": "42001 lists only the 4.1 issues and 4.2 requirements. Unlike 27001, interfaces and dependencies are not listed."
+    },
+    {
+      "id": "B3",
+      "domain": "D2",
+      "question": "Clause 4.4 requires the organisation to establish, implement, maintain, continually improve and:",
+      "options": [
+        "Certify the AIMS",
+        "Document the AIMS",
+        "Outsource the AIMS",
+        "Publish the AIMS"
+      ],
+      "answer": 1,
+      "explanation": "42001 adds 'document' to the usual 4.4 wording."
+    },
+    {
+      "id": "B4",
+      "domain": "D2",
+      "question": "Which is a required element of the AI policy under 5.2?",
+      "options": [
+        "A list of all AI models",
+        "A framework for setting AI objectives",
+        "Model accuracy targets",
+        "Supplier names"
+      ],
+      "answer": 1,
+      "explanation": "The policy must give a framework for AI objectives and commit to requirements and continual improvement."
+    },
+    {
+      "id": "B5",
+      "domain": "D2",
+      "question": "The AI policy must refer, as relevant, to:",
+      "options": [
+        "Other organisational policies",
+        "Competitors' policies",
+        "The EU AI Act only",
+        "Annex D sectors"
+      ],
+      "answer": 0,
+      "explanation": "5.2 says the AI policy refers to other organisational policies as relevant."
+    },
+    {
+      "id": "B6",
+      "domain": "D2",
+      "question": "Under 5.3, top management must specifically assign responsibility for:",
+      "options": [
+        "Writing all code",
+        "AIMS conformity and reporting AIMS performance to top management",
+        "Choosing the certification body",
+        "Running all impact assessments"
+      ],
+      "answer": 1,
+      "explanation": "These two assignments are required by name."
+    },
+    {
+      "id": "B7",
+      "domain": "D2",
+      "question": "Which is an example of an external issue under 4.1?",
+      "options": [
+        "Contractual obligations",
+        "Applicable law, including prohibited uses of AI",
+        "Internal governance",
+        "Intended purpose of the AI system"
+      ],
+      "answer": 1,
+      "explanation": "Note 2 lists legal requirements including prohibited AI uses as external context. The others are internal."
+    },
+    {
+      "id": "B8",
+      "domain": "D2",
+      "question": "How does 42001 define a governing body?",
+      "options": [
+        "The IT steering group",
+        "The person or group accountable for the organisation's performance and conformance",
+        "The certification body",
+        "The internal audit team"
+      ],
+      "answer": 1,
+      "explanation": "Definition 3.22. Small organisations may not have one separate from top management."
+    },
+    {
+      "id": "B9",
+      "domain": "D2",
+      "question": "A note to 5.1 suggests top management can show commitment by:",
+      "options": [
+        "Writing the code themselves",
+        "Building a culture of responsible AI use, development and governance",
+        "Avoiding AI",
+        "Delegating all accountability"
+      ],
+      "answer": 1,
+      "explanation": "Note 2 to 5.1 highlights establishing and modelling a responsible AI culture."
+    },
+    {
+      "id": "B10",
+      "domain": "D2",
+      "question": "Which clause defines AIMS scope?",
+      "options": [
+        "4.1",
+        "4.3",
+        "5.2",
+        "6.1.1"
+      ],
+      "answer": 1,
+      "explanation": "4.3 Determining the scope of the AI management system."
+    },
+    {
+      "id": "C1",
+      "domain": "D3",
+      "question": "AI risk criteria under 6.1.1 must support which of these?",
+      "options": [
+        "Setting salaries",
+        "Distinguishing acceptable from non-acceptable risks",
+        "Choosing a cloud provider",
+        "Writing marketing copy"
+      ],
+      "answer": 1,
+      "explanation": "They support acceptability decisions, risk assessment, risk treatment and assessing AI risk impacts."
+    },
+    {
+      "id": "C2",
+      "domain": "D3",
+      "question": "In 6.1.2, consequences must be assessed for:",
+      "options": [
+        "The organisation only",
+        "The organisation, individuals and societies",
+        "Shareholders only",
+        "Regulators only"
+      ],
+      "answer": 1,
+      "explanation": "42001 widens consequences to individuals and societies."
+    },
+    {
+      "id": "C3",
+      "domain": "D3",
+      "question": "Who approves the AI risk treatment plan and accepts residual AI risk?",
+      "options": [
+        "Risk owners",
+        "Designated management",
+        "The certification body",
+        "The data science team"
+      ],
+      "answer": 1,
+      "explanation": "6.1.3 refers to designated management. Risk owners are a 27001 term not used in 42001."
+    },
+    {
+      "id": "C4",
+      "domain": "D3",
+      "question": "What must the Statement of Applicability contain under 6.1.3 f?",
+      "options": [
+        "Necessary controls with justification for inclusion and exclusion",
+        "Only implemented controls",
+        "A list of AI models",
+        "Audit findings"
+      ],
+      "answer": 0,
+      "explanation": "The SoA holds the necessary controls and justifies inclusion and exclusion."
+    },
+    {
+      "id": "C5",
+      "domain": "D3",
+      "question": "Which is a valid justification for excluding an Annex A control?",
+      "options": [
+        "It is expensive",
+        "The risk assessment shows it is not needed",
+        "The auditor dislikes it",
+        "It is new"
+      ],
+      "answer": 1,
+      "explanation": "Exclusions can rest on the risk assessment or on external requirements not requiring the control."
+    },
+    {
+      "id": "C6",
+      "domain": "D3",
+      "question": "The AI system impact assessment under 6.1.4 must consider:",
+      "options": [
+        "Deployment, intended use and foreseeable misuse",
+        "Only intended use",
+        "Only cost",
+        "Only data quality"
+      ],
+      "answer": 0,
+      "explanation": "6.1.4 covers deployment, intended use and foreseeable misuse."
+    },
+    {
+      "id": "C7",
+      "domain": "D3",
+      "question": "How do impact assessment results relate to risk assessment?",
+      "options": [
+        "They replace it",
+        "They must be considered in the risk assessment",
+        "They are unrelated",
+        "They are only for regulators"
+      ],
+      "answer": 1,
+      "explanation": "6.1.4 requires the results to be considered in the AI risk assessment in 6.1.2."
+    },
+    {
+      "id": "C8",
+      "domain": "D3",
+      "question": "AI objectives under 6.2 must be:",
+      "options": [
+        "Secret",
+        "Consistent with the AI policy and measurable if practicable",
+        "Set by the supplier",
+        "Financial only"
+      ],
+      "answer": 1,
+      "explanation": "They must also take account of requirements and be monitored, communicated, updated and documented."
+    },
+    {
+      "id": "C9",
+      "domain": "D3",
+      "question": "The AI risk assessment process must produce results that are:",
+      "options": [
+        "Quantitative only",
+        "Consistent, valid and comparable",
+        "Approved by regulators",
+        "Published"
+      ],
+      "answer": 1,
+      "explanation": "6.1.2 b) requires repeatable, consistent, valid and comparable results."
+    },
+    {
+      "id": "C10",
+      "domain": "D3",
+      "question": "Where does 42001 give a list of possible AI objectives and risk sources?",
+      "options": [
+        "Annex A",
+        "Annex B",
+        "Annex C",
+        "Annex D"
+      ],
+      "answer": 2,
+      "explanation": "Annex C is informative and lists objectives such as fairness and risk sources such as level of automation."
+    },
+    {
+      "id": "E1",
+      "domain": "D4",
+      "question": "Under 7.2, competence must be determined for people whose work affects:",
+      "options": [
+        "Only security",
+        "AI performance",
+        "Only finance",
+        "Marketing"
+      ],
+      "answer": 1,
+      "explanation": "42001 links competence to work that affects AI performance."
+    },
+    {
+      "id": "E2",
+      "domain": "D4",
+      "question": "Clause 7.3 requires people to be aware of:",
+      "options": [
+        "Every Annex A control",
+        "The AI policy, their contribution, and the implications of not conforming",
+        "All model parameters",
+        "The audit schedule"
+      ],
+      "answer": 1,
+      "explanation": "These are the three awareness points."
+    },
+    {
+      "id": "E3",
+      "domain": "D4",
+      "question": "Which is part of controlling documented information under 7.5.3?",
+      "options": [
+        "Version control and retention",
+        "Model training",
+        "Bias testing",
+        "Supplier audits"
+      ],
+      "answer": 0,
+      "explanation": "7.5.3 covers distribution, access, storage, version control, retention and disposal."
+    },
+    {
+      "id": "E4",
+      "domain": "D4",
+      "question": "When must AI risk assessments be repeated under 8.2?",
+      "options": [
+        "Never",
+        "At planned intervals or when significant changes are proposed or occur",
+        "Only after incidents",
+        "Only at certification"
+      ],
+      "answer": 1,
+      "explanation": "8.2 sets both triggers."
+    },
+    {
+      "id": "E5",
+      "domain": "D4",
+      "question": "Under 8.3, what must happen if treatment options in the plan are not effective?",
+      "options": [
+        "Ignore them",
+        "Review and revalidate them through 6.1.3 and update the plan",
+        "Delete the plan",
+        "Notify the certification body"
+      ],
+      "answer": 1,
+      "explanation": "8.3 requires revalidation and an updated risk treatment plan."
+    },
+    {
+      "id": "E6",
+      "domain": "D4",
+      "question": "When must AI system impact assessments be performed under 8.4?",
+      "options": [
+        "Once only",
+        "At planned intervals or when significant changes are proposed",
+        "Only when a regulator asks",
+        "Every five years"
+      ],
+      "answer": 1,
+      "explanation": "8.4 mirrors 8.2 for impact assessments."
+    },
+    {
+      "id": "E7",
+      "domain": "D4",
+      "question": "Under 8.1, what must happen if implemented controls do not achieve intended results?",
+      "options": [
+        "Corrective actions must be considered",
+        "The controls are removed",
+        "Nothing",
+        "The SoA is deleted"
+      ],
+      "answer": 0,
+      "explanation": "8.1 says control effectiveness is monitored and corrective action considered if results fall short."
+    },
+    {
+      "id": "E8",
+      "domain": "D4",
+      "question": "Which clause covers communication of what, when, with whom and how?",
+      "options": [
+        "7.3",
+        "7.4",
+        "7.5",
+        "8.1"
+      ],
+      "answer": 1,
+      "explanation": "7.4 Communication."
+    },
+    {
+      "id": "E9",
+      "domain": "D4",
+      "question": "8.1 requires control of externally provided processes, products or services that are:",
+      "options": [
+        "Cheaper than internal ones",
+        "Relevant to the AIMS",
+        "Hosted in the cloud",
+        "Open source"
+      ],
+      "answer": 1,
+      "explanation": "Any external process, product or service relevant to the AIMS must be controlled."
+    },
+    {
+      "id": "E10",
+      "domain": "D4",
+      "question": "Which documented information does 8.2 require?",
+      "options": [
+        "Results of all AI risk assessments",
+        "Staff salaries",
+        "Marketing plans",
+        "Model source code"
+      ],
+      "answer": 0,
+      "explanation": "8.2 requires retained results of all AI risk assessments."
+    },
+    {
+      "id": "F1",
+      "domain": "D5",
+      "question": "How many controls are in Annex A of ISO/IEC 42001?",
+      "options": [
+        "93",
+        "38",
+        "114",
+        "9"
+      ],
+      "answer": 1,
+      "explanation": "38 controls under 9 objective areas, A.2 to A.10."
+    },
+    {
+      "id": "F2",
+      "domain": "D5",
+      "question": "Which Annex A area covers impact assessments?",
+      "options": [
+        "A.3",
+        "A.5",
+        "A.7",
+        "A.9"
+      ],
+      "answer": 1,
+      "explanation": "A.5 Assessing impacts of AI systems."
+    },
+    {
+      "id": "F3",
+      "domain": "D5",
+      "question": "A team records where each training dataset came from and how it was transformed. Which control is this?",
+      "options": [
+        "A.7.5 Data provenance",
+        "A.4.4 Tooling resources",
+        "A.8.3 External reporting",
+        "A.2.4 Review of the AI policy"
+      ],
+      "answer": 0,
+      "explanation": "A.7.5 covers recording data provenance over the data and system life cycles."
+    },
+    {
+      "id": "F4",
+      "domain": "D5",
+      "question": "Which control requires a process for staff to report concerns, with protection from reprisals?",
+      "options": [
+        "A.3.3",
+        "A.8.4",
+        "A.10.3",
+        "A.6.2.6"
+      ],
+      "answer": 0,
+      "explanation": "A.3.3 Reporting of concerns. Annex B also points to ISO 37002."
+    },
+    {
+      "id": "F5",
+      "domain": "D5",
+      "question": "Which control requires event logging at least while the AI system is in use?",
+      "options": [
+        "A.6.2.8",
+        "A.7.6",
+        "A.9.2",
+        "A.4.5"
+      ],
+      "answer": 0,
+      "explanation": "A.6.2.8 AI system recording of event logs."
+    },
+    {
+      "id": "F6",
+      "domain": "D5",
+      "question": "A chatbot provider tells users they are talking to an AI and explains its limitations. Which control does this best meet?",
+      "options": [
+        "A.8.2 System documentation and information for users",
+        "A.7.3 Acquisition of data",
+        "A.10.2 Allocating responsibilities",
+        "A.5.5 Assessing societal impacts"
+      ],
+      "answer": 0,
+      "explanation": "A.8.2 covers giving users the information they need, including that they are interacting with AI."
+    },
+    {
+      "id": "F7",
+      "domain": "D5",
+      "question": "Which Annex A area deals with suppliers, customers and allocation of responsibilities?",
+      "options": [
+        "A.4",
+        "A.6",
+        "A.9",
+        "A.10"
+      ],
+      "answer": 3,
+      "explanation": "A.10 Third-party and customer relationships."
+    },
+    {
+      "id": "F8",
+      "domain": "D5",
+      "question": "Annex B is:",
+      "options": [
+        "Informative and optional",
+        "Normative implementation guidance for the Annex A controls",
+        "A list of sectors",
+        "The bibliography"
+      ],
+      "answer": 1,
+      "explanation": "Annex B is normative. You do not have to justify its guidance in the SoA, and you can adapt it."
+    },
+    {
+      "id": "F9",
+      "domain": "D5",
+      "question": "Which control area includes verification and validation and deployment planning?",
+      "options": [
+        "A.6 AI system life cycle",
+        "A.2 Policies related to AI",
+        "A.8 Information for interested parties",
+        "A.3 Internal organization"
+      ],
+      "answer": 0,
+      "explanation": "A.6.2.4 and A.6.2.5 sit in A.6."
+    },
+    {
+      "id": "F10",
+      "domain": "D5",
+      "question": "Which is a risk source listed in Annex C?",
+      "options": [
+        "Level of automation",
+        "Office lighting",
+        "Staff holidays",
+        "Printer failures"
+      ],
+      "answer": 0,
+      "explanation": "Annex C risk sources include complexity of environment, lack of transparency, level of automation, ML-related sources, hardware, life cycle issues and technology readiness."
+    },
+    {
+      "id": "G1",
+      "domain": "D6",
+      "question": "Clause 9.1 requires the organisation to determine:",
+      "options": [
+        "What to monitor and measure, methods, when to monitor, and when to analyse and evaluate",
+        "Which certification body to use",
+        "Model hyperparameters",
+        "Staff pay"
+      ],
+      "answer": 0,
+      "explanation": "Unlike 27001, 9.1 in 42001 does not list who monitors or who analyses."
+    },
+    {
+      "id": "G2",
+      "domain": "D6",
+      "question": "Which is a management review input in 9.3.2?",
+      "options": [
+        "Changes in needs and expectations of interested parties",
+        "The marketing budget",
+        "Employee salaries",
+        "The certificate"
+      ],
+      "answer": 0,
+      "explanation": "9.3.2 c) lists this input."
+    },
+    {
+      "id": "G3",
+      "domain": "D6",
+      "question": "Internal audit results must be reported to:",
+      "options": [
+        "Relevant managers",
+        "All customers",
+        "The regulator",
+        "The public"
+      ],
+      "answer": 0,
+      "explanation": "9.2.2 c) requires reporting to relevant managers."
+    },
+    {
+      "id": "G4",
+      "domain": "D6",
+      "question": "Auditors for internal audit must be selected to ensure:",
+      "options": [
+        "They are external",
+        "Objectivity and impartiality of the audit process",
+        "They are data scientists",
+        "They are board members"
+      ],
+      "answer": 1,
+      "explanation": "9.2.2 b). External status is not required."
+    },
+    {
+      "id": "G5",
+      "domain": "D6",
+      "question": "What must corrective actions be appropriate to under 10.2?",
+      "options": [
+        "The budget",
+        "The effects of the nonconformities",
+        "The auditor's preference",
+        "The number of staff"
+      ],
+      "answer": 1,
+      "explanation": "10.2 states corrective actions are proportionate to the effects."
+    },
+    {
+      "id": "G6",
+      "domain": "D6",
+      "question": "A model is found to use an unapproved dataset. The team removes it today. This is:",
+      "options": [
+        "Correction",
+        "Corrective action",
+        "Risk acceptance",
+        "Continual improvement"
+      ],
+      "answer": 0,
+      "explanation": "Fixing the immediate issue is correction. Corrective action finds and removes why it happened."
+    },
+    {
+      "id": "G7",
+      "domain": "D6",
+      "question": "Continual improvement in 10.1 targets the AIMS's:",
+      "options": [
+        "Size and cost",
+        "Suitability, adequacy and effectiveness",
+        "Number of models",
+        "Certificate grade"
+      ],
+      "answer": 1,
+      "explanation": "10.1 uses these three words."
+    },
+    {
+      "id": "G8",
+      "domain": "D6",
+      "question": "What are the outputs of management review under 9.3.3?",
+      "options": [
+        "Decisions on continual improvement opportunities and any needed AIMS changes",
+        "The certification audit report",
+        "New Annex A controls",
+        "Model retraining"
+      ],
+      "answer": 0,
+      "explanation": "9.3.3 sets these outputs and requires evidence of results."
+    },
+    {
+      "id": "G9",
+      "domain": "D6",
+      "question": "In a certification audit, what does Stage 1 mainly check?",
+      "options": [
+        "Documentation and readiness",
+        "Model accuracy in production",
+        "Supplier contracts only",
+        "Penetration tests"
+      ],
+      "answer": 0,
+      "explanation": "Stage 1 reviews documentation and readiness. Stage 2 checks implementation and effectiveness."
+    },
+    {
+      "id": "G10",
+      "domain": "D6",
+      "question": "What does an audit programme under 9.2.2 have to consider?",
+      "options": [
+        "Importance of the processes and results of previous audits",
+        "Only the number of AI systems",
+        "The marketing calendar",
+        "Only the CEO's views"
+      ],
+      "answer": 0,
+      "explanation": "The same principle as in 27001."
+    }
+  ],
+  "exam_domain_weight_note": "No official 42001 exam weights exist for this course. The six study domains are weighted equally."
+}

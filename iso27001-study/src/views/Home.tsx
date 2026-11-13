@@ -1,10 +1,22 @@
 import type { Card, StudyPack } from '../types'
 import { isDue, streak, useProgress } from '../lib/progress'
 import { pct } from '../lib/util'
-import { go } from '../App'
+import { go, type Course } from '../App'
 import { nextLesson } from './Lessons'
 
-export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
+export function Home({
+  pack,
+  deck,
+  courses,
+  course,
+  onSwitch,
+}: {
+  pack: StudyPack
+  deck: Card[]
+  courses: Course[]
+  course: Course
+  onSwitch: (id: string) => void
+}) {
   const { progress } = useProgress()
   const reviewsDue = deck.filter((c) => progress.cards[c.id] && isDue(progress.cards[c.id])).length
   const unseen = deck.filter((c) => !progress.cards[c.id]).length
@@ -29,6 +41,21 @@ export function Home({ pack, deck }: { pack: StudyPack; deck: Card[] }) {
   return (
     <>
       <header className="page-head">
+        {courses.length > 1 && (
+          <div className="course-switch" role="radiogroup" aria-label="Course">
+            {courses.map((c) => (
+              <button
+                key={c.id}
+                role="radio"
+                aria-checked={c.id === course.id}
+                className={c.id === course.id ? 'seg active' : 'seg'}
+                onClick={() => c.id !== course.id && onSwitch(c.id)}
+              >
+                {c.short}
+              </button>
+            ))}
+          </div>
+        )}
         <p className="eyebrow">{pack.meta.target_exam}</p>
         <h1>Your study</h1>
       </header>
