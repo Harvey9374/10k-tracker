@@ -42,16 +42,19 @@ function applyHeatToStr(paceStr: string, adjSecs: number): string {
   return paceStr
 }
 
-function substituteCalibrated(item: string, zones: CalibratedZones, heatAdj: number): string {
+function substituteCalibrated(item: string, zones: CalibratedZones, heatAdj: number, phaseNumber?: number): string {
   const lower = item.toLowerCase()
   const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
   let zonePace: string | null = null
 
-  if (/interval|800m|400m|1[,.]?000m|1km rep/.test(lower)) {
+  // Phase 3+ uses aspirational sub-45 target paces for intervals and race pace — keep them hardcoded
+  const useTargetPaces = (phaseNumber ?? 1) >= 3
+
+  if (!useTargetPaces && /interval|800m|400m|1[,.]?000m|1km rep/.test(lower)) {
     zonePace = fmtPaceRange(zones.interval.min + heatAdj, zones.interval.max + heatAdj)
-  } else if (/tempo|threshold/.test(lower)) {
+  } else if (!useTargetPaces && /tempo|threshold/.test(lower)) {
     zonePace = fmtPaceRange(zones.tempo.min + heatAdj, zones.tempo.max + heatAdj)
-  } else if (/race pace/.test(lower)) {
+  } else if (!useTargetPaces && /race pace/.test(lower)) {
     zonePace = `${fmt(zones.racePace + heatAdj)}/km`
   } else if (/easy/.test(lower)) {
     zonePace = fmtPaceRange(zones.easy.min + heatAdj, zones.easy.max + heatAdj)
@@ -142,7 +145,7 @@ function CircuitDetail({ circuit, accentColor }: { circuit: string[]; accentColo
 function isSkipItem(item: string) { return /^skip intervals?/i.test(item.trim()) }
 
 function SessionItem({ item, phase, logs, calibratedZones, heatAdjSecs }: { item: string; phase: Phase | null; logs: WorkoutLog[]; calibratedZones?: CalibratedZones | null; heatAdjSecs?: number }) {
-  const displayItem = calibratedZones ? substituteCalibrated(item, calibratedZones, heatAdjSecs ?? 0) : item
+  const displayItem = calibratedZones ? substituteCalibrated(item, calibratedZones, heatAdjSecs ?? 0, phase?.number) : item
   const [open, setOpen] = useState(false)
   const hasStrength = isStrengthItem(item) && !!phase?.strengthCircuit?.length
   const hasSkip = isSkipItem(item)
