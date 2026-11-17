@@ -284,7 +284,7 @@ export const PHASES: Phase[] = [
     focus: 'Sessions target 10km race conditions. Build ability to sustain race pace (4:30/km) for increasing durations.',
     paceGuide: [
       { label: 'Easy run',   pace: '5:30–6:00/km' },
-      { label: 'Steady',     pace: '4:45–5:00/km' },
+      { label: 'Steady',     pace: '5:00–5:25/km' },
       { label: 'Intervals',  pace: '4:15–4:30/km' },
       { label: 'Race pace',  pace: '4:30/km' },
     ],
@@ -339,11 +339,11 @@ export const PHASES: Phase[] = [
       items: [
         'Warm-up: 5 mins easy jog — start slow, don\'t rush into the target pace',
         'Build 5 mins: lift pace from easy toward steady — 2–3 mins to settle in',
-        'Weeks 25–28: steady block at 4:50–5:00/km for 35 mins — push into discomfort; this is not easy pace',
-        'Weeks 29–32: steady block at 4:40–4:50/km for 35 mins — sub-threshold; lungs working, can still talk',
-        'Weeks 33–36: steady block at 4:30–4:40/km for 40 mins — this is race pace; race day should feel familiar',
+        'Weeks 25–28: steady block at 5:10–5:25/km for 35 mins — comfortably hard, not threshold; full sentences just possible',
+        'Weeks 29–32: steady block at 4:55–5:10/km for 35 mins — sub-threshold now; short sentences only, effort climbing',
+        'Weeks 33–36: steady block at 4:40–4:55/km for 40 mins — approaching race effort sustained; this is the fitness test',
         'Cool-down: 5 mins walk or easy jog',
-        'Sub-45 note: controlled at 4:35/km here means race day pace is well within reach',
+        'Note: steady is always ~25–30s/km slower than your interval pace — different purpose, different effort',
       ],
     },
     weekend: {
