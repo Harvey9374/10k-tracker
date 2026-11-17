@@ -1,3 +1,5 @@
+import { EXERCISE_SVGS } from './exerciseSvgs'
+
 export interface ExerciseDef {
   key: string
   name: string
@@ -5,6 +7,7 @@ export interface ExerciseDef {
   steps: string[]    // numbered how-to
   cues: string[]     // ✓ form points
   mistake: string    // ⚠ most common error
+  svg?: string
 }
 
 export const EXERCISE_LIBRARY: ExerciseDef[] = [
@@ -399,6 +402,8 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
     mistake: 'Hips either sagging down or piking up — film yourself from the side once to check your position',
   },
 ]
+
+EXERCISE_LIBRARY.forEach(ex => { if (EXERCISE_SVGS[ex.key]) ex.svg = EXERCISE_SVGS[ex.key] })
 
 export function findExercise(line: string): ExerciseDef | null {
   const lower = line.toLowerCase().replace(/-/g, ' ')

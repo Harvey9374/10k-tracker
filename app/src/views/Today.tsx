@@ -93,6 +93,11 @@ function ExerciseCard({ line, accentColor }: { line: string; accentColor: string
       </div>
       {open && (
         <div style={{ padding: '10px 12px 12px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
+          {ex.svg && (
+            <div style={{ marginBottom: 10, borderRadius: 6, overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)' }}
+              dangerouslySetInnerHTML={{ __html: ex.svg }}
+            />
+          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{ex.name}</span>
             <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 10, background: accentColor + '22', color: accentColor }}>{ex.position}</span>
