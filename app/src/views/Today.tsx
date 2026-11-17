@@ -76,6 +76,7 @@ function isSectionHeader(line: string) {
 
 function ExerciseCard({ line, accentColor }: { line: string; accentColor: string }) {
   const [open, setOpen] = useState(false)
+  const [imgFailed, setImgFailed] = useState(false)
   const ex = findExercise(line)
 
   if (!ex) return (
@@ -93,7 +94,15 @@ function ExerciseCard({ line, accentColor }: { line: string; accentColor: string
       </div>
       {open && (
         <div style={{ padding: '10px 12px 12px', background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
-          {ex.svg && (
+          {ex.imageUrl && !imgFailed && (
+            <img
+              src={ex.imageUrl}
+              alt={ex.name}
+              onError={() => setImgFailed(true)}
+              style={{ width: '100%', maxHeight: 180, objectFit: 'cover', borderRadius: 6, marginBottom: 10, display: 'block' }}
+            />
+          )}
+          {ex.svg && (!ex.imageUrl || imgFailed) && (
             <div style={{ marginBottom: 10, borderRadius: 6, overflow: 'hidden', background: 'var(--bg)', border: '1px solid var(--border)' }}
               dangerouslySetInnerHTML={{ __html: ex.svg }}
             />
