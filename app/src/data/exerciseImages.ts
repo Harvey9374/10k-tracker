@@ -6,7 +6,7 @@ const BASE = 'https://cdn.jsdelivr.net/gh/yuhonas/free-exercise-db@main/exercise
 export const EXERCISE_IMAGES: Record<string, string> = {
   'bulgarian-split-squat': `${BASE}/Split_Squat_with_Dumbbells/0.jpg`,
   'goblet-squat':          `${BASE}/Goblet_Squat/0.jpg`,
-  'glute-bridge':          `${BASE}/Barbell_Glute_Bridge/0.jpg`,
+  'glute-bridge':          '/images/exercises/glute-bridge.jpg',
   'dead-bug':              `${BASE}/Dead_Bug/0.jpg`,
   'press-up':              `${BASE}/Pushups/0.jpg`,
   'bent-over-row':         `${BASE}/Bent_Over_Two-Dumbbell_Row/0.jpg`,
@@ -17,8 +17,8 @@ export const EXERCISE_IMAGES: Record<string, string> = {
   'hip-thrust':            `${BASE}/Barbell_Hip_Thrust/0.jpg`,
   'dumbbell-floor-press':  `${BASE}/Dumbbell_Floor_Press/0.jpg`,
   'arnold-press':          `${BASE}/Arnold_Dumbbell_Press/0.jpg`,
-  'renegade-row':          `${BASE}/Alternating_Renegade_Row/0.jpg`,
-  'superman-hold':         `${BASE}/Superman/0.jpg`,
+  'renegade-row':          '/images/exercises/renegade-row.jpg',
+  'superman-hold':         '/images/exercises/superman-hold.jpg',
   'plank':                 `${BASE}/Plank/0.jpg`,
   'calf-raise':            `${BASE}/Standing_Dumbbell_Calf_Raise/0.jpg`,
   // User-provided photos for exercises not in the open database
