@@ -1,4 +1,5 @@
 import { EXERCISE_SVGS } from './exerciseSvgs'
+import { EXERCISE_IMAGES } from './exerciseImages'
 
 export interface ExerciseDef {
   key: string
@@ -8,6 +9,7 @@ export interface ExerciseDef {
   cues: string[]     // ✓ form points
   mistake: string    // ⚠ most common error
   svg?: string
+  imageUrl?: string
 }
 
 export const EXERCISE_LIBRARY: ExerciseDef[] = [
@@ -403,7 +405,10 @@ export const EXERCISE_LIBRARY: ExerciseDef[] = [
   },
 ]
 
-EXERCISE_LIBRARY.forEach(ex => { if (EXERCISE_SVGS[ex.key]) ex.svg = EXERCISE_SVGS[ex.key] })
+EXERCISE_LIBRARY.forEach(ex => {
+  if (EXERCISE_SVGS[ex.key]) ex.svg = EXERCISE_SVGS[ex.key]
+  if (EXERCISE_IMAGES[ex.key]) ex.imageUrl = EXERCISE_IMAGES[ex.key]
+})
 
 export function findExercise(line: string): ExerciseDef | null {
   const lower = line.toLowerCase().replace(/-/g, ' ')
