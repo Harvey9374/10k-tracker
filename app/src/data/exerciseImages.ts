@@ -21,6 +21,11 @@ export const EXERCISE_IMAGES: Record<string, string> = {
   'superman-hold':         `${BASE}/Superman/0.jpg`,
   'plank':                 `${BASE}/Plank/0.jpg`,
   'calf-raise':            `${BASE}/Standing_Dumbbell_Calf_Raise/0.jpg`,
-  // Not in database — fall back to SVG: single-leg-rdl, lateral-lunge,
-  // curtsy-lunge, bird-dog, side-plank, copenhagen-plank
+  // User-provided photos for exercises not in the open database
+  'single-leg-rdl':        '/images/exercises/single-leg-rdl.jpg',
+  'lateral-lunge':         '/images/exercises/lateral-lunge.jpg',
+  'curtsy-lunge':          '/images/exercises/curtsy-lunge.jpg',
+  'bird-dog':              '/images/exercises/bird-dog.jpg',
+  'side-plank':            '/images/exercises/side-plank.jpg',
+  'copenhagen-plank':      '/images/exercises/copenhagen-plank.jpg',
 }
