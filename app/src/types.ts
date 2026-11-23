@@ -5,6 +5,12 @@ export interface ExerciseLog {
   unit: string
 }
 
+export interface IntervalSplit {
+  timeSecs: number
+  distanceKm: number
+  heartRate?: number
+}
+
 export interface WorkoutLog {
   id: string
   date: string
@@ -18,6 +24,7 @@ export interface WorkoutLog {
   injuryFlag?: boolean
   stravaId?: number
   exerciseLogs?: ExerciseLog[]
+  intervalSplits?: IntervalSplit[]
 }
 
 export interface TimeTrial {
