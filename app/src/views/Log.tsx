@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { WorkoutLog, ExerciseLog } from '../types'
+import type { WorkoutLog, ExerciseLog, IntervalSplit } from '../types'
 import { formatPace, calcPaceSeconds, formatTime } from '../data/plan'
 import { getCircuitVariation, isStrengthLog, adjustedReps, applyRepProgressionAdjustment, getProgressionAdvice } from '../data/progression'
 import type { Exercise } from '../data/progression'
@@ -62,6 +62,24 @@ function sessionClass(type: string) {
   return ''
 }
 
+function parseSplitTime(val: string): number | null {
+  const m = val.match(/^(\d+):(\d{2})$/)
+  if (m) return parseInt(m[1]) * 60 + parseInt(m[2])
+  if (/^\d+(\.\d+)?$/.test(val.trim())) return parseFloat(val.trim())
+  return null
+}
+
+const REP_DISTANCES = [
+  { label: '200m', km: 0.2 },
+  { label: '400m', km: 0.4 },
+  { label: '800m', km: 0.8 },
+  { label: '1km', km: 1.0 },
+]
+
+function repDistLabel(km: number) {
+  return km === 0.2 ? '200m' : km === 0.4 ? '400m' : km === 0.8 ? '800m' : km === 1.0 ? '1km' : `${km * 1000}m`
+}
+
 function fmtDate(iso: string) {
   const d = new Date(iso + 'T00:00:00')
   return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
@@ -84,6 +102,10 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const [exerciseReps, setExerciseReps] = useState<Record<string, number>>({})
 
   const isStrengthSession = sessionType === 'Strength + Conditioning'
+  const isIntervalSession = sessionType === 'Interval Session' || sessionType === 'Race Pace Session'
+
+  const [repDistanceKm, setRepDistanceKm] = useState(0.4)
+  const [splitInputs, setSplitInputs] = useState<string[]>(Array(10).fill(''))
 
   // Get current circuit variation for strength sessions
   const strengthCount = logs.filter(l => isStrengthLog(l.sessionType)).length
@@ -109,6 +131,11 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
   const paceSeconds = hasPace ? calcPaceSeconds(dist, dur) : null
   const paceLabel = paceSeconds ? formatPace(paceSeconds) : null
 
+  const validSplitPaceSecs = splitInputs
+    .map(v => parseSplitTime(v))
+    .filter((s): s is number => s !== null && s > 0)
+    .map(s => s / repDistanceKm)
+
   function handleSave() {
     const exerciseLogsData: ExerciseLog[] | undefined = isStrengthSession && allExercises.length > 0
       ? allExercises.map(e => ({
@@ -127,6 +154,12 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       else if (advice?.direction === 'down') applyRepProgressionAdjustment(allExercises, 'down')
     }
 
+    const intervalSplitsData: IntervalSplit[] | undefined = isIntervalSession
+      ? splitInputs
+          .map(v => { const s = parseSplitTime(v); return s != null && s > 0 ? { timeSecs: s, distanceKm: repDistanceKm } : null })
+          .filter((s): s is IntervalSplit => s !== null)
+      : undefined
+
     onAdd({
       date,
       sessionType,
@@ -138,6 +171,7 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
       injuryFlag: injuryFlag || undefined,
       completed: true,
       exerciseLogs: exerciseLogsData,
+      intervalSplits: intervalSplitsData?.length ? intervalSplitsData : undefined,
     })
     setDistanceKm('')
     setDurationMins('')
@@ -146,6 +180,8 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
     setRoundsCompleted('')
     setInjuryFlag(false)
     setExerciseReps({})
+    setSplitInputs(Array(10).fill(''))
+    setRepDistanceKm(0.4)
     setDate(today)
     setSaved(true)
     setTimeout(() => setSaved(false), 2500)
@@ -196,6 +232,87 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                 <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>Average Pace</div>
                 <div className="pace-display">{paceLabel}</div>
                 <div className="form-hint">{formatTime(dur * 60)} · {dist} km</div>
+              </div>
+            )}
+
+            {isIntervalSession && (
+              <div className="form-group">
+                <label className="form-label">Rep Splits</label>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                  {REP_DISTANCES.map(d => (
+                    <button
+                      key={d.label} type="button"
+                      onClick={() => setRepDistanceKm(d.km)}
+                      style={{
+                        padding: '6px 12px', borderRadius: 'var(--radius-sm)', fontSize: 13, fontWeight: 700,
+                        border: `1.5px solid ${repDistanceKm === d.km ? 'var(--accent)' : 'var(--border)'}`,
+                        background: repDistanceKm === d.km ? 'var(--accent-dim)' : 'var(--surface)',
+                        color: repDistanceKm === d.km ? 'var(--accent)' : 'var(--text-muted)', cursor: 'pointer',
+                      }}
+                    >{d.label}</button>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)', flex: 1 }}>Time per rep (mm:ss)</span>
+                  <button type="button"
+                    onClick={() => setSplitInputs(s => s.length > 1 ? s.slice(0, -1) : s)}
+                    style={{ width: 30, height: 30, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>−</button>
+                  <span style={{ fontSize: 13, fontWeight: 700, minWidth: 20, textAlign: 'center' }}>{splitInputs.length}</span>
+                  <button type="button"
+                    onClick={() => setSplitInputs(s => [...s, ''])}
+                    style={{ width: 30, height: 30, borderRadius: 8, border: '1.5px solid var(--border)', background: 'var(--surface)', color: 'var(--text)', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>+</button>
+                </div>
+
+                {splitInputs.map((val, i) => {
+                  const secs = parseSplitTime(val)
+                  const paceSecPerKm = secs != null ? secs / repDistanceKm : null
+                  const paceStr = paceSecPerKm != null ? `${formatPace(paceSecPerKm)}/km` : '—'
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                      <div style={{ width: 18, fontSize: 11, color: 'var(--text-muted)', textAlign: 'right', flexShrink: 0 }}>{i + 1}</div>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="1:40"
+                        value={val}
+                        onChange={e => { const a = [...splitInputs]; a[i] = e.target.value; setSplitInputs(a) }}
+                        style={{ flex: 1, textAlign: 'center', fontFamily: 'monospace', fontSize: 15 }}
+                      />
+                      <div style={{ width: 72, fontSize: 13, fontWeight: 700, color: paceSecPerKm != null ? 'var(--accent)' : 'var(--text-dim)', textAlign: 'right', flexShrink: 0 }}>
+                        {paceStr}
+                      </div>
+                    </div>
+                  )
+                })}
+
+                {validSplitPaceSecs.length >= 2 && (() => {
+                  const fastest = Math.min(...validSplitPaceSecs)
+                  const slowest = Math.max(...validSplitPaceSecs)
+                  const drift = Math.round(slowest - fastest)
+                  const avg = Math.round(validSplitPaceSecs.reduce((a, b) => a + b, 0) / validSplitPaceSecs.length)
+                  const feedbackColor = drift <= 5 ? 'var(--accent)' : drift <= 12 ? 'var(--accent)' : drift <= 22 ? 'var(--warn)' : '#ef4444'
+                  const feedbackText = drift <= 5 ? 'Excellent consistency' : drift <= 12 ? 'Good consistency' : drift <= 22 ? `${drift}s/km drift — slight positive split` : `${drift}s/km drift — large fade, hold back on rep 1`
+                  return (
+                    <div style={{ marginTop: 10, padding: '10px 14px', borderRadius: 8, background: 'var(--surface)', border: '1px solid var(--border)', fontSize: 13 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Fastest</span>
+                        <span style={{ fontWeight: 700 }}>{formatPace(fastest)}/km</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Slowest</span>
+                        <span style={{ fontWeight: 700 }}>{formatPace(slowest)}/km</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Average</span>
+                        <span style={{ fontWeight: 700 }}>{formatPace(avg)}/km</span>
+                      </div>
+                      <div style={{ color: feedbackColor, fontWeight: 700, borderTop: '1px solid var(--border)', paddingTop: 8 }}>
+                        {feedbackText}
+                      </div>
+                    </div>
+                  )
+                })()}
               </div>
             )}
 
@@ -389,6 +506,17 @@ export default function Log({ logs, onAdd, onDelete }: Props) {
                       {log.durationMins ? ` · ${log.durationMins} min` : ''}
                     </div>
                     {log.notes && <div className="log-sub" style={{ marginTop: 2, fontStyle: 'italic' }}>{log.notes}</div>}
+                    {log.intervalSplits && log.intervalSplits.length > 0 && (() => {
+                      const paces = log.intervalSplits.map(s => s.timeSecs / s.distanceKm)
+                      const fastest = Math.min(...paces)
+                      const slowest = Math.max(...paces)
+                      const dist = repDistLabel(log.intervalSplits[0].distanceKm)
+                      return (
+                        <div className="log-sub" style={{ marginTop: 2 }}>
+                          {log.intervalSplits.length} × {dist} · {formatPace(fastest)}–{formatPace(slowest)}/km
+                        </div>
+                      )
+                    })()}
                   </div>
                   <div className="log-right">
                     {pace && <div className="log-pace">{pace}</div>}
