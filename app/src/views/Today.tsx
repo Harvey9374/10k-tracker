@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { getWeekNumber, getPhase, getDaySession, PLAN_START, RACE_DATE, BENCHMARKS, PACE_GUIDE, formatPace, formatTime } from '../data/plan'
 import { findExercise } from '../data/exercises'
 import { getCircuitVariation, getSkipVariation, getProgressionAdvice, isStrengthLog, isSkipLog, exerciseToString, adjustedReps } from '../data/progression'
-import { useSessionCompletions } from '../hooks/useStore'
+import { useSessionCompletions, useDayOverride } from '../hooks/useStore'
 import { useWeather, calcHeatAdj } from '../hooks/useWeather'
 import type { WorkoutLog, Phase, CalibratedZones } from '../types'
 
@@ -269,6 +269,19 @@ const INJURY_SESSIONS: Record<string, { title: string; items: string[] }> = {
 
 const DAY_TO_SESSION_KEY = ['weekend', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'weekend']
 
+const ALL_PLAN_DAYS = [
+  { key: 'monday',    label: 'Monday',    type: 'run' },
+  { key: 'tuesday',   label: 'Tuesday',   type: 'strength' },
+  { key: 'wednesday', label: 'Wednesday', type: 'conditioning' },
+  { key: 'thursday',  label: 'Thursday',  type: 'recovery' },
+  { key: 'friday',    label: 'Friday',    type: 'run' },
+  { key: 'weekend',   label: 'Weekend',   type: 'run' },
+]
+
+const DAY_KEY_EMOJI: Record<string, string> = {
+  monday: '🏃', tuesday: '💪', wednesday: '⚡', thursday: '🧘', friday: '🏃', weekend: '🏃',
+}
+
 function getLightSession(dayKey: string, phaseType?: string): { title: string; items: string[] } {
   const isRun = dayKey === 'monday' || dayKey === 'friday' || dayKey === 'weekend'
   const isStrength = dayKey === 'tuesday'
@@ -362,7 +375,12 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
   const loggedToday = logs.filter(l => l.date === todayStr)
   const todayMarkedComplete = completions.includes(todayStr)
 
-  const daySession = phase ? getDaySession(phase, week, today) : null
+  const { overrides, setOverride } = useDayOverride()
+  const naturalDayKey = DAY_TO_SESSION_KEY[today.getDay()]
+  const dayOverride = overrides[todayStr] ?? null
+  const [showSwapPicker, setShowSwapPicker] = useState(false)
+
+  const daySession = phase ? getDaySession(phase, week, today, dayOverride ?? undefined) : null
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const todayName = dayNames[today.getDay()]
 
@@ -758,12 +776,51 @@ export default function Today({ logs, onGoLog, calibratedZones, injuryMode, onTo
           ) : daySession ? (
             <div className="today-session-card">
               <div className="tsc-header">
-                <span style={{ fontSize: 16 }}>{['🏃', '💪', '⚡', '🧘', '🏃', '🏃', '🏃'][today.getDay()]}</span>
-                <span className="tsc-day">{todayName}'s Session</span>
+                <span style={{ fontSize: 16 }}>{DAY_KEY_EMOJI[dayOverride ?? naturalDayKey]}</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span className="tsc-day">{todayName}'s Session</span>
+                  {dayOverride && (
+                    <span style={{ fontSize: 11, color: 'var(--accent-2)', marginLeft: 8, fontWeight: 700 }}>
+                      ↕ {ALL_PLAN_DAYS.find(d => d.key === dayOverride)?.label}
+                    </span>
+                  )}
+                </div>
+                <button
+                  onClick={() => setShowSwapPicker(s => !s)}
+                  style={{ fontSize: 12, color: showSwapPicker ? 'var(--accent)' : 'var(--text-muted)', background: 'none', border: `1px solid ${showSwapPicker ? 'var(--accent)' : 'var(--border)'}`, borderRadius: 8, padding: '3px 8px', cursor: 'pointer', flexShrink: 0 }}
+                >↕ Swap</button>
                 {loggedToday.length > 0 && (
-                  <span className="badge badge-green" style={{ marginLeft: 'auto' }}>✓ Logged</span>
+                  <span className="badge badge-green">✓ Logged</span>
                 )}
               </div>
+              {showSwapPicker && (
+                <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', background: 'var(--surface)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Show a different day's session today:</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {ALL_PLAN_DAYS.map(d => (
+                      <button
+                        key={d.key}
+                        onClick={() => { setOverride(todayStr, dayOverride === d.key ? null : d.key); setShowSwapPicker(false) }}
+                        style={{
+                          fontSize: 12, fontWeight: 700,
+                          color: dayOverride === d.key ? '#fff' : d.key === naturalDayKey ? 'var(--accent)' : 'var(--text-muted)',
+                          background: dayOverride === d.key ? 'var(--accent)' : d.key === naturalDayKey ? 'var(--accent-dim)' : 'var(--card)',
+                          border: `1.5px solid ${dayOverride === d.key ? 'var(--accent)' : d.key === naturalDayKey ? 'var(--accent)' : 'var(--border)'}`,
+                          borderRadius: 8, padding: '5px 10px', cursor: 'pointer',
+                        }}
+                      >
+                        {DAY_KEY_EMOJI[d.key]} {d.label}{d.key === naturalDayKey ? ' (today)' : ''}
+                      </button>
+                    ))}
+                    {dayOverride && (
+                      <button
+                        onClick={() => { setOverride(todayStr, null); setShowSwapPicker(false) }}
+                        style={{ fontSize: 12, color: 'var(--danger)', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '5px 10px', cursor: 'pointer' }}
+                      >✕ Reset</button>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="tsc-title" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span style={{ flex: 1 }}>{lightMode ? getLightSession(String(daySession.key)).title : daySession.session.title}</span>
                 <button

@@ -101,6 +101,29 @@ export function useSessionCompletions() {
   return { completions, toggleCompletion }
 }
 
+export function useDayOverride() {
+  const [overrides, setOverrides] = useState<Record<string, string>>(() => {
+    try {
+      const raw = localStorage.getItem('dayOverrides')
+      if (!raw) return {}
+      const data = JSON.parse(raw) as Record<string, string>
+      const cutoff = new Date()
+      cutoff.setDate(cutoff.getDate() - 7)
+      const cutoffStr = cutoff.toISOString().slice(0, 10)
+      return Object.fromEntries(Object.entries(data).filter(([d]) => d >= cutoffStr))
+    } catch { return {} }
+  })
+  const setOverride = useCallback((dateStr: string, dayKey: string | null) => {
+    setOverrides(prev => {
+      const next = { ...prev }
+      if (dayKey === null) { delete next[dateStr] } else { next[dateStr] = dayKey }
+      try { localStorage.setItem('dayOverrides', JSON.stringify(next)) } catch {}
+      return next
+    })
+  }, [])
+  return { overrides, setOverride }
+}
+
 export function usePlanControl() {
   const [weekOffset, setWeekOffset] = useState<number>(() => {
     try { return Number(localStorage.getItem('planWeekOffset') || '0') } catch { return 0 }
