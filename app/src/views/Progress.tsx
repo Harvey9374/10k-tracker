@@ -32,12 +32,24 @@ function parseTimeInput(mm: string, ss: string): number | null {
 
 const EASY_TYPES = new Set(['Easy Run', 'Recovery / Mobility', 'Skip + Mobility'])
 
+function getEffectivePaceSecs(l: WorkoutLog): number | null {
+  if (l.intervalSplits && l.intervalSplits.length > 0) {
+    const totalTime = l.intervalSplits.reduce((s, sp) => s + sp.timeSecs, 0)
+    const totalDist = l.intervalSplits.reduce((s, sp) => s + sp.distanceKm, 0)
+    if (totalDist > 0) return totalTime / totalDist
+  }
+  if (l.distanceKm && l.durationMins && l.distanceKm > 0 && l.durationMins > 0) {
+    return (l.durationMins * 60) / l.distanceKm
+  }
+  return null
+}
+
 function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
   const [qualityOnly, setQualityOnly] = useState(true)
   const [selected, setSelected] = useState<WorkoutLog | null>(null)
 
   const runLogs = logs
-    .filter(l => l.distanceKm && l.durationMins && l.distanceKm > 0 && l.durationMins > 0)
+    .filter(l => getEffectivePaceSecs(l) !== null)
     .filter(l => !qualityOnly || !EASY_TYPES.has(l.sessionType))
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(-20)
@@ -58,7 +70,7 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
     </div>
   )
 
-  const paces = runLogs.map(l => calcPaceSeconds(l.distanceKm!, l.durationMins!))
+  const paces = runLogs.map(l => getEffectivePaceSecs(l)!)
   const minPace = Math.min(...paces)
   const maxPace = Math.max(...paces)
   const range = maxPace - minPace || 30
@@ -66,7 +78,7 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
   const W = 300, H = 80, padX = 10, padY = 10
 
   const pts = runLogs.map((l, i) => {
-    const pace = calcPaceSeconds(l.distanceKm!, l.durationMins!)
+    const pace = getEffectivePaceSecs(l)!
     const x = padX + (i / (runLogs.length - 1)) * (W - padX * 2)
     const y = padY + (pace - minPace) / range * (H - padY * 2)
     return { x, y, pace, date: l.date }
@@ -111,19 +123,33 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
         })}
       </svg>
       {selected && (() => {
-        const paceSecPerKm = selected.durationMins && selected.distanceKm
-          ? (selected.durationMins * 60) / selected.distanceKm : 0
+        const paceSecPerKm = getEffectivePaceSecs(selected) ?? 0
         const paceMin = Math.floor(paceSecPerKm / 60)
         const paceSec = Math.round(paceSecPerKm % 60)
         const dateLabel = new Date(selected.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
         const durMins = selected.durationMins ?? 0
         const durM = Math.floor(durMins)
         const durS = Math.round((durMins % 1) * 60)
+        const hasIntervals = selected.intervalSplits && selected.intervalSplits.length > 0
         return (
           <div style={{ marginTop: 10, padding: '10px 14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 4, position: 'relative' }}>
             <button onClick={() => setSelected(null)} style={{ position: 'absolute', top: 8, right: 10, fontSize: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
             <div style={{ fontWeight: 700, color: 'var(--text)' }}>{dateLabel}</div>
-            <div style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 15 }}>{paceMin}:{String(paceSec).padStart(2, '0')}/km</div>
+            <div style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 15 }}>
+              {paceMin}:{String(paceSec).padStart(2, '0')}/km
+              {hasIntervals && <span style={{ fontSize: 11, color: 'var(--text-muted)', fontWeight: 400, marginLeft: 6 }}>avg interval</span>}
+            </div>
+            {hasIntervals && (() => {
+              const splitPaces = selected.intervalSplits!.map(sp => sp.timeSecs / sp.distanceKm)
+              const minP = Math.min(...splitPaces), maxP = Math.max(...splitPaces)
+              const fmt = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`
+              const repM = selected.intervalSplits![0].distanceKm * 1000
+              return (
+                <div style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+                  {selected.intervalSplits!.length} × {repM}m · {fmt(minP)}–{fmt(maxP)}/km
+                </div>
+              )
+            })()}
             <div style={{ display: 'flex', gap: 16, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
               {selected.distanceKm && <span>📍 {selected.distanceKm.toFixed(1)} km</span>}
               {selected.durationMins && <span>⏱ {durM}:{String(durS).padStart(2, '0')}</span>}
