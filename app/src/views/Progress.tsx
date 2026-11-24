@@ -30,15 +30,30 @@ function parseTimeInput(mm: string, ss: string): number | null {
   return m * 60 + s
 }
 
+const EASY_TYPES = new Set(['Easy Run', 'Recovery / Mobility', 'Skip + Mobility'])
+
 function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
+  const [qualityOnly, setQualityOnly] = useState(true)
+
   const runLogs = logs
     .filter(l => l.distanceKm && l.durationMins && l.distanceKm > 0 && l.durationMins > 0)
+    .filter(l => !qualityOnly || !EASY_TYPES.has(l.sessionType))
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(-20)
 
+  const toggleRow = (
+    <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
+      <button onClick={() => setQualityOnly(true)} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: qualityOnly ? 'var(--accent)' : 'var(--card)', color: qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>Quality runs</button>
+      <button onClick={() => setQualityOnly(false)} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: !qualityOnly ? 'var(--accent)' : 'var(--card)', color: !qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${!qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>All runs</button>
+    </div>
+  )
+
   if (runLogs.length < 3) return (
-    <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '12px 0', textAlign: 'center' }}>
-      Log 3+ sessions with distance & duration to see your pace trend.
+    <div>
+      {toggleRow}
+      <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '12px 0', textAlign: 'center' }}>
+        {qualityOnly ? 'Log 3+ interval, tempo or race pace sessions to see your quality trend.' : 'Log 3+ sessions with distance & duration to see your pace trend.'}
+      </div>
     </div>
   )
 
@@ -61,9 +76,10 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
 
   return (
     <div>
+      {toggleRow}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--text-muted)' }}>
-          Run Pace Trend
+          {qualityOnly ? 'Quality Run Trend' : 'All Runs Trend'}
         </span>
         <span style={{ fontSize: 12, fontWeight: 700, color: improving ? 'var(--accent)' : 'var(--text-muted)' }}>
           {improving ? '↑ Getting faster' : '→ Consistent'}

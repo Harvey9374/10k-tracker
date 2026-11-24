@@ -485,7 +485,7 @@ export function getPhase(week: number): Phase | null {
   return PHASES.find(p => week >= p.weekRange[0] && week <= p.weekRange[1]) ?? PHASES[PHASES.length - 1]
 }
 
-export function getDaySession(phase: Phase, weekNumber: number, date = new Date()) {
+export function getDaySession(phase: Phase, weekNumber: number, date = new Date(), overrideKey?: string) {
   const day = date.getDay() // 0=Sun, 1=Mon...6=Sat
   const dayMap: Record<number, { key: keyof Phase; label: string; type: string }> = {
     1: { key: 'monday',    label: 'Monday',    type: 'run' },
@@ -496,7 +496,15 @@ export function getDaySession(phase: Phase, weekNumber: number, date = new Date(
     6: { key: 'weekend',   label: 'Saturday',  type: 'run' },
     0: { key: 'weekend',   label: 'Sunday',    type: 'run' },
   }
-  const info = dayMap[day]
+  const overrideMap: Record<string, { key: keyof Phase; label: string; type: string }> = {
+    monday:    { key: 'monday',    label: 'Monday',    type: 'run' },
+    tuesday:   { key: 'tuesday',   label: 'Tuesday',   type: 'strength' },
+    wednesday: { key: 'wednesday', label: 'Wednesday', type: 'conditioning' },
+    thursday:  { key: 'thursday',  label: 'Thursday',  type: 'recovery' },
+    friday:    { key: 'friday',    label: 'Friday',    type: 'run' },
+    weekend:   { key: 'weekend',   label: 'Weekend',   type: 'run' },
+  }
+  const info = overrideKey ? (overrideMap[overrideKey] ?? dayMap[day]) : dayMap[day]
   if (!info) return null
   const session = phase[info.key] as { title: string; items: string[] }
   return { ...info, session, weekNumber, phase }
