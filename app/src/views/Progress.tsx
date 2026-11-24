@@ -34,6 +34,7 @@ const EASY_TYPES = new Set(['Easy Run', 'Recovery / Mobility', 'Skip + Mobility'
 
 function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
   const [qualityOnly, setQualityOnly] = useState(true)
+  const [selected, setSelected] = useState<WorkoutLog | null>(null)
 
   const runLogs = logs
     .filter(l => l.distanceKm && l.durationMins && l.distanceKm > 0 && l.durationMins > 0)
@@ -43,8 +44,8 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
 
   const toggleRow = (
     <div style={{ display: 'flex', gap: 4, marginBottom: 10 }}>
-      <button onClick={() => setQualityOnly(true)} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: qualityOnly ? 'var(--accent)' : 'var(--card)', color: qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>Quality runs</button>
-      <button onClick={() => setQualityOnly(false)} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: !qualityOnly ? 'var(--accent)' : 'var(--card)', color: !qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${!qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>All runs</button>
+      <button onClick={() => { setSelected(null); setQualityOnly(true) }} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: qualityOnly ? 'var(--accent)' : 'var(--card)', color: qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>Quality runs</button>
+      <button onClick={() => { setSelected(null); setQualityOnly(false) }} style={{ flex: 1, padding: '5px 0', fontSize: 12, fontWeight: 700, borderRadius: 8, cursor: 'pointer', background: !qualityOnly ? 'var(--accent)' : 'var(--card)', color: !qualityOnly ? '#fff' : 'var(--text-muted)', border: `1.5px solid ${!qualityOnly ? 'var(--accent)' : 'var(--border)'}` }}>All runs</button>
     </div>
   )
 
@@ -93,11 +94,46 @@ function PaceTrendChart({ logs }: { logs: WorkoutLog[] }) {
           </linearGradient>
         </defs>
         <path d={pathD} fill="none" stroke="url(#paceGrad)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-        {pts.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r={i === pts.length - 1 ? 4 : 2.5}
-            fill={i === pts.length - 1 ? 'var(--accent)' : 'var(--accent-2)'} />
-        ))}
+        {pts.map((p, i) => {
+          const log = runLogs[i]
+          const isSelected = selected?.id === log.id
+          const isLast = i === pts.length - 1
+          return (
+            <circle key={i} cx={p.x} cy={p.y}
+              r={isSelected ? 7 : isLast ? 4 : 2.5}
+              fill={isLast ? 'var(--accent)' : 'var(--accent-2)'}
+              stroke={isSelected ? 'white' : 'none'}
+              strokeWidth={isSelected ? 2 : 0}
+              style={{ cursor: 'pointer' }}
+              onClick={() => setSelected(isSelected ? null : log)}
+            />
+          )
+        })}
       </svg>
+      {selected && (() => {
+        const paceSecPerKm = selected.durationMins && selected.distanceKm
+          ? (selected.durationMins * 60) / selected.distanceKm : 0
+        const paceMin = Math.floor(paceSecPerKm / 60)
+        const paceSec = Math.round(paceSecPerKm % 60)
+        const dateLabel = new Date(selected.date + 'T12:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+        const durMins = selected.durationMins ?? 0
+        const durM = Math.floor(durMins)
+        const durS = Math.round((durMins % 1) * 60)
+        return (
+          <div style={{ marginTop: 10, padding: '10px 14px', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 13, display: 'flex', flexDirection: 'column', gap: 4, position: 'relative' }}>
+            <button onClick={() => setSelected(null)} style={{ position: 'absolute', top: 8, right: 10, fontSize: 16, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', lineHeight: 1 }}>×</button>
+            <div style={{ fontWeight: 700, color: 'var(--text)' }}>{dateLabel}</div>
+            <div style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 15 }}>{paceMin}:{String(paceSec).padStart(2, '0')}/km</div>
+            <div style={{ display: 'flex', gap: 16, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+              {selected.distanceKm && <span>📍 {selected.distanceKm.toFixed(1)} km</span>}
+              {selected.durationMins && <span>⏱ {durM}:{String(durS).padStart(2, '0')}</span>}
+              {selected.sessionType && <span>🏃 {selected.sessionType}</span>}
+              {selected.perceivedEffort != null && <span>💪 RPE {selected.perceivedEffort}/10</span>}
+            </div>
+            {selected.notes && <div style={{ color: 'var(--text-muted)', fontSize: 12, fontStyle: 'italic', marginTop: 2 }}>{selected.notes}</div>}
+          </div>
+        )
+      })()}
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
         <span>{fmtDate(pts[0].date)} · {formatPace(paces[0])}</span>
         <span style={{ color: improving ? 'var(--accent)' : 'var(--text-muted)', fontWeight: improving ? 700 : 400 }}>
